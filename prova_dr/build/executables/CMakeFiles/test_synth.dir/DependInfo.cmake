@@ -6,8 +6,9 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/camera.cpp" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth.dir/__/src/camera.cpp.o"
   "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/dataset.cpp" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth.dir/__/src/dataset.cpp.o"
+  "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/dtam.cpp" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth.dir/__/src/dtam.cpp.o"
   "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/image.cpp" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth.dir/__/src/image.cpp.o"
-  "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/state.cpp" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth.dir/__/src/state.cpp.o"
+  "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/utils.cpp" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth.dir/__/src/utils.cpp.o"
   "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/executables/test_synth.cpp" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth.dir/test_synth.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")

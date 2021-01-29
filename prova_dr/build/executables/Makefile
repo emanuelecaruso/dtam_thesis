@@ -200,6 +200,36 @@ __/src/dataset.cpp.s:
 	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/dataset.cpp.s
 .PHONY : __/src/dataset.cpp.s
 
+__/src/dtam.o: __/src/dtam.cpp.o
+
+.PHONY : __/src/dtam.o
+
+# target to build an object file
+__/src/dtam.cpp.o:
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/main.dir/build.make executables/CMakeFiles/main.dir/__/src/dtam.cpp.o
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/dtam.cpp.o
+.PHONY : __/src/dtam.cpp.o
+
+__/src/dtam.i: __/src/dtam.cpp.i
+
+.PHONY : __/src/dtam.i
+
+# target to preprocess a source file
+__/src/dtam.cpp.i:
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/main.dir/build.make executables/CMakeFiles/main.dir/__/src/dtam.cpp.i
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/dtam.cpp.i
+.PHONY : __/src/dtam.cpp.i
+
+__/src/dtam.s: __/src/dtam.cpp.s
+
+.PHONY : __/src/dtam.s
+
+# target to generate assembly for a file
+__/src/dtam.cpp.s:
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/main.dir/build.make executables/CMakeFiles/main.dir/__/src/dtam.cpp.s
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/dtam.cpp.s
+.PHONY : __/src/dtam.cpp.s
+
 __/src/image.o: __/src/image.cpp.o
 
 .PHONY : __/src/image.o
@@ -230,35 +260,35 @@ __/src/image.cpp.s:
 	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/image.cpp.s
 .PHONY : __/src/image.cpp.s
 
-__/src/state.o: __/src/state.cpp.o
+__/src/utils.o: __/src/utils.cpp.o
 
-.PHONY : __/src/state.o
+.PHONY : __/src/utils.o
 
 # target to build an object file
-__/src/state.cpp.o:
-	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/main.dir/build.make executables/CMakeFiles/main.dir/__/src/state.cpp.o
-	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/state.cpp.o
-.PHONY : __/src/state.cpp.o
+__/src/utils.cpp.o:
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/main.dir/build.make executables/CMakeFiles/main.dir/__/src/utils.cpp.o
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/utils.cpp.o
+.PHONY : __/src/utils.cpp.o
 
-__/src/state.i: __/src/state.cpp.i
+__/src/utils.i: __/src/utils.cpp.i
 
-.PHONY : __/src/state.i
+.PHONY : __/src/utils.i
 
 # target to preprocess a source file
-__/src/state.cpp.i:
-	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/main.dir/build.make executables/CMakeFiles/main.dir/__/src/state.cpp.i
-	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/state.cpp.i
-.PHONY : __/src/state.cpp.i
+__/src/utils.cpp.i:
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/main.dir/build.make executables/CMakeFiles/main.dir/__/src/utils.cpp.i
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/utils.cpp.i
+.PHONY : __/src/utils.cpp.i
 
-__/src/state.s: __/src/state.cpp.s
+__/src/utils.s: __/src/utils.cpp.s
 
-.PHONY : __/src/state.s
+.PHONY : __/src/utils.s
 
 # target to generate assembly for a file
-__/src/state.cpp.s:
-	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/main.dir/build.make executables/CMakeFiles/main.dir/__/src/state.cpp.s
-	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/state.cpp.s
-.PHONY : __/src/state.cpp.s
+__/src/utils.cpp.s:
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/main.dir/build.make executables/CMakeFiles/main.dir/__/src/utils.cpp.s
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/utils.cpp.s
+.PHONY : __/src/utils.cpp.s
 
 main.o: main.cpp.o
 
@@ -330,12 +360,15 @@ help:
 	@echo "... __/src/dataset.o"
 	@echo "... __/src/dataset.i"
 	@echo "... __/src/dataset.s"
+	@echo "... __/src/dtam.o"
+	@echo "... __/src/dtam.i"
+	@echo "... __/src/dtam.s"
 	@echo "... __/src/image.o"
 	@echo "... __/src/image.i"
 	@echo "... __/src/image.s"
-	@echo "... __/src/state.o"
-	@echo "... __/src/state.i"
-	@echo "... __/src/state.s"
+	@echo "... __/src/utils.o"
+	@echo "... __/src/utils.i"
+	@echo "... __/src/utils.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

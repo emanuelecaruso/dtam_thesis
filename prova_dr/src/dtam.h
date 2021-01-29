@@ -1,11 +1,15 @@
 #pragma once
+#include "camera.h"
+#include "image.h"
 
 class Dtam{
   public:
-    CameraVector camera_vector_;
-    Class(CameraVector camera_vector){
-      camera_vector_ = camera_vector;
+    int i_;
+    Image<float>* img_cam_r_;
+    Image<float>* img_cam_m_;
+    Dtam(int i){
+      i_ = i;
     };
 
-    bool get_d(Eigen::Vector2i& uv, Camera* camera_r, Camera* camera_m, std::vector<floatZ d);
+    bool sign_epipolar_line(Eigen::Vector2i& uv, Camera* camera_r, Camera* camera_m);
 };

@@ -19,7 +19,7 @@ class Dataset{
     };
 
     // function that extract json given its path
-    bool collectCameras(CameraVector& camera_vector);
+    bool collectCameras(CameraVector& camera_vector, float max_depth);
     bool collectImages(std::vector< Image<cv::Vec3b>* >& image_vector);
 
   private:

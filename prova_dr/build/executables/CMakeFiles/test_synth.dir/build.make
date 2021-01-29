@@ -109,18 +109,31 @@ executables/CMakeFiles/test_synth.dir/__/src/image.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_synth.dir/__/src/image.cpp.s"
 	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/image.cpp -o CMakeFiles/test_synth.dir/__/src/image.cpp.s
 
-executables/CMakeFiles/test_synth.dir/__/src/state.cpp.o: executables/CMakeFiles/test_synth.dir/flags.make
-executables/CMakeFiles/test_synth.dir/__/src/state.cpp.o: ../src/state.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object executables/CMakeFiles/test_synth.dir/__/src/state.cpp.o"
-	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/test_synth.dir/__/src/state.cpp.o -c /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/state.cpp
+executables/CMakeFiles/test_synth.dir/__/src/dtam.cpp.o: executables/CMakeFiles/test_synth.dir/flags.make
+executables/CMakeFiles/test_synth.dir/__/src/dtam.cpp.o: ../src/dtam.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object executables/CMakeFiles/test_synth.dir/__/src/dtam.cpp.o"
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/test_synth.dir/__/src/dtam.cpp.o -c /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/dtam.cpp
 
-executables/CMakeFiles/test_synth.dir/__/src/state.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_synth.dir/__/src/state.cpp.i"
-	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/state.cpp > CMakeFiles/test_synth.dir/__/src/state.cpp.i
+executables/CMakeFiles/test_synth.dir/__/src/dtam.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_synth.dir/__/src/dtam.cpp.i"
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/dtam.cpp > CMakeFiles/test_synth.dir/__/src/dtam.cpp.i
 
-executables/CMakeFiles/test_synth.dir/__/src/state.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_synth.dir/__/src/state.cpp.s"
-	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/state.cpp -o CMakeFiles/test_synth.dir/__/src/state.cpp.s
+executables/CMakeFiles/test_synth.dir/__/src/dtam.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_synth.dir/__/src/dtam.cpp.s"
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/dtam.cpp -o CMakeFiles/test_synth.dir/__/src/dtam.cpp.s
+
+executables/CMakeFiles/test_synth.dir/__/src/utils.cpp.o: executables/CMakeFiles/test_synth.dir/flags.make
+executables/CMakeFiles/test_synth.dir/__/src/utils.cpp.o: ../src/utils.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object executables/CMakeFiles/test_synth.dir/__/src/utils.cpp.o"
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/test_synth.dir/__/src/utils.cpp.o -c /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/utils.cpp
+
+executables/CMakeFiles/test_synth.dir/__/src/utils.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_synth.dir/__/src/utils.cpp.i"
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/utils.cpp > CMakeFiles/test_synth.dir/__/src/utils.cpp.i
+
+executables/CMakeFiles/test_synth.dir/__/src/utils.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_synth.dir/__/src/utils.cpp.s"
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/utils.cpp -o CMakeFiles/test_synth.dir/__/src/utils.cpp.s
 
 # Object files for target test_synth
 test_synth_OBJECTS = \
@@ -128,7 +141,8 @@ test_synth_OBJECTS = \
 "CMakeFiles/test_synth.dir/__/src/dataset.cpp.o" \
 "CMakeFiles/test_synth.dir/__/src/camera.cpp.o" \
 "CMakeFiles/test_synth.dir/__/src/image.cpp.o" \
-"CMakeFiles/test_synth.dir/__/src/state.cpp.o"
+"CMakeFiles/test_synth.dir/__/src/dtam.cpp.o" \
+"CMakeFiles/test_synth.dir/__/src/utils.cpp.o"
 
 # External object files for target test_synth
 test_synth_EXTERNAL_OBJECTS =
@@ -137,7 +151,8 @@ executables/test_synth: executables/CMakeFiles/test_synth.dir/test_synth.cpp.o
 executables/test_synth: executables/CMakeFiles/test_synth.dir/__/src/dataset.cpp.o
 executables/test_synth: executables/CMakeFiles/test_synth.dir/__/src/camera.cpp.o
 executables/test_synth: executables/CMakeFiles/test_synth.dir/__/src/image.cpp.o
-executables/test_synth: executables/CMakeFiles/test_synth.dir/__/src/state.cpp.o
+executables/test_synth: executables/CMakeFiles/test_synth.dir/__/src/dtam.cpp.o
+executables/test_synth: executables/CMakeFiles/test_synth.dir/__/src/utils.cpp.o
 executables/test_synth: executables/CMakeFiles/test_synth.dir/build.make
 executables/test_synth: /usr/lib/x86_64-linux-gnu/libopencv_shape.so.3.2.0
 executables/test_synth: /usr/lib/x86_64-linux-gnu/libopencv_stitching.so.3.2.0
@@ -181,7 +196,7 @@ executables/test_synth: /usr/lib/x86_64-linux-gnu/libopencv_imgcodecs.so.3.2.0
 executables/test_synth: /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0
 executables/test_synth: /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0
 executables/test_synth: executables/CMakeFiles/test_synth.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable test_synth"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable test_synth"
 	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/test_synth.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

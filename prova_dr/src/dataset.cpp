@@ -42,7 +42,7 @@ bool Dataset::load_json(json& js){
   return true;
 }
 
-bool Dataset::collectCameras(CameraVector& camera_vector){
+bool Dataset::collectCameras(CameraVector& camera_vector, float max_depth){
   json js;
   if (!Dataset::load_json(js)) return false;
   auto cameras = js.at("cameras");
@@ -74,11 +74,15 @@ bool Dataset::collectCameras(CameraVector& camera_vector){
 
 
     Eigen::Vector3f t(f[9],f[10],f[11]);
+    Eigen::Isometry3f frame_camera_wrt_world;
+    frame_camera_wrt_world.linear()=R;
+    frame_camera_wrt_world.translation()=t;
     Eigen::Isometry3f frame_world_wrt_camera;
-    frame_world_wrt_camera.linear()=R;
-    frame_world_wrt_camera.translation()=t;
+    frame_world_wrt_camera=frame_camera_wrt_world.inverse();
 
-    Camera* cam = new Camera(name,lens,aspect,width,resolution,frame_world_wrt_camera);
+
+    Camera* cam = new Camera(name,lens,aspect,width,resolution,max_depth,frame_camera_wrt_world,frame_world_wrt_camera);
+    cam->initImgs();
     camera_vector.push_back(cam);
   }
 

@@ -105,7 +105,7 @@ for obj_ in bpy.data.objects:
         pi=math.pi
         
         eul_ang_=obj_.rotation_euler
-        ex_=eul_ang_.x+pi   # z axis of blender is flipped
+        ex_=eul_ang_.x 
         ey_=eul_ang_.y
         ez_=eul_ang_.z
         
@@ -118,16 +118,12 @@ for obj_ in bpy.data.objects:
         # here euler angles are applyied in zyx order
         Rzy_=np.dot(Rz_,Ry_)
         R_=np.dot(Rzy_,Rx_)
-        R_transpose=R_.transpose()
-
         l_=obj_.location
-        np_t=np.array([l_[0],l_[1],l_[2]])
-        np_l=-R_transpose.dot(np_t)
 
-        frame_=[ R_transpose.item(0), R_transpose.item(1), R_transpose.item(2),
-                R_transpose.item(3), R_transpose.item(4), R_transpose.item(5),
-                R_transpose.item(6), R_transpose.item(7), R_transpose.item(8),
-                np_l.item(0), np_l.item(1), np_l.item(2) ]
+        frame_=[ R_.item(0), R_.item(1), R_.item(2),
+                R_.item(3), R_.item(4), R_.item(5),
+                R_.item(6), R_.item(7), R_.item(8),
+                l_[0], l_[1], l_[2] ]
             
     
         lens_=obj_.data.lens*0.001 #millimiters to meters

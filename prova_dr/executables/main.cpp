@@ -1,8 +1,8 @@
 #include "defs.h"
 #include "dataset.h"
 #include "camera.h"
-#include "state.h"
 #include "image.h"
+#include "utils.h"
 
 using namespace std;
 using namespace pr;
@@ -20,29 +20,32 @@ int main (int argc, char * argv[]) {
     return 0;
   }
 
+  float max_depth;  // max depth in depth map
   CameraVector camera_vector; // initialize vector containing pointers to camera objects for each pose
   ImageVector image_vector; // initialize vector containing pointers to image objects of dataset
   //
   Eigen::Vector3f p(0,0,0);
   Dataset* dataset = new Dataset(path_dataset); // pointer to object handler of the dataset
-  State* state = new State(p); // pointer to object handler of the state of the LS problem
   //
-  // state->generateWorldFrame();  // generate world frame with points
-  // dataset->collectCameras(camera_vector);
+  dataset->collectCameras(camera_vector, max_depth);
   dataset->collectImages(image_vector);
-  image_vector[0]->show();
-  //
-  // for (Camera* camera : camera_vector)
-  // {
-  //   camera->projectCps(state->cps_world_frame);
-  //   camera->showPointsWithCircles();
-  // }
-  // for (Image<cv::Vec3b>* image : image_vector)
-  //   image->show();
-  cv::waitKey(0);
 
-  // camera_vector[8]->projectCps(state->cp_vector);
-  // camera_vector[8]->showImage();
+  Eigen::Vector3f o(0,0,0);
+
+  for (Camera* camera : camera_vector)
+  {
+    camera->showWorldFrame(o,0.01,20);
+    camera->image_rgb_->show();
+  }
+  for (Image<cv::Vec3b>* image : image_vector)
+  {
+    image->show();
+  }
+
+  // camera_vector[8]->showWorldFrame(o,0.01,20);
+  // camera_vector[8]->image_rgb_->show();
+
+  cv::waitKey(0);
 
   return 1;
 }

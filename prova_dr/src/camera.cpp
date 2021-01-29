@@ -1,41 +1,104 @@
 #include "camera.h"
+#include <thread>
+#include <vector>
+#include <mutex>
 
+using namespace std;
 using namespace pr;
 
 bool Camera::extractCameraMatrix(Eigen::Matrix3f& K){
   float height= width_/aspect_;
 
   K <<
-    lens_, 0    , width_/2 ,
-    0    , lens_, height/2,
-    0    ,   0  , 1       ;
+    lens_, 0    , -width_/2 ,
+    0    , lens_, -height/2,
+    0    ,   0  , -1       ;
 
   return true;
 }
 
+
 void Camera::clearImgs(){
-  int cols = depth_map_->image_.cols;
-  int rows = depth_map_->image_.rows;
-  cv::Mat_< cv::Vec3b > image_rgb(cols,rows);
-  image_rgb=cv::Vec3b(255,255,255);
-  cv::Mat_< uchar > depth_map(cols,rows);
-  depth_map=uchar(255);
-  depth_map_->image_=depth_map;
-  image_rgb_->image_=image_rgb;
+  depth_map_->image_=1.0;
+  image_rgb_->image_=cv::Vec3b(255,255,255);
 }
 
 void Camera::initImgs(){
-  Image< uchar >* depth_map_img = new Image< uchar >("Depth map "+name_);
-  cv::Mat_< uchar > depth_map(resolution_,(int)(resolution_/aspect_));
-  depth_map=uchar(255);
+  Image< float >* depth_map_img = new Image< float >("Depth map "+name_);
+  cv::Mat_< float > depth_map((int)(resolution_/aspect_),resolution_);
+  depth_map=1.0;
   depth_map_img->image_=depth_map;
   depth_map_=depth_map_img;
 
   Image< cv::Vec3b >* rgb_image_img = new Image< cv::Vec3b >("rgb image "+name_);
-  cv::Mat_< cv::Vec3b > rgb_image(resolution_,(int)(resolution_/aspect_));
+  cv::Mat_< cv::Vec3b > rgb_image((int)(resolution_/aspect_),resolution_);
   rgb_image=cv::Vec3b(255,255,255);
   rgb_image_img->image_=rgb_image;
   image_rgb_=rgb_image_img;
+}
+
+void Camera::showWorldFrame(Eigen::Vector3f origin, float delta, int length){
+  Camera::clearImgs();
+  std::vector<Cp> cps_world_frame;
+  for (int i=0; i<length; i++)
+  {
+    Eigen::Vector3f x(origin[0]+delta*i,origin[1],origin[2]);
+    cv::Vec3b color1(0,0,255);
+    struct Cp cp1 = {x, color1};
+    cps_world_frame.push_back(cp1);
+
+    Eigen::Vector3f y(origin[0],origin[1]+delta*i,origin[2]);
+    cv::Vec3b color2(0,255,0);
+    struct Cp cp2 = {y, color2};
+    cps_world_frame.push_back(cp2);
+
+    if (i>0)
+    {
+      Eigen::Vector3f z(origin[0],origin[1],origin[2]+delta*i);
+      cv::Vec3b color3(255,0,0);
+      struct Cp cp3 = {z, color3};
+      cps_world_frame.push_back(cp3);
+    }
+  }
+
+  Eigen::Matrix3f K;
+  Camera::extractCameraMatrix(K);
+
+  int cols=resolution_;
+  int rows=resolution_/aspect_;
+
+  for (Cp cp : cps_world_frame){
+    Eigen::Vector3f p_cam = frame_world_wrt_camera_*cp.point;
+
+    if (p_cam.z()>-lens_)
+      continue;
+
+    Eigen::Vector3f p_proj = K*p_cam;
+
+    Eigen::Vector2f uv = p_proj.head<2>()*(1./p_proj.z());
+
+    if(uv.x()<0 || uv.x()>width_)
+      continue;
+    if(uv.y()<0 || uv.y()>(width_/aspect_))
+      continue;
+
+    Eigen::Vector2i uv_int;
+    uv_int.x()=(int)round((uv.x()/width_)*resolution_);
+    uv_int.y()=(int)round((resolution_/aspect_)-(uv.y()/(width_/aspect_))*(resolution_/aspect_));
+
+    if (cp.color[0]>255 || cp.color[1]>255 || cp.color[2]>255)
+      continue;
+
+    int r=uv_int.y();
+    int c=uv_int.x();
+    if(r<0||r>=rows)
+      continue;
+    if(c<0||c>=cols)
+      continue;
+
+    cv::circle(image_rgb_->image_, cv::Point(c,r), 3, cp.color);
+  }
+
 }
 
 
@@ -44,9 +107,9 @@ bool Camera::projectCp(Cp& cp){
   Eigen::Matrix3f K;
   Camera::extractCameraMatrix(K);
 
-  Eigen::Vector3f p_cam = frame_world_wrt_camera*cp.point;
+  Eigen::Vector3f p_cam = frame_world_wrt_camera_*cp.point;
 
-  if (p_cam.z()<=lens_)
+  if (p_cam.z()>-lens_)
     return false;
 
   Eigen::Vector3f p_proj = K*p_cam;
@@ -60,19 +123,19 @@ bool Camera::projectCp(Cp& cp){
 
   Eigen::Vector2i uv_int;
   uv_int.x()=(int)round((uv.x()/width_)*resolution_);
-  uv_int.y()=(int)round((uv.y()/(width_/aspect_))*resolution_);
+  uv_int.y()=(int)round((resolution_/aspect_)-(uv.y()/(width_/aspect_))*(resolution_/aspect_));
 
 
-  int numb = (p_cam.z())*(255.0/2.0);
-  uchar depth = numb;
+  float depth = (-p_cam.z())/(max_depth_);
+  // std::cout << depth << std::endl;
 
-  uchar evalued_pixel;
+  float evalued_pixel;
   depth_map_->evalPixel(uv_int,evalued_pixel);
 
   if (evalued_pixel<depth)
     return false;
 
-  if (depth>255 || cp.color[0]>255 || cp.color[1]>255 || cp.color[2]>255)
+  if (depth>1 || depth>255 || cp.color[0]>255 || cp.color[1]>255 || cp.color[2]>255)
     return false;
 
 
@@ -88,4 +151,37 @@ void Camera::projectCps(cpVector& cp_vector){
   {
     Camera::projectCp(cp);
   }
+}
+
+void Camera::test(){}
+
+
+void Camera::projectCps_parallell(cpVector& cp_vector){
+
+  Camera::clearImgs();
+  const size_t nloop = cp_vector.size();
+  const size_t nthreads = std::thread::hardware_concurrency();
+  {
+    // Pre loop
+    std::vector<std::thread> threads(nthreads);
+    std::mutex critical;
+    for(int t = 0;t<nthreads;t++)
+    {
+      threads[t] = std::thread(std::bind(
+        [&](const int bi, const int ei, const int t)
+        {
+          // loop over all items
+          for(int i = bi;i<ei;i++)
+          {
+            // inner loop
+            {
+              Camera::projectCp(cp_vector[i]);
+            }
+          }
+        },t*nloop/nthreads,(t+1)==nthreads?nloop:(t+1)*nloop/nthreads,t));
+    }
+    std::for_each(threads.begin(),threads.end(),[](std::thread& x){x.join();});
+    // Post loop
+  }
+
 }
