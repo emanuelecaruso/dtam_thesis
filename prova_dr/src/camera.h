@@ -29,22 +29,26 @@ class Camera{
        frame_world_wrt_camera_ = frame_world_wrt_camera;
     };
 
-
+    bool extractCameraMatrix(Eigen::Matrix3f& K);
     void showWorldFrame(Eigen::Vector3f origin, float delta,int length);
+
     void clearImgs();
     void initImgs();
-    bool projectCp(Cp& p);
-    void projectCps(cpVector& cp_vector);
-    void projectCps_parallell(cpVector& cp_vector);
-    void test();
+
+    void pixelCoords2uv(Eigen::Vector2i& pixel_coords, Eigen::Vector2f& uv);
+    void uv2pixelCoords( Eigen::Vector2f& uv, Eigen::Vector2i& pixel_coords);
+
+    bool pointAtDepth(Eigen::Vector2f& uv, float depth, Eigen::Vector3f& p);
+    bool projectPoint(Eigen::Vector3f& p, Eigen::Vector2f& uv );
+    bool projectPixel(Cp& p);
+    void projectPixels(cpVector& cp_vector);
+    void projectPixels_parallell(cpVector& cp_vector);
+
 
     inline Camera* clone(){
       return new Camera(*this);
     }
 
-  private:
-    bool extractCameraMatrix(Eigen::Matrix3f& K);
-    // bool cuv2cp(Cuv& cuv, Cp& cp);
 };
 
 typedef std::vector<Camera*> CameraVector;

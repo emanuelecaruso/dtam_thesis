@@ -23,11 +23,13 @@ int main (int argc, char * argv[]) {
 
   float object_depth=2;
 
-  int resolution = 10;
+  int resolution = 11;
   float film = 0.024;
   float lens = 0.035;
   float aspect = 1;
   float offset_x = 0.1;
+  float offset_y = 0.0;
+  float offset_z = -0.1;
   float max_depth=2;
 
   Eigen::Vector3f t_r(0,0,-object_depth);
@@ -40,7 +42,7 @@ int main (int argc, char * argv[]) {
   Camera* camera_r = new Camera("Camera_r",lens,aspect,film,resolution,max_depth,frame_camera_wrt_world_r,frame_world_wrt_camera_r);
   camera_vector.push_back(camera_r);
 
-  Eigen::Vector3f t_m(-offset_x,0,-object_depth);
+  Eigen::Vector3f t_m(-offset_x,-offset_y,-object_depth+offset_z);
   Eigen::Isometry3f frame_world_wrt_camera_m;
   frame_world_wrt_camera_m.linear().setIdentity();
   frame_world_wrt_camera_m.translation()=t_m;
@@ -60,9 +62,9 @@ int main (int argc, char * argv[]) {
 
   cpVector cp_vector;
   // generate a "super dense" cloud of points expressed in camera_r frame
-  float left_bound=-object_depth/3.5;
-  float right_bound=(object_depth/3.5)+(offset_x*object_depth);
-  int density=4000;
+  float left_bound=-object_depth/3;
+  float right_bound=(object_depth/3)+(offset_x*object_depth);
+  int density=5000;
   cout << "generating the super dense cloud of points .." << endl;
   t_start_projection=getTime();
   for (int x=0; x<density; x++)
@@ -84,10 +86,8 @@ int main (int argc, char * argv[]) {
 
   cerr << "projecting super dense cloud of points on cameras..." << endl;
   t_start_projection=getTime();
-  camera_r->projectCps_parallell(cp_vector);
-  camera_m->projectCps_parallell(cp_vector);
-  // camera_r->projectCps(cp_vector);
-  // camera_m->projectCps(cp_vector);
+  // camera_r->projectPixels_parallell(cp_vector);
+  // camera_m->projectPixels_parallell(cp_vector);
   t_end_projection=getTime();
   cerr << "projection took: " << (t_end_projection-t_start_projection) << " ms" << endl;
 
@@ -96,10 +96,22 @@ int main (int argc, char * argv[]) {
   // compute depth map
   //############################################################################
 
-  Eigen::Vector2i uv(resolution-1,0);
+  Eigen::Vector2i pixel_coords_r(5,5);
   Dtam* dtam = new Dtam(1);
-  dtam->sign_epipolar_line(uv, camera_r, camera_m);
-  cv::waitKey(0);
+
+  dtam->getEpipolarLine(pixel_coords_r, camera_r, camera_m);
+
+  // Eigen::Vector2f uv;
+  // Eigen::Vector3f p(-0.67,0.67,0);
+  // camera_r->projectPoint( p,uv );
+
+  // Eigen::Vector2i pixel_coords(0,0);
+  // cv::Vec3b clr(255,0,0);
+  // camera_r->image_rgb_->setPixel(pixel_coords, clr);
+  // camera_r->image_rgb_->show(800/resolution);
+
+  // cv::waitKey(0);
+
 
   //
 
@@ -113,7 +125,7 @@ int main (int argc, char * argv[]) {
   // camera_m->showWorldFrame(o,0.01,20);
   // camera_r->image_rgb_->show();
   // camera_m->image_rgb_->show();
-  // cv::waitKey(0);
+  cv::waitKey(0);
 
 
   return 1;

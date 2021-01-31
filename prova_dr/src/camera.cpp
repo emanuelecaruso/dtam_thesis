@@ -10,9 +10,9 @@ bool Camera::extractCameraMatrix(Eigen::Matrix3f& K){
   float height= width_/aspect_;
 
   K <<
-    lens_, 0    , -width_/2 ,
-    0    , lens_, -height/2,
-    0    ,   0  , -1       ;
+    lens_,   0   ,  -width_/2 ,
+    0    ,  -lens_, -height/2,
+    0    ,   0   ,   -1       ;
 
   return true;
 }
@@ -82,15 +82,14 @@ void Camera::showWorldFrame(Eigen::Vector3f origin, float delta, int length){
     if(uv.y()<0 || uv.y()>(width_/aspect_))
       continue;
 
-    Eigen::Vector2i uv_int;
-    uv_int.x()=(int)round((uv.x()/width_)*resolution_);
-    uv_int.y()=(int)round((resolution_/aspect_)-(uv.y()/(width_/aspect_))*(resolution_/aspect_));
+    Eigen::Vector2i pixel_coords;
+    Camera::uv2pixelCoords( uv, pixel_coords);
 
     if (cp.color[0]>255 || cp.color[1]>255 || cp.color[2]>255)
       continue;
 
-    int r=uv_int.y();
-    int c=uv_int.x();
+    int r=pixel_coords.y();
+    int c=pixel_coords.x();
     if(r<0||r>=rows)
       continue;
     if(c<0||c>=cols)
@@ -101,8 +100,55 @@ void Camera::showWorldFrame(Eigen::Vector3f origin, float delta, int length){
 
 }
 
+void Camera::pixelCoords2uv(Eigen::Vector2i& pixel_coords, Eigen::Vector2f& uv){
+  float pixel_width = width_/resolution_;
 
-bool Camera::projectCp(Cp& cp){
+  uv.x()=((float)pixel_coords.x()/(resolution_))*width_+(pixel_width/2);
+  uv.y()=(((float)pixel_coords.y())/(float)((resolution_)/aspect_))*(float)(width_/aspect_)+(pixel_width/2);
+}
+
+void Camera::uv2pixelCoords( Eigen::Vector2f& uv, Eigen::Vector2i& pixel_coords){
+
+  pixel_coords.x()=(int)((uv.x()/width_)*resolution_);
+  pixel_coords.y()=(int)((uv.y()/(width_/aspect_))*(resolution_/aspect_));
+}
+
+bool Camera::pointAtDepth(Eigen::Vector2f& uv, float depth, Eigen::Vector3f& p){
+
+  Eigen::Matrix3f K;
+  Camera::extractCameraMatrix(K);
+
+  Eigen::Vector3f p_proj;
+  Eigen::Vector2f product = uv * depth;
+  p_proj.x() = product.x();
+  p_proj.y() = product.y();
+  p_proj.z() = depth;
+  Eigen::Vector3f p_cam = K.inverse()*p_proj;
+
+  p = frame_camera_wrt_world_*p_cam;
+
+}
+
+bool Camera::projectPoint(Eigen::Vector3f& p, Eigen::Vector2f& uv ){
+
+  Eigen::Matrix3f K;
+  Camera::extractCameraMatrix(K);
+
+  Eigen::Vector3f p_cam = frame_world_wrt_camera_*p;
+
+  // if (p_cam.z()>-lens_)
+  //   return false;
+
+  Eigen::Vector3f p_proj = K*p_cam;
+
+  // if (p_proj.z()==0)
+  //   return false;
+
+  uv = p_proj.head<2>()*(1./p_proj.z());
+
+}
+
+bool Camera::projectPixel(Cp& cp){
 
   Eigen::Matrix3f K;
   Camera::extractCameraMatrix(K);
@@ -121,16 +167,13 @@ bool Camera::projectCp(Cp& cp){
   if(uv.y()<0 || uv.y()>width_/aspect_)
     return false;
 
-  Eigen::Vector2i uv_int;
-  uv_int.x()=(int)round((uv.x()/width_)*resolution_);
-  uv_int.y()=(int)round((resolution_/aspect_)-(uv.y()/(width_/aspect_))*(resolution_/aspect_));
+  Eigen::Vector2i pixel_coords;
+  Camera::uv2pixelCoords( uv, pixel_coords);
 
-
-  float depth = (-p_cam.z())/(max_depth_);
-  // std::cout << depth << std::endl;
+  float depth = (p_proj.z())/(max_depth_);
 
   float evalued_pixel;
-  depth_map_->evalPixel(uv_int,evalued_pixel);
+  depth_map_->evalPixel(pixel_coords,evalued_pixel);
 
   if (evalued_pixel<depth)
     return false;
@@ -139,24 +182,22 @@ bool Camera::projectCp(Cp& cp){
     return false;
 
 
-  image_rgb_->setPixel(uv_int, cp.color);
-  depth_map_->setPixel(uv_int,depth);
+  image_rgb_->setPixel(pixel_coords, cp.color);
+  depth_map_->setPixel(pixel_coords,depth);
 
   return true;
 }
 
-void Camera::projectCps(cpVector& cp_vector){
+void Camera::projectPixels(cpVector& cp_vector){
   Camera::clearImgs();
   for (Cp cp : cp_vector)
   {
-    Camera::projectCp(cp);
+    Camera::projectPixel(cp);
   }
 }
 
-void Camera::test(){}
 
-
-void Camera::projectCps_parallell(cpVector& cp_vector){
+void Camera::projectPixels_parallell(cpVector& cp_vector){
 
   Camera::clearImgs();
   const size_t nloop = cp_vector.size();
@@ -175,7 +216,7 @@ void Camera::projectCps_parallell(cpVector& cp_vector){
           {
             // inner loop
             {
-              Camera::projectCp(cp_vector[i]);
+              Camera::projectPixel(cp_vector[i]);
             }
           }
         },t*nloop/nthreads,(t+1)==nthreads?nloop:(t+1)*nloop/nthreads,t));

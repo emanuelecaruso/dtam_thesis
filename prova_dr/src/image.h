@@ -29,19 +29,19 @@ class Image{
       return new Image(*this);
     }
 
-    inline bool evalPixel(Eigen::Vector2i& uv, T& color){
-      if (uv.y()>=0 && uv.y()<image_.rows && uv.x()>=0 && uv.x()<image_.cols)
+    inline bool evalPixel(Eigen::Vector2i& pixel_coords, T& color){
+      if (pixel_coords.y()>=0 && pixel_coords.y()<image_.rows && pixel_coords.x()>=0 && pixel_coords.x()<image_.cols)
       {
-        color = image_.template at<T>(uv.y(),uv.x());
+        color = image_.template at<T>(pixel_coords.y(),pixel_coords.x());
         return true;
       }
       return false;
     }
 
-    inline bool setPixel(Eigen::Vector2i& uv, T color){
-      if (uv.y()>=0 && uv.y()<image_.rows && uv.x()>=0 && uv.x()<image_.cols)
+    inline bool setPixel(Eigen::Vector2i& pixel_coords, T color){
+      if (pixel_coords.y()>=0 && pixel_coords.y()<image_.rows && pixel_coords.x()>=0 && pixel_coords.x()<image_.cols)
       {
-        image_.template at<T>(uv.y(),uv.x()) = color;
+        image_.template at<T>(pixel_coords.y(),pixel_coords.x()) = color;
         return true;
       }
       return false;

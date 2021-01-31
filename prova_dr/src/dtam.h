@@ -11,5 +11,7 @@ class Dtam{
       i_ = i;
     };
 
-    bool sign_epipolar_line(Eigen::Vector2i& uv, Camera* camera_r, Camera* camera_m);
+    float getSteepness(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2 );
+    void resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2 , float width, float height, float resolution );
+    bool getEpipolarLine(Eigen::Vector2i& uv_r, Camera* camera_r, Camera* camera_m);
 };
