@@ -27,9 +27,9 @@ int main (int argc, char * argv[]) {
   float film = 0.024;
   float lens = 0.035;
   float aspect = 1;
-  float offset_x = 0.1;
-  float offset_y = 0.1;
-  float offset_z = 0.1;
+  float offset_x = 0.2;
+  float offset_y = 0.2;
+  float offset_z = -0.1;
   float max_depth=2;
 
   Eigen::Vector3f t_r(0,0,-object_depth);
@@ -49,7 +49,7 @@ int main (int argc, char * argv[]) {
   Eigen::Isometry3f frame_camera_wrt_world_m;
   frame_camera_wrt_world_m = frame_world_wrt_camera_m.inverse();
 
-  Camera* camera_m = new Camera("Camera_m",lens,aspect,film,resolution,max_depth,frame_camera_wrt_world_r,frame_world_wrt_camera_m);
+  Camera* camera_m = new Camera("Camera_m",lens,aspect,film,resolution,max_depth,frame_camera_wrt_world_m,frame_world_wrt_camera_m);
   camera_vector.push_back(camera_m);
 
   camera_r->initImgs();
@@ -99,16 +99,23 @@ int main (int argc, char * argv[]) {
   Eigen::Vector2i pixel_coords_r(5,5);
   Dtam* dtam = new Dtam(1);
 
+  cerr << "computing discrete cost volume..." << endl;
+  t_start_projection=getTime();
+
   dtam->getEpipolarLine(pixel_coords_r, camera_r, camera_m);
+
+  t_end_projection=getTime();
+
+  cerr << "discrete cost volume computation took: " << (t_end_projection-t_start_projection) << " ms" << endl;
 
   // Eigen::Vector2f uv;
   // Eigen::Vector3f p(-0.67,0.67,0);
   // camera_r->projectPoint( p,uv );
 
   // Eigen::Vector2i pixel_coords(0,0);
-  // cv::Vec3b clr(255,0,0);
-  // camera_r->image_rgb_->setPixel(pixel_coords, clr);
-  // camera_r->image_rgb_->show(800/resolution);
+  cv::Vec3b clr(255,0,0);
+  camera_r->image_rgb_->setPixel(pixel_coords_r, clr);
+  camera_r->image_rgb_->show(800/resolution);
 
   // cv::waitKey(0);
 

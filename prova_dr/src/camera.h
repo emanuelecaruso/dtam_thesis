@@ -38,12 +38,13 @@ class Camera{
     void pixelCoords2uv(Eigen::Vector2i& pixel_coords, Eigen::Vector2f& uv);
     void uv2pixelCoords( Eigen::Vector2f& uv, Eigen::Vector2i& pixel_coords);
 
-    bool pointAtDepth(Eigen::Vector2f& uv, float depth, Eigen::Vector3f& p);
+    void pointAtDepth(Eigen::Vector2f& uv, float depth, Eigen::Vector3f& p);
     bool projectPoint(Eigen::Vector3f& p, Eigen::Vector2f& uv, float& p_cam_z );
     bool projectPixel(Cp& p);
     void projectPixels(cpVector& cp_vector);
     void projectPixels_parallell(cpVector& cp_vector);
 
+    void resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2, float& depth1, float& depth2);
 
     inline Camera* clone(){
       return new Camera(*this);
