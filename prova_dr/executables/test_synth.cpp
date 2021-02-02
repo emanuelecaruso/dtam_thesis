@@ -28,8 +28,8 @@ int main (int argc, char * argv[]) {
   float lens = 0.035;
   float aspect = 1;
   float offset_x = 0.1;
-  float offset_y = 0.0;
-  float offset_z = -0.1;
+  float offset_y = 0.1;
+  float offset_z = 0.1;
   float max_depth=2;
 
   Eigen::Vector3f t_r(0,0,-object_depth);

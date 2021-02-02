@@ -39,7 +39,7 @@ class Camera{
     void uv2pixelCoords( Eigen::Vector2f& uv, Eigen::Vector2i& pixel_coords);
 
     bool pointAtDepth(Eigen::Vector2f& uv, float depth, Eigen::Vector3f& p);
-    bool projectPoint(Eigen::Vector3f& p, Eigen::Vector2f& uv );
+    bool projectPoint(Eigen::Vector3f& p, Eigen::Vector2f& uv, float& p_cam_z );
     bool projectPixel(Cp& p);
     void projectPixels(cpVector& cp_vector);
     void projectPixels_parallell(cpVector& cp_vector);

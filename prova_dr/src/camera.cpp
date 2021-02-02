@@ -129,38 +129,32 @@ bool Camera::pointAtDepth(Eigen::Vector2f& uv, float depth, Eigen::Vector3f& p){
 
 }
 
-bool Camera::projectPoint(Eigen::Vector3f& p, Eigen::Vector2f& uv ){
+bool Camera::projectPoint(Eigen::Vector3f& p, Eigen::Vector2f& uv, float& p_cam_z ){
 
   Eigen::Matrix3f K;
   Camera::extractCameraMatrix(K);
 
   Eigen::Vector3f p_cam = frame_world_wrt_camera_*p;
 
-  // if (p_cam.z()>-lens_)
-  //   return false;
+  // return wether the projected point is in front or behind the camera
+  p_cam_z=p_cam.z();
+  if (p_cam_z>-lens_)
+    return false;
 
   Eigen::Vector3f p_proj = K*p_cam;
 
-  // if (p_proj.z()==0)
-  //   return false;
-
   uv = p_proj.head<2>()*(1./p_proj.z());
+
+
+  return true;
 
 }
 
 bool Camera::projectPixel(Cp& cp){
 
-  Eigen::Matrix3f K;
-  Camera::extractCameraMatrix(K);
-
-  Eigen::Vector3f p_cam = frame_world_wrt_camera_*cp.point;
-
-  if (p_cam.z()>-lens_)
-    return false;
-
-  Eigen::Vector3f p_proj = K*p_cam;
-
-  Eigen::Vector2f uv = p_proj.head<2>()*(1./p_proj.z());
+  Eigen::Vector2f uv;
+  float p_cam_z;
+  bool point_in_front_of_camera = Camera::projectPoint(cp.point, uv, p_cam_z );
 
   if(uv.x()<0 || uv.x()>width_)
     return false;
@@ -170,7 +164,7 @@ bool Camera::projectPixel(Cp& cp){
   Eigen::Vector2i pixel_coords;
   Camera::uv2pixelCoords( uv, pixel_coords);
 
-  float depth = (p_proj.z())/(max_depth_);
+  float depth = (-p_cam_z)/max_depth_;
 
   float evalued_pixel;
   depth_map_->evalPixel(pixel_coords,evalued_pixel);

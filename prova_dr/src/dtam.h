@@ -12,6 +12,7 @@ class Dtam{
     };
 
     float getSteepness(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2 );
+    bool get1stDepthWithUV(Camera* camera_r, Camera* camera_m, Eigen::Vector2f& uv_r, Eigen::Vector2f& uv_m, float& depth);
     void resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2 , float width, float height, float resolution );
     bool getEpipolarLine(Eigen::Vector2i& uv_r, Camera* camera_r, Camera* camera_m);
 };
