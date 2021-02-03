@@ -23,12 +23,12 @@ int main (int argc, char * argv[]) {
 
   float object_depth=2;
 
-  int resolution = 11;
+  int resolution = 101;
   float film = 0.024;
   float lens = 0.035;
   float aspect = 1;
-  float offset_x = 0.2;
-  float offset_y = 0.2;
+  float offset_x = 0.1;
+  float offset_y = 0.1;
   float offset_z = -0.1;
   float max_depth=2;
 
@@ -96,7 +96,7 @@ int main (int argc, char * argv[]) {
   // compute depth map
   //############################################################################
 
-  Eigen::Vector2i pixel_coords_r(5,5);
+  Eigen::Vector2i pixel_coords_r(50,50);
   Dtam* dtam = new Dtam(1);
 
   cerr << "computing discrete cost volume..." << endl;

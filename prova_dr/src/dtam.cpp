@@ -1,4 +1,5 @@
 #include "dtam.h"
+#include <math.h>
 
 
 bool Dtam::get1stDepthWithUV(Camera* camera_r, Camera* camera_m, Eigen::Vector2f& uv_r, Eigen::Vector2f& uv_m, float& depth){
@@ -27,7 +28,7 @@ bool Dtam::getEpipolarLine(Eigen::Vector2i& pixel_coords_r, Camera* camera_r, Ca
   Eigen::Vector2f uv_r;
   camera_r->pixelCoords2uv(pixel_coords_r, uv_r);
   camera_r->pointAtDepth(uv_r, camera_r->max_depth_, query_p);
-  // camera_r->pointAtDepth(uv_r, 0.1351, query_p);
+  // camera_r->pointAtDepth(uv_r, 0.3, query_p);
   Eigen::Vector2f query_p_projected_on_cam_m;
   float query_depth_on_camera_m;
   bool query_in_front = camera_m->projectPoint(query_p, query_p_projected_on_cam_m, query_depth_on_camera_m);
@@ -47,7 +48,7 @@ bool Dtam::getEpipolarLine(Eigen::Vector2i& pixel_coords_r, Camera* camera_r, Ca
     uv2=query_p_projected_on_cam_m;
     depth2=query_depth_on_camera_m;
     Dtam::get1stDepthWithUV(camera_r, camera_m, uv_r, uv1, depth1);
-    camera_m->resizeLine(uv1 , uv2, depth1, depth2 );
+    camera_m->resizeLine(uv1 , uv2);
 
   }
   // if camera r is in front of camera m whereas query point is on the back
@@ -62,36 +63,66 @@ bool Dtam::getEpipolarLine(Eigen::Vector2i& pixel_coords_r, Camera* camera_r, Ca
     uv2=query_p_projected_on_cam_m;
     depth1=cam_r_depth_on_camera_m;
     depth2=query_depth_on_camera_m;
-
-    // camera_m->resizeLine(uv1 , uv2, depth1, depth2);
-    // std::cout << "Depth1 new: " << depth1 << std::endl;
-    // std::cout << "Depth2 new: " << depth2 << "\n\n" << std::endl;
-
-    Eigen::Vector3f pt;
-    // camera_m->pointAtDepth(uv2, depth2, pt);
-    camera_m->pointAtDepth(uv2, depth2, pt);
-
-    Eigen::Vector2f uv_;
-    float d;
-    camera_r->projectPoint(pt,uv_, d );
-    Eigen::Vector2i pxl;
-    camera_r->uv2pixelCoords( uv_, pxl);
-
-    std::cout << uv_ << std::endl;
-    std::cout << pxl << std::endl;
-
+    camera_m->resizeLine(uv1 , uv2);
   }
+
+  // Fast Voxel Traversal Algorithm
 
   Eigen::Vector2i pixel_coords_1;
   Eigen::Vector2i pixel_coords_2;
+  camera_m->uv2pixelCoords(uv1 , pixel_coords_1);
+  camera_m->uv2pixelCoords(uv2 , pixel_coords_2);
+  float pixel_width= camera_m->width_/camera_m->resolution_;
+  float steepness=(uv2.y()-uv1.y())/(uv2.x()-uv1.x());
 
-  camera_r->uv2pixelCoords( uv1, pixel_coords_1);
-  camera_r->uv2pixelCoords( uv2, pixel_coords_2);
 
-  cv::Vec3b clr1(0,0,255);
-  cv::Vec3b clr2(0,255,0);
-  camera_m->image_rgb_->setPixel(pixel_coords_1, clr1);
-  camera_m->image_rgb_->setPixel(pixel_coords_2, clr2);
+  int sign_x;
+  int sign_y;
+  int sign_steepness;
+
+  if (steepness>0)
+    sign_steepness=1;
+  else
+    sign_steepness=-1;
+
+  if ((uv2.x()-uv1.x())>0)
+    sign_x = 1;
+  else
+    sign_x = -1;
+  if ((uv2.y()-uv1.y())>0)
+    sign_y = 1;
+  else
+    sign_y = -1;
+
+  float delta_x = ((pixel_coords_1.x()+1)*pixel_width)-uv1.x();
+  float delta_y = ((pixel_coords_1.y()+1)*pixel_width)-uv1.y();
+
+  Eigen::Vector2i current_pixel = pixel_coords_1;
+
+  float tMaxX = (steepness)*delta_x;//+(pixel_coords_1.y()*pixel_width);
+  float tMaxY = (1.0/steepness)*delta_y;//+(pixel_coords_1.x()*pixel_width);
+
+  float tDeltaX = sign_y*sqrt((steepness)*pixel_width*(steepness)*pixel_width+pixel_width*pixel_width);
+  float tDeltaY = sign_y*sqrt((1.0/steepness)*pixel_width*(1.0/steepness)*pixel_width+pixel_width*pixel_width);
+
+
+  while (sign_x*current_pixel.x()<=sign_x*pixel_coords_2.x() && sign_y*current_pixel.y()<=sign_y*pixel_coords_2.y()){
+    cv::Vec3b clr(255,0,0);
+    camera_m->image_rgb_->setPixel(current_pixel, clr);
+
+    // DO STUFF
+
+    if(sign_y*tMaxX<sign_y*tMaxY){
+      tMaxX+=tDeltaX;
+      current_pixel.x()+=sign_x;
+    }
+    else{
+      tMaxY+=tDeltaY;
+      current_pixel.y()+=sign_y;
+    }
+  }
+
+
 
 
 

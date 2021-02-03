@@ -44,7 +44,7 @@ class Camera{
     void projectPixels(cpVector& cp_vector);
     void projectPixels_parallell(cpVector& cp_vector);
 
-    void resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2, float& depth1, float& depth2);
+    bool resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2);
 
     inline Camera* clone(){
       return new Camera(*this);
