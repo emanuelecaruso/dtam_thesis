@@ -1,11 +1,14 @@
-syms f d width height u1 v1 u2 v2 r11 r12 r13 r21 r22 r23 r31 r32 r33 t1 t2 t3
+clear
+clc
+
+syms f d d2 width height u1 v1 u2 v2 r11 r12 r13 r21 r22 r23 r31 r32 r33 t1 t2 t3
 
 k=[f 0 -width/2; 0 -f -height/2; 0 0 -1];
-kinv = inv(K);
+kinv = inv(k);
 T= [r11 r12 r13 t1; r21 r22 r23 t2; r31 r32 r33 t3; 0 0 0 1];
 
 p_proj1 = [u1*d;v1*d;d];
-p_proj2 = [u2*f;v2*f;f];
+p_proj2 = [u2*d2;v2*d2;d2];
 
 a=[kinv*p_proj2;1];
 b=[simplify(kinv*p_proj1);1];
@@ -14,7 +17,7 @@ mlt=T*b;
 
 disp("depth")
 expr1 = mlt(3) == a(3);
-slv = solve(expr1,d);
+slv = solve(expr1,d2);
 pretty(simplify(slv,'Steps',1000));
 
 disp("u2")

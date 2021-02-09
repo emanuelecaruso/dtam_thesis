@@ -222,7 +222,7 @@ void Camera::projectPixels_parallell(cpVector& cp_vector){
 
 }
 
-bool Camera::resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2){
+bool Camera::resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2, float& depth1, float& depth2){
 
   float pixel_width= width_/resolution_;
   float height = width_/aspect_;
@@ -230,6 +230,7 @@ bool Camera::resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2){
   float delta_x = uv2.x()-uv1.x();
   float delta_y = uv2.y()-uv1.y();
   float steepness=delta_y/delta_x;
+  float invdepth_delta=(1.0/depth1)-(1.0/depth2);
 
   bool done1 = false; bool done2 = false;
   bool top1 = false; bool bottom1 = false; bool left1 = false; bool right1 = false;
@@ -257,9 +258,13 @@ bool Camera::resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2){
   if (left1)
   {
     float deltax1 = -uv1.x()+(pixel_width/2);
+
     float v=uv1.y()+steepness*deltax1;
     if (v>=0 && v<=height)
     {
+      float ratio_x = deltax1/delta_x;
+      float invdepth = ratio_x*invdepth_delta;
+      depth1 = 1.0/((1.0/depth1)-invdepth);
       uv1.x()=(pixel_width/2);
       uv1.y()=v;
       done1= true;
@@ -269,20 +274,28 @@ bool Camera::resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2){
   if (top1 && !done1)
   {
     float deltay1=-uv1.y()+(pixel_width/2);
+
     float u=uv1.x()+(1.0/steepness)*deltay1;
     if (u>=0 && u<=width_)
     {
+      float ratio_y = deltay1/delta_y;
+      float invdepth = ratio_y*invdepth_delta;
+      depth1 = 1.0/((1.0/depth1)-invdepth);
       uv1.x()=u;
-      uv1.y()=0;
+      uv1.y()=(pixel_width/2);
       done1= true;
     }
   }
   if (right1 && !done1)
   {
     float deltax1 = width_-(pixel_width/2)-uv1.x();
+
     float v=uv1.y()+steepness*deltax1;
     if (v>=0 && v<=height)
     {
+      float ratio_x = deltax1/delta_x;
+      float invdepth = ratio_x*invdepth_delta;
+      depth1 = 1.0/((1.0/depth1)-invdepth);
       uv1.x()=width_-(pixel_width/2);
       uv1.y()=v;
       done1= true;
@@ -291,9 +304,13 @@ bool Camera::resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2){
   if (bottom1 && !done1)
   {
     float deltay1=height-(pixel_width/2)-uv1.y();
+
     float u=uv1.x()+(1.0/steepness)*deltay1;
     if (u>=0 && u<=width_)
     {
+      float ratio_y = deltay1/delta_y;
+      float invdepth = ratio_y*invdepth_delta;
+      depth1 = 1.0/((1.0/depth1)-invdepth);
       uv1.x()=u;
       uv1.y()=height-(pixel_width/2);
       done1= true;
@@ -304,9 +321,13 @@ bool Camera::resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2){
   if (left2)
   {
     float deltax2 = -uv2.x()+(pixel_width/2);
+
     float v=uv2.y()+steepness*deltax2;
     if (v>=0 && v<=height)
     {
+      float ratio_x = deltax2/delta_x;
+      float invdepth = ratio_x*invdepth_delta;
+      depth2 = 1.0/((1.0/depth2)-invdepth);
       uv2.x()=(pixel_width/2);
       uv2.y()=v;
       done2= true;
@@ -315,9 +336,13 @@ bool Camera::resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2){
   if (top2 && !done2)
   {
     float deltay2=-uv2.y()+(pixel_width/2);
+
     float u=uv2.x()+(1.0/steepness)*deltay2;
     if (u>=0 && u<=width_)
     {
+      float ratio_y = deltay2/delta_y;
+      float invdepth = ratio_y*invdepth_delta;
+      depth2 = 1.0/((1.0/depth2)-invdepth);
       uv2.x()=u;
       uv2.y()=(pixel_width/2);
       done2= true;
@@ -326,9 +351,13 @@ bool Camera::resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2){
   if (right2 && !done2)
   {
     float deltax2 = width_-(pixel_width/2)-uv2.x();
+
     float v=uv2.y()+steepness*deltax2;
     if (v>=0 && v<=height)
     {
+      float ratio_x = deltax2/delta_x;
+      float invdepth = ratio_x*invdepth_delta;
+      depth2 = 1.0/((1.0/depth2)-invdepth);
       uv2.x()=width_-(pixel_width/2);
       uv2.y()=v;
       done2= true;
@@ -337,9 +366,13 @@ bool Camera::resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2){
   if (bottom2 && !done2)
   {
     float deltay2=height-(pixel_width/2)-uv2.y();
+
     float u=uv2.x()+(1.0/steepness)*deltay2;
     if (u>=0 && u<=width_)
     {
+      float ratio_y = deltay2/delta_y;
+      float invdepth = ratio_y*invdepth_delta;
+      depth2 = 1.0/((1.0/depth2)-invdepth);
       uv2.x()=u;
       uv2.y()=height-(pixel_width/2);
       done2= true;

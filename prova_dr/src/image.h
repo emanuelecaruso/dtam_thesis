@@ -25,8 +25,10 @@ class Image{
     }
 
 
-    inline Image* clone(){
-      return new Image(*this);
+    inline Image* clone(std::string new_name){
+      Image<T>* depth_map_gt = new Image<T>(new_name);
+      depth_map_gt->image_ = image_.clone();
+      return depth_map_gt;
     }
 
     inline bool evalPixel(Eigen::Vector2i& pixel_coords, T& color){
@@ -52,5 +54,7 @@ class Image{
       return false;
     }
 };
+
+int mseBetween2Colors(cv::Vec3b& clr1, cv::Vec3b& clr2);
 
 using ImageVector = std::vector< Image<cv::Vec3b>* >;
