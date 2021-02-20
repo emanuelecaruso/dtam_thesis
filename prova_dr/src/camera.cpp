@@ -137,13 +137,13 @@ bool Camera::projectPoint(Eigen::Vector3f& p, Eigen::Vector2f& uv, float& p_cam_
 
   // return wether the projected point is in front or behind the camera
   p_cam_z=-p_cam.z();
-  if (p_cam_z<lens_)
-    return false;
 
   Eigen::Vector3f p_proj = K*p_cam;
 
   uv = p_proj.head<2>()*(1./p_proj.z());
 
+  if (p_cam_z<lens_)
+    return false;
 
   return true;
 
@@ -222,7 +222,7 @@ void Camera::projectPixels_parallell(cpVector& cp_vector){
 
 }
 
-bool Camera::resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2, float& depth1, float& depth2){
+bool Camera::resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2, float& depth1, float& depth2, bool& resized1, bool& resized2){
 
   float pixel_width= width_/resolution_;
   float height = width_/aspect_;
@@ -230,26 +230,28 @@ bool Camera::resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2, float& depth
   float delta_x = uv2.x()-uv1.x();
   float delta_y = uv2.y()-uv1.y();
   float steepness=delta_y/delta_x;
-  float invdepth_delta=(1.0/depth1)-(1.0/depth2);
+  float invdepth_delta=(1.0/depth2)-(1.0/depth1);
 
-  bool done1 = false; bool done2 = false;
   bool top1 = false; bool bottom1 = false; bool left1 = false; bool right1 = false;
   bool top2 = false; bool bottom2 = false; bool left2 = false; bool right2 = false;
-  if ( uv1.x() < 0 )
+  resized1 = false;
+  resized2 = false;
+
+  if ( uv1.x() < pixel_width/2 )
     left1=true;
-  else if (uv1.x() > width_)
+  else if (uv1.x() > width_-(pixel_width/2))
     right1=true;
-  if ( uv1.y() < 0 )
+  if ( uv1.y() < pixel_width/2 )
     top1=true;
-  else if (uv1.y() > height)
+  else if (uv1.y() > height-(pixel_width/2))
     bottom1=true;
-  if ( uv2.x() < 0 )
+  if ( uv2.x() < pixel_width/2 )
     left2=true;
-  else if (uv2.x() > width_)
+  else if (uv2.x() > width_-(pixel_width/2))
     right2=true;
-  if ( uv2.y() < 0 )
+  if ( uv2.y() < pixel_width/2 )
     top2=true;
-  else if (uv2.y() > height)
+  else if (uv2.y() > height-(pixel_width/2))
     bottom2=true;
 
   if ( (left1&&left2) || (right1&&right2) || (top1&&top2) || (bottom1&&bottom2) )
@@ -264,14 +266,16 @@ bool Camera::resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2, float& depth
     {
       float ratio_x = deltax1/delta_x;
       float invdepth = ratio_x*invdepth_delta;
-      depth1 = 1.0/((1.0/depth1)-invdepth);
+      depth1 = 1.0/((1.0/depth1)+invdepth);
+
       uv1.x()=(pixel_width/2);
       uv1.y()=v;
-      done1= true;
+      resized1=true;
+
     }
 
   }
-  if (top1 && !done1)
+  if (top1 && !resized1)
   {
     float deltay1=-uv1.y()+(pixel_width/2);
 
@@ -280,13 +284,15 @@ bool Camera::resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2, float& depth
     {
       float ratio_y = deltay1/delta_y;
       float invdepth = ratio_y*invdepth_delta;
-      depth1 = 1.0/((1.0/depth1)-invdepth);
+      depth1 = 1.0/((1.0/depth1)+invdepth);
       uv1.x()=u;
       uv1.y()=(pixel_width/2);
-      done1= true;
+      resized1=true;
+      // if (depth1>depth2)
+      //   std::cout << "top" << std::endl;
     }
   }
-  if (right1 && !done1)
+  if (right1 && !resized1)
   {
     float deltax1 = width_-(pixel_width/2)-uv1.x();
 
@@ -295,13 +301,15 @@ bool Camera::resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2, float& depth
     {
       float ratio_x = deltax1/delta_x;
       float invdepth = ratio_x*invdepth_delta;
-      depth1 = 1.0/((1.0/depth1)-invdepth);
+      depth1 = 1.0/((1.0/depth1)+invdepth);
       uv1.x()=width_-(pixel_width/2);
       uv1.y()=v;
-      done1= true;
+      resized1=true;
+      // if (depth1>depth2)
+      //   std::cout << "right" << std::endl;
     }
   }
-  if (bottom1 && !done1)
+  if (bottom1 && !resized1)
   {
     float deltay1=height-(pixel_width/2)-uv1.y();
 
@@ -310,10 +318,12 @@ bool Camera::resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2, float& depth
     {
       float ratio_y = deltay1/delta_y;
       float invdepth = ratio_y*invdepth_delta;
-      depth1 = 1.0/((1.0/depth1)-invdepth);
+      depth1 = 1.0/((1.0/depth1)+invdepth);
       uv1.x()=u;
       uv1.y()=height-(pixel_width/2);
-      done1= true;
+      resized1=true;
+      // if (depth1>depth2)
+      //   std::cout << "bottom" << std::endl;
     }
   }
 
@@ -327,13 +337,13 @@ bool Camera::resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2, float& depth
     {
       float ratio_x = deltax2/delta_x;
       float invdepth = ratio_x*invdepth_delta;
-      depth2 = 1.0/((1.0/depth2)-invdepth);
+      depth2 = 1.0/((1.0/depth2)+invdepth);
       uv2.x()=(pixel_width/2);
       uv2.y()=v;
-      done2= true;
+      resized2=true;
     }
   }
-  if (top2 && !done2)
+  if (top2 && !resized2)
   {
     float deltay2=-uv2.y()+(pixel_width/2);
 
@@ -342,13 +352,13 @@ bool Camera::resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2, float& depth
     {
       float ratio_y = deltay2/delta_y;
       float invdepth = ratio_y*invdepth_delta;
-      depth2 = 1.0/((1.0/depth2)-invdepth);
+      depth2 = 1.0/((1.0/depth2)+invdepth);
       uv2.x()=u;
       uv2.y()=(pixel_width/2);
-      done2= true;
+      resized2=true;
     }
   }
-  if (right2 && !done2)
+  if (right2 && !resized2)
   {
     float deltax2 = width_-(pixel_width/2)-uv2.x();
 
@@ -357,13 +367,13 @@ bool Camera::resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2, float& depth
     {
       float ratio_x = deltax2/delta_x;
       float invdepth = ratio_x*invdepth_delta;
-      depth2 = 1.0/((1.0/depth2)-invdepth);
+      depth2 = 1.0/((1.0/depth2)+invdepth);
       uv2.x()=width_-(pixel_width/2);
       uv2.y()=v;
-      done2= true;
+      resized2=true;
     }
   }
-  if (bottom2 && !done2)
+  if (bottom2 && !resized2)
   {
     float deltay2=height-(pixel_width/2)-uv2.y();
 
@@ -372,10 +382,10 @@ bool Camera::resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2, float& depth
     {
       float ratio_y = deltay2/delta_y;
       float invdepth = ratio_y*invdepth_delta;
-      depth2 = 1.0/((1.0/depth2)-invdepth);
+      depth2 = 1.0/((1.0/depth2)+invdepth);
       uv2.x()=u;
       uv2.y()=height-(pixel_width/2);
-      done2= true;
+      resized2=true;
     }
   }
   return true;

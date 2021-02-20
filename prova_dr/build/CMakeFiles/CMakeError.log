@@ -1,0 +1,55 @@
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_605cf/fast"
+/usr/bin/make -f CMakeFiles/cmTC_605cf.dir/build.make CMakeFiles/cmTC_605cf.dir/build
+make[1]: ingresso nella directory "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles/CMakeTmp"
+Building C object CMakeFiles/cmTC_605cf.dir/CheckSymbolExists.c.o
+/usr/bin/cc   -fPIC    -o CMakeFiles/cmTC_605cf.dir/CheckSymbolExists.c.o   -c /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_605cf
+/usr/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_605cf.dir/link.txt --verbose=1
+/usr/bin/cc -fPIC     -rdynamic CMakeFiles/cmTC_605cf.dir/CheckSymbolExists.c.o  -o cmTC_605cf 
+CMakeFiles/cmTC_605cf.dir/CheckSymbolExists.c.o: nella funzione "main":
+CheckSymbolExists.c:(.text+0x1b): riferimento non definito a "pthread_create"
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_605cf.dir/build.make:86: recipe for target 'cmTC_605cf' failed
+make[1]: *** [cmTC_605cf] Error 1
+make[1]: uscita dalla directory "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles/CMakeTmp"
+Makefile:121: recipe for target 'cmTC_605cf/fast' failed
+make: *** [cmTC_605cf/fast] Error 2
+
+File /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_95599/fast"
+/usr/bin/make -f CMakeFiles/cmTC_95599.dir/build.make CMakeFiles/cmTC_95599.dir/build
+make[1]: ingresso nella directory "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles/CMakeTmp"
+Building C object CMakeFiles/cmTC_95599.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -fPIC -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_95599.dir/CheckFunctionExists.c.o   -c /usr/local/share/cmake-3.12/Modules/CheckFunctionExists.c
+Linking C executable cmTC_95599
+/usr/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_95599.dir/link.txt --verbose=1
+/usr/bin/cc -fPIC -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_95599.dir/CheckFunctionExists.c.o  -o cmTC_95599 -lpthreads 
+/usr/bin/ld: impossibile trovare -lpthreads
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_95599.dir/build.make:86: recipe for target 'cmTC_95599' failed
+make[1]: *** [cmTC_95599] Error 1
+make[1]: uscita dalla directory "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles/CMakeTmp"
+Makefile:121: recipe for target 'cmTC_95599/fast' failed
+make: *** [cmTC_95599/fast] Error 2
+
+

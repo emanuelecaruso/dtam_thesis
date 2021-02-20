@@ -7,14 +7,12 @@ Before installing anything one should make sure what packages are already instal
 CMake build utilities:
 
     sudo apt install build-essential cmake
-    
+
 OpenCV 2/3: https://opencv.org
 
     sudo apt install libopencv-dev
-    
-Eigen3: http://eigen.tuxfamily.org
 
-    sudo apt install libeigen3-dev
+Eigen3 version=3.3.9: http://eigen.tuxfamily.org
 
 ### Compilation
 From the system console, execute the build sequence (out of source build):
@@ -23,7 +21,7 @@ From the system console, execute the build sequence (out of source build):
     cd build
     cmake ..
     make
-    
+
 ### Execution
 The project provides the following 5 binaries in the `build/executables` folder:
 - `./camera_test`: Testing of the pinhole camera projection function

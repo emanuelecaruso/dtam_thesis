@@ -15,7 +15,7 @@ set(CMAKE_CXX_COMPILER_ID "GNU")
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
-  "/usr/include/eigen3"
+  "/usr/local/include/eigen3"
   "../src"
   "../libs"
   "/usr/include/opencv"

@@ -68,12 +68,14 @@ CMAKE_BINARY_DIR = /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build
 # Directory level rules for directory executables
 
 # Convenience name for "all" pass in the directory.
+executables/all: executables/CMakeFiles/test_synth_cuda.dir/all
 executables/all: executables/CMakeFiles/main.dir/all
 executables/all: executables/CMakeFiles/test_synth.dir/all
 
 .PHONY : executables/all
 
 # Convenience name for "clean" pass in the directory.
+executables/clean: executables/CMakeFiles/test_synth_cuda.dir/clean
 executables/clean: executables/CMakeFiles/main.dir/clean
 executables/clean: executables/CMakeFiles/test_synth.dir/clean
 
@@ -83,6 +85,43 @@ executables/clean: executables/CMakeFiles/test_synth.dir/clean
 executables/preinstall:
 
 .PHONY : executables/preinstall
+
+#=============================================================================
+# Target rules for target executables/CMakeFiles/test_synth_cuda.dir
+
+# All Build rule for target.
+executables/CMakeFiles/test_synth_cuda.dir/all:
+	$(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/depend
+	$(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=15,16,17,18,19,20,21 "Built target test_synth_cuda"
+.PHONY : executables/CMakeFiles/test_synth_cuda.dir/all
+
+# Include target in all.
+all: executables/CMakeFiles/test_synth_cuda.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+executables/CMakeFiles/test_synth_cuda.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles 7
+	$(MAKE) -f CMakeFiles/Makefile2 executables/CMakeFiles/test_synth_cuda.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles 0
+.PHONY : executables/CMakeFiles/test_synth_cuda.dir/rule
+
+# Convenience name for target.
+test_synth_cuda: executables/CMakeFiles/test_synth_cuda.dir/rule
+
+.PHONY : test_synth_cuda
+
+# clean rule for target.
+executables/CMakeFiles/test_synth_cuda.dir/clean:
+	$(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/clean
+.PHONY : executables/CMakeFiles/test_synth_cuda.dir/clean
+
+# clean rule for target.
+clean: executables/CMakeFiles/test_synth_cuda.dir/clean
+
+.PHONY : clean
 
 #=============================================================================
 # Target rules for target executables/CMakeFiles/main.dir

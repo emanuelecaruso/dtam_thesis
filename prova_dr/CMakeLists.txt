@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
 
 #ds project name
-project(dense3Dtracking)
+project(dense3Dtracking LANGUAGES C CXX CUDA)
 
 #ds set cmake build flags
 set(CMAKE_BUILD_TYPE Release)
@@ -13,6 +13,12 @@ find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
+find_package(CUDA 9.1 REQUIRED)
+if(NOT CUDA_FOUND)
+  message(STATUS "CUDA not found")
+endif()
+
+include_directories(${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
 
 #ds set internal includes (our files)
 include_directories(src)

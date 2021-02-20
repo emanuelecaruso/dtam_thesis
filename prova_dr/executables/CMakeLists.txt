@@ -19,3 +19,13 @@ add_executable(test_synth test_synth.cpp
 ../src/utils.cpp
 )
 target_link_libraries(test_synth opencv_highgui)
+
+#synthetic simulator test
+add_executable(test_synth_cuda test_synth_cuda.cpp
+../src/dataset.cpp
+../src/camera.cpp
+../src/image.cpp
+../src/dtam.cpp
+../src/utils.cpp
+)
+target_link_libraries(test_synth opencv_highgui)

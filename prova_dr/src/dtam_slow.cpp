@@ -28,10 +28,15 @@ int Dtam::closest(std::vector<float>& vec, float value) {
   if (idx_up<=0){
     return -1;
   }
-  if (dist_low<dist_up)
+  if (idx_up >= vec.size())
+    return -1;
+
+  if (dist_low<dist_up){
     return idx_low;
-  else
+  }
+  else{
     return idx_up;
+  }
 
 }
 
@@ -78,13 +83,16 @@ bool Dtam::getTotalCosts(std::vector<std::vector<std::tuple<float,int>>>& allCos
           if (i!=k && !allCosts[k].empty()){
             int idx = closest(depthsVec[k], depth);
             if(idx!=-1){
-              cost += std::get<1>(allCosts[k][idx]);
+              int cost_delta = std::get<1>(allCosts[k][idx]);
+              // if (idx>(allCosts[k].size()-1))
+              //   std::cout << idx << " " << allCosts[k].size() << std::endl;
+              cost += cost_delta;
               // if(idx>depthsVec[k].size()-1)
               // if(idx==-1)
               //   std::cout << "vec size: " << depthsVec[k].size()-1 << ", idx: " << idx << std::endl;
             }
             else
-              cost += cost;
+              cost = 10000000;
 
           }
 
@@ -132,7 +140,7 @@ int Dtam::getIndexOfMinimumCost(std::vector<std::tuple<float,int>>& totalCosts){
 
 }
 
-// bool Dtam::collectCostsInEpipolarLine_FVT(Eigen::Vector2i& pixel_coords_r, Camera* camera_r, Camera* camera_m,
+// bool Dtam::getCost_FVT(Eigen::Vector2i& pixel_coords_r, Camera* camera_r, Camera* camera_m,
 //    std::vector<std::tuple<float,int>>& costInvdepthTuple){
 //   Eigen::Vector3f camera_r_p = camera_r->frame_camera_wrt_world_.translation();
 //   Eigen::Vector2f cam_r_projected_on_cam_m;
@@ -300,213 +308,89 @@ int Dtam::getIndexOfMinimumCost(std::vector<std::tuple<float,int>>& totalCosts){
 //   return true;
 // }
 
-bool Dtam::collectCostsInEpipolarLine(Eigen::Vector2i& pixel_coords_r, Camera* camera_r, Camera* camera_m,
-   std::vector<std::tuple<float,int>>& costInvdepthTuple){
-  Eigen::Vector3f camera_r_p = camera_r->frame_camera_wrt_world_.translation();
-  Eigen::Vector2f cam_r_projected_on_cam_m;
-  float cam_r_depth_on_camera_m;
-  bool cam_r_in_front = camera_m->projectPoint(camera_r_p, cam_r_projected_on_cam_m, cam_r_depth_on_camera_m);
+bool Dtam::getCost(Eigen::Vector2i& pixel_coords_r, float depth_r, Camera* camera_r, Camera* camera_m,
+   int& cost, bool check){
 
-  Eigen::Vector3f query_p = camera_r->frame_camera_wrt_world_.translation();
-  Eigen::Vector2f uv_r;
-  camera_r->pixelCoords2uv(pixel_coords_r, uv_r);
-  camera_r->pointAtDepth(uv_r, camera_r->max_depth_, query_p);
-  // camera_r->pointAtDepth(uv_r, 0.3, query_p);
-  Eigen::Vector2f query_p_projected_on_cam_m;
-  float query_depth_on_camera_m;
-  bool query_in_front = camera_m->projectPoint(query_p, query_p_projected_on_cam_m, query_depth_on_camera_m);
+  Eigen::Vector2f uv_r, uv_m; Eigen::Vector3f p; float depth_m; Eigen::Vector2i pixel_coords_m;
+  cv::Vec3b clr_r, clr_m;
 
-  Eigen::Vector2f uv1;
-  Eigen::Vector2f uv2;
-  float depth1;
-  float depth2;
+  camera_r->pixelCoords2uv( pixel_coords_r,  uv_r);
+  camera_r->pointAtDepth( uv_r, depth_r, p);
+  camera_m->projectPoint( p, uv_m, depth_m );
+  camera_m->uv2pixelCoords( uv_m, pixel_coords_m);
 
-  // if both camera r and query point are on back of camera m return false
-  if (!query_in_front && !cam_r_in_front)
+  camera_r->image_rgb_->evalPixel( pixel_coords_r, clr_r);
+
+  bool flag = camera_m->image_rgb_->evalPixel( pixel_coords_m, clr_m);
+  if (!flag)
     return false;
-  // if query point is in front of camera m whereas camera r is on the back
-  else if (query_in_front && !cam_r_in_front){
-    // std::cout << "query in front" << std::endl;
 
-    uv2=query_p_projected_on_cam_m;
-    depth2=query_depth_on_camera_m;
-    Dtam::get1stDepthWithUV(camera_r, camera_m, uv_r, uv1, depth1);
-    depth1=camera_r->lens_;
-    bool flag = camera_m->resizeLine(uv1 , uv2, depth1, depth2);
-    if (!flag)
-      return false;
+  cost = mseBetween2Colors( clr_r, clr_m);
 
+  if (check){
+    cv::Vec3b clr = cv::Vec3b(255,0,255);
+    camera_m->image_rgb_->setPixel( pixel_coords_m, clr);
   }
-  // if camera r is in front of camera m whereas query point is on the back
-  else if (!query_in_front && cam_r_in_front){
-    // TODO
-    return false;
-  }
-  // if both camera r and query point are in front of camera m
-  else {
-    // std::cout << "both in front" << std::endl;
-
-    uv1=cam_r_projected_on_cam_m;
-    uv2=query_p_projected_on_cam_m;
-    depth1=cam_r_depth_on_camera_m;
-    depth2=query_depth_on_camera_m;
-    bool flag = camera_m->resizeLine(uv1 , uv2, depth1, depth2);
-    if (!flag)
-      return false;
-
-
-    // Eigen::Vector3f p;
-    // camera_r->pointAtDepth(uv_r, 0.5, p);
-    // float p_cam_z;
-    // camera_m->projectPoint(p, uv1, p_cam_z );
-    // depth1=0.5;
-    // uv2=query_p_projected_on_cam_m;
-    // depth2=camera_r->max_depth_;
-    // camera_m->resizeLine(uv1 , uv2, depth1, depth2);
-  }
-
-
-
-  cv::Vec3b clr_r;
-  camera_r->image_rgb_->evalPixel(pixel_coords_r,clr_r);
-  float pixel_width= camera_m->width_/camera_m->resolution_;
-  float delta_u=uv2.x()-uv1.x();
-  float delta_v=uv2.y()-uv1.y();
-  int num_interpolations = (abs(delta_v)+abs(delta_u))/(pixel_width);
-  if (num_interpolations==1)
-    return false;
-  float invdepth_delta=(1.0/depth1)-(1.0/depth2);
-  // std::cout << "depth2: " << depth2 << std::endl;
-
-  Eigen::Isometry3f T = camera_r->frame_world_wrt_camera_*camera_m->frame_camera_wrt_world_;
-  auto r=T.linear();
-  auto t=T.translation();
-  float f = camera_r->lens_;
-  float w=camera_m->width_;
-  float h=camera_m->width_/camera_m->aspect_;
-
-  for (int i=0; i<num_interpolations; i++){
-  // for (int i=0; i<5; i++){
-    float ratio = (float)i/((float)num_interpolations-1);
-    Eigen::Vector2f uv_current;
-    uv_current.x()=uv1.x()+ratio*delta_u;
-    uv_current.y()=uv1.y()+ratio*delta_v;
-    Eigen::Vector2i pixel_current;
-    camera_m->uv2pixelCoords( uv_current, pixel_current);
-    cv::Vec3b clr_current;
-    camera_m->image_rgb_->evalPixel(pixel_current,clr_current);
-    int cost_current = mseBetween2Colors(clr_r, clr_current);
-    float invdepth_m_ = ratio*invdepth_delta;
-    float invdepth_m = ((1.0/depth1)-invdepth_m_);
-    float depth_m = 1.0/invdepth_m;
-    float depth_r = depth_m*r(2,2)-t(2)-((depth_m*r(2,0)*(2*uv_current.x()-w))/(2*f))-((depth_m*r(2,1)*(-2*uv_current.y()+h))/(2*f));
-    // float invdepth_r = 1.0/depth_r;
-    // std::cout << "invdepth: " << invdepth << ", cost_current: " << cost_current << std::endl;
-
-
-    // std::cout << "i: " << i << ", cost: " << cost_current << ", clr_r: " << clr_r << ", clr_current: " << clr_current << ", depth: " << 1.0/invdepth << std::endl;
-
-
-    // Eigen::Vector3f p;
-    // camera_m->pointAtDepth(uv_current, 1.0/invdepth, p);
-    // Eigen::Vector2f uv_m;
-    // float p_cam_z;
-    // camera_r->projectPoint(p, uv_m, p_cam_z );
-    // Eigen::Vector2i pixel_coords_m;
-    // camera_m->uv2pixelCoords( uv_m, pixel_coords_m);
-    // if (pixel_coords_m != pixel_coords_r)
-    //   std::cout << pixel_coords_m << std::endl;
-
-
-
-
-    std::tuple<float,int> tuple(depth_r,cost_current);
-    costInvdepthTuple.push_back(tuple);
-
-    // // show epipolar line
-    // cv::Vec3b clr(255,0,255);
-    // camera_m->image_rgb_->setPixel(pixel_current, clr);
-    // std::cout << ", cost: " << cost_current << ", invdepth: " << invdepth << std::endl;
-
-  }
-  // int index = getIndexOfMinimumCost(costInvdepthTuple);
-  // cv::Vec3b clr(0,0,255);
-  // Eigen::Vector2f uv_ = std::get<2>(costInvdepthTuple[index]);
-  // Eigen::Vector2i pxl;
-  // camera_m->uv2pixelCoords( uv_, pxl);
-  // camera_m->image_rgb_->setPixel(pxl, clr);
 
 
   return true;
 }
 
 
-void Dtam::getDepthMap(CameraVector& camera_vector){
+
+void Dtam::getDepthMap(CameraVector& camera_vector, int interpolation, bool check){
   int cols = camera_vector[0]->depth_map_->image_.cols;
   int rows = camera_vector[0]->depth_map_->image_.rows;
-  for (int row = 0; row<rows; row++)
+  for (int row = 0; row<rows; row++){
     for (int col = 0; col<cols; col++){
-      std::vector<std::vector<std::tuple<float,int>>> allCosts;
-      std::vector<std::tuple<float,int>> totalCosts;
+      if(check){ row=50; col=50;}
+      Eigen::Vector2i pixel_coords_r = Eigen::Vector2i(col,row);
+      int cost_min = 999999;
+      int cost_max = 0;
+      float depth_min, depth_max;
 
-      Eigen::Vector2i pixel_coords_r(col,row);
-
-      // collectCostsInEpipolarLine_FVT(pixel_coords_r, camera_vector[0], camera_vector[1], costInvdepthTuple);
-      if (camera_vector.size()<2)
-        continue;
-      else if (camera_vector.size()==2){
-        std::vector<std::tuple<float,int>> costInvdepthTuple;
-        bool flag = collectCostsInEpipolarLine(pixel_coords_r, camera_vector[0], camera_vector[1], costInvdepthTuple);
-        if (!flag || costInvdepthTuple.size()==0)
-          continue;
-
-        allCosts.push_back(costInvdepthTuple);
-      }
-      else{
-        for (int i=1; i<camera_vector.size(); i++){
-          std::vector<std::tuple<float,int>> costInvdepthTuple;
-          if (i!=0){
-            bool flag = collectCostsInEpipolarLine(pixel_coords_r, camera_vector[0], camera_vector[i], costInvdepthTuple);
-            if (!flag || costInvdepthTuple.size()==0){
-              costInvdepthTuple.clear();
-            }
-
-            allCosts.push_back(costInvdepthTuple);
+      float depth1 = camera_vector[0]->lens_;
+      float depth2 = camera_vector[0]->max_depth_;
+      float depth_delta = depth2-depth1;
+      float invdepth_delta = (1.0/depth2)-(1.0/depth1);
+      for (int i=0; i<interpolation; i++){
+        float ratio = (float)i/(float)(interpolation);
+        float depth_current = depth1+depth_delta*ratio;
+        // float invdepth_current = (1.0/depth1)+invdepth_delta*ratio;
+        // float depth_current = 1.0/invdepth_current;
+        int cost_pixel = 0;
+        for (int camera_iterator=1; camera_iterator<camera_vector.size(); camera_iterator++){
+          int cost_current;
+          bool flag = getCost( pixel_coords_r, depth_current, camera_vector[0], camera_vector[camera_iterator], cost_current, check);
+          if (flag){
+            cost_pixel += cost_current;
           }
+          else{
+            continue;
+            // camera_vector[0]->depth_map_->setPixel(pixel_coords_r, 1.0);
+            // std::cout << "mah" << std::endl;
+          }
+          if (cost_pixel < cost_min){
+            cost_min=cost_pixel;
+            depth_min=depth_current;
+          }
+          else if (cost_pixel > cost_max){
+            cost_max=cost_pixel;
+            depth_max=depth_current;
+          }
+            // cost_pixel += 100;
+            // continue; // OR cost_pixel += number ????
         }
 
       }
-
-      getTotalCosts(allCosts, totalCosts);
-      // for (int i=0; i<totalCosts.size(); i++){
-        // std::cout << std::get<0>(totalCosts[i]) << std::endl;
-        // if (std::get<0>(totalCosts[i])<=0.2)
-        //   std::cout << std::get<0>(totalCosts[i]) << std::endl;
-      // if (totalCosts.size()<=1)
-      //   std::cout << totalCosts.size() << std::endl;
-      // }
-      int index = getIndexOfMinimumCost(totalCosts);
-      if (index==-1)
-        continue;
-      // std::cout << index << std::endl;
-      float depth_r = std::get<0>(totalCosts[index]);
-      int cost = std::get<1>(totalCosts[index]);
-      // if (index>totalCosts.size()-1)
-      // std::cout << totalCosts.size() << std::endl;
-      //
-      //
-      if(cost<9999100){
-        float depth_value = depth_r/camera_vector[0]->max_depth_;
-        camera_vector[0]->depth_map_->setPixel(pixel_coords_r,depth_value);
-      }
+      // if (depth_min>0.4)
+      //   std::cout << depth_min << std::endl;
+      camera_vector[0]->depth_map_->setPixel(pixel_coords_r, depth_min/camera_vector[0]->max_depth_);
+      if(check){ break;}
 
     }
-  // Eigen::Vector2i pixel_coords_r(50,50);
-  // std::vector<std::tuple<float,int>> costInvdepthTuple;
-  // dtam->collectCostsInEpipolarLine_FVT(pixel_coords_r, camera_r, camera_m, costInvdepthTuple);
-  // std::vector<std::vector<std::tuple<float,int>>> allCosts;
-  // std::vector<std::tuple<float,int>> totalCosts;
-  // allCosts.push_back(costInvdepthTuple);
-  // dtam->getTotalCosts(allCosts, totalCosts);
-  // dtam->getDepthOfMinimumCost(totalCosts);
+    if(check){ break;}
+
+  }
+
 }
