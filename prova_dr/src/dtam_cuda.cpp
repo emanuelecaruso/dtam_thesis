@@ -1,6 +1,8 @@
-#include "dtam.h"
+#include "dtam_cuda.h"
+#include "cuda_handler.cuh"
 #include <math.h>
 #include "utils.h"
+#include <stdlib.h>
 
 
 bool Dtam::get1stDepthWithUV(Camera* camera_r, Camera* camera_m, Eigen::Vector2f& uv_r, Eigen::Vector2f& uv_m, float& depth){
@@ -26,7 +28,7 @@ struct cameraData{
   bool cam_r_in_front;
 };
 
-void Dtam::getDepthMap(CameraVector& camera_vector, int num_interpolations, bool check){
+void Dtam::getDepthMap(CameraVector camera_vector, int num_interpolations, bool check){
   double t_start;
   double t_end;
 
@@ -36,6 +38,8 @@ void Dtam::getDepthMap(CameraVector& camera_vector, int num_interpolations, bool
 
   // reference camera
   Camera* camera_r = camera_vector[0];
+
+
   Eigen::Vector3f camera_r_p = camera_r->frame_camera_wrt_world_.translation();
   float depth1_r=camera_r->lens_;
   float depth2_r=camera_r->max_depth_;
@@ -43,9 +47,11 @@ void Dtam::getDepthMap(CameraVector& camera_vector, int num_interpolations, bool
   int cols = camera_r->depth_map_->image_.cols;
   int rows = camera_r->depth_map_->image_.rows;
 
+
   float f = camera_r->lens_;
   float w=camera_r->width_;
   float h=camera_r->width_/camera_r->aspect_;
+
 
   for (int camera_iterator=0; camera_iterator<camera_vector.size()-1; camera_iterator++){
     cameraData* camera_data = new cameraData;
@@ -64,7 +70,6 @@ void Dtam::getDepthMap(CameraVector& camera_vector, int num_interpolations, bool
     camera_data->cam_r_depth_on_camera_m=cam_r_depth_on_camera_m;
     camera_data->cam_r_in_front=cam_r_in_front;
 
-
     camera_data->uv1=cam_r_projected_on_cam_m;
     camera_data->uv1_fixed=cam_r_projected_on_cam_m;
     camera_data->depth1_m_fixed=cam_r_depth_on_camera_m;
@@ -72,7 +77,21 @@ void Dtam::getDepthMap(CameraVector& camera_vector, int num_interpolations, bool
     cameraData_vector[camera_iterator]=camera_data;
   }
 
-
+  // std::cout << camera_vector[0]->depth_map_ << std::endl;
+  // std::cout << camera_vector[0]->image_rgb_ << std::endl;
+  // std::cout << camera_vector[0]->name_ << std::endl;
+  // std::cout << camera_vector[0]->lens_ << std::endl;
+  // std::cout << camera_vector[0]->aspect_ << std::endl;
+  // std::cout << camera_vector[0]->width_ << std::endl;
+  // std::cout << camera_vector[0]->resolution_ << std::endl;
+  // std::cout << camera_vector[0]->max_depth_ << std::endl;
+  std::cout << camera_vector[0]->frame_camera_wrt_world_.linear() << std::endl;
+  std::cout << camera_vector[0]->frame_camera_wrt_world_.translation() << std::endl;
+  std::cout << camera_vector[0]->frame_world_wrt_camera_.linear() << std::endl;
+  std::cout << camera_vector[0]->frame_world_wrt_camera_.translation() << std::endl;
+  std::cout << "" << std::endl;
+  
+  CostVolumeMin(camera_vector);
 
 
   for (int row = 0; row<rows; row++){
@@ -91,6 +110,7 @@ void Dtam::getDepthMap(CameraVector& camera_vector, int num_interpolations, bool
       // query point
       Eigen::Vector3f query_p;
       Eigen::Vector2f uv_r;
+
       camera_r->pixelCoords2uv(pixel_coords_r, uv_r);
       camera_r->pointAtDepth(uv_r, depth2_r, query_p);
 

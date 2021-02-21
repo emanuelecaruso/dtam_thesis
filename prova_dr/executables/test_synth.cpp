@@ -69,9 +69,6 @@ int main (int argc, char * argv[]) {
   camera_vector.push_back(camera_m2);
 
 
-  for (Camera* camera : camera_vector)
-    camera->initImgs();
-
 
   //############################################################################
   // generate depth map groundtruth and rgb images of cameras

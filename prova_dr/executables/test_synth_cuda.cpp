@@ -3,7 +3,7 @@
 #include "camera.h"
 #include "image.h"
 #include "utils.h"
-#include "dtam.h"
+#include "dtam_cuda.h"
 #include <stdio.h>
 #include <cuda_runtime.h>
 
@@ -66,11 +66,8 @@ int main (int argc, char * argv[]) {
 
   camera_vector.push_back(camera_r);
   camera_vector.push_back(camera_m1);
-  camera_vector.push_back(camera_m2);
+  // camera_vector.push_back(camera_m2);
 
-
-  for (Camera* camera : camera_vector)
-    camera->initImgs();
 
 
   //############################################################################
@@ -113,9 +110,9 @@ int main (int argc, char * argv[]) {
 
   cerr << "projecting super dense cloud of points on cameras..." << endl;
   t_start_projection=getTime();
-  for (Camera* camera : camera_vector)
+  for (Camera* camera : camera_vector){
     camera->projectPixels_parallell(cp_vector);
-
+  }
   t_end_projection=getTime();
   cerr << "projection took: " << (t_end_projection-t_start_projection) << " ms" << endl;
 
@@ -136,10 +133,12 @@ int main (int argc, char * argv[]) {
   cerr << "computing discrete cost volume..." << endl;
   t_start_projection=getTime();
 
-  dtam->getDepthMap(camera_vector,100, true);
-  // dtam->getDepthMap(camera_vector,100);
+  // dtam->getDepthMap(camera_vector, 100, true);
+  dtam->getDepthMap(camera_vector,100);
   // dtam->getDepthMap(camera_vector, 0.25);
   // dtam->getDepthMap(camera_vector, 0.25, true);
+
+
 
   t_end_projection=getTime();
   cerr << "discrete cost volume computation took: " << (t_end_projection-t_start_projection) << " ms" << endl;

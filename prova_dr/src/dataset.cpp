@@ -82,7 +82,6 @@ bool Dataset::collectCameras(CameraVector& camera_vector, float max_depth){
 
 
     Camera* cam = new Camera(name,lens,aspect,width,resolution,max_depth,frame_camera_wrt_world,frame_world_wrt_camera);
-    cam->initImgs();
     camera_vector.push_back(cam);
   }
 

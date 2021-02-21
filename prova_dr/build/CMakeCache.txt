@@ -245,7 +245,7 @@ CUDA_HOST_COMPILER:FILEPATH=/usr/bin/cc
 CUDA_NVCC_EXECUTABLE:FILEPATH=/usr/bin/nvcc
 
 //Semi-colon delimit multiple arguments. during all build types.
-CUDA_NVCC_FLAGS:STRING=
+CUDA_NVCC_FLAGS:STRING=--expt-relaxed-constexpr
 
 //Semi-colon delimit multiple arguments. during DEBUG builds.
 CUDA_NVCC_FLAGS_DEBUG:STRING=

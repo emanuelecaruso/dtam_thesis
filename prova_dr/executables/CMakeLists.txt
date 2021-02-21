@@ -25,7 +25,8 @@ add_executable(test_synth_cuda test_synth_cuda.cpp
 ../src/dataset.cpp
 ../src/camera.cpp
 ../src/image.cpp
-../src/dtam.cpp
+../src/dtam_cuda.cpp
 ../src/utils.cpp
+../src/cuda_handler.cu
 )
 target_link_libraries(test_synth opencv_highgui)

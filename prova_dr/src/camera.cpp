@@ -23,19 +23,6 @@ void Camera::clearImgs(){
   image_rgb_->image_=cv::Vec3b(255,255,255);
 }
 
-void Camera::initImgs(){
-  Image< float >* depth_map_img = new Image< float >("Depth map "+name_);
-  cv::Mat_< float > depth_map((int)(resolution_/aspect_),resolution_);
-  depth_map=1.0;
-  depth_map_img->image_=depth_map;
-  depth_map_=depth_map_img;
-
-  Image< cv::Vec3b >* rgb_image_img = new Image< cv::Vec3b >("rgb image "+name_);
-  cv::Mat_< cv::Vec3b > rgb_image((int)(resolution_/aspect_),resolution_);
-  rgb_image=cv::Vec3b(255,255,255);
-  rgb_image_img->image_=rgb_image;
-  image_rgb_=rgb_image_img;
-}
 
 void Camera::showWorldFrame(Eigen::Vector3f origin, float delta, int length){
   Camera::clearImgs();

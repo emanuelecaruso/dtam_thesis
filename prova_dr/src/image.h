@@ -40,10 +40,28 @@ class Image{
       return false;
     }
 
+    inline bool evalPixel(int row, int col, T& color){
+      if (row>=0 && row<image_.rows && col>=0 && col<image_.cols)
+      {
+        color = image_.template at<T>(row,col);
+        return true;
+      }
+      return false;
+    }
+
     inline bool setPixel(Eigen::Vector2i& pixel_coords, T color){
       if (pixel_coords.y()>=0 && pixel_coords.y()<image_.rows && pixel_coords.x()>=0 && pixel_coords.x()<image_.cols)
       {
         image_.template at<T>(pixel_coords.y(),pixel_coords.x()) = color;
+        return true;
+      }
+      return false;
+    }
+
+    inline bool setPixel(int row, int col, T color){
+      if (row>=0 && row<image_.rows && col>=0 && col<image_.cols)
+      {
+        image_.template at<T>(row,col) = color;
         return true;
       }
       return false;
