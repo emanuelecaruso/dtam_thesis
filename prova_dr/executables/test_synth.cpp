@@ -43,7 +43,7 @@ int main (int argc, char * argv[]) {
   Eigen::Isometry3f frame_camera_wrt_world_r;
   frame_camera_wrt_world_r = frame_world_wrt_camera_r.inverse();
 
-  Camera* camera_r = new Camera("Camera_r",lens,aspect,film,resolution,max_depth,frame_camera_wrt_world_r,frame_world_wrt_camera_r);
+  Camera* camera_r = new Camera("Camera_r",lens,aspect,film,resolution,max_depth,&frame_camera_wrt_world_r,&frame_world_wrt_camera_r);
 
   Eigen::Vector3f t_m1(-offset_x_m1,-offset_y_m1,-object_depth+offset_z_m1);
   Eigen::Isometry3f frame_world_wrt_camera_m1;
@@ -52,7 +52,7 @@ int main (int argc, char * argv[]) {
   Eigen::Isometry3f frame_camera_wrt_world_m1;
   frame_camera_wrt_world_m1 = frame_world_wrt_camera_m1.inverse();
 
-  Camera* camera_m1 = new Camera("Camera_m1",lens,aspect,film,resolution,max_depth,frame_camera_wrt_world_m1,frame_world_wrt_camera_m1);
+  Camera* camera_m1 = new Camera("Camera_m1",lens,aspect,film,resolution,max_depth,&frame_camera_wrt_world_m1,&frame_world_wrt_camera_m1);
 
   Eigen::Vector3f t_m2(-offset_x_m2,-offset_y_m2,-object_depth+offset_z_m2);
   Eigen::Isometry3f frame_world_wrt_camera_m2;
@@ -61,7 +61,7 @@ int main (int argc, char * argv[]) {
   Eigen::Isometry3f frame_camera_wrt_world_m2;
   frame_camera_wrt_world_m2 = frame_world_wrt_camera_m2.inverse();
 
-  Camera* camera_m2 = new Camera("Camera_m2",lens,aspect,film,resolution,max_depth,frame_camera_wrt_world_m2,frame_world_wrt_camera_m2);
+  Camera* camera_m2 = new Camera("Camera_m2",lens,aspect,film,resolution,max_depth,&frame_camera_wrt_world_m2,&frame_world_wrt_camera_m2);
 
 
   camera_vector.push_back(camera_r);

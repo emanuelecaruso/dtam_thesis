@@ -278,32 +278,32 @@ __/src/dtam.cpp.s:
 	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/dtam.cpp.s
 .PHONY : __/src/dtam.cpp.s
 
-__/src/dtam_cuda.o: __/src/dtam_cuda.cpp.o
+__/src/dtam_cuda.o: __/src/dtam_cuda.cu.o
 
 .PHONY : __/src/dtam_cuda.o
 
 # target to build an object file
-__/src/dtam_cuda.cpp.o:
-	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/dtam_cuda.cpp.o
-.PHONY : __/src/dtam_cuda.cpp.o
+__/src/dtam_cuda.cu.o:
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/dtam_cuda.cu.o
+.PHONY : __/src/dtam_cuda.cu.o
 
-__/src/dtam_cuda.i: __/src/dtam_cuda.cpp.i
+__/src/dtam_cuda.i: __/src/dtam_cuda.cu.i
 
 .PHONY : __/src/dtam_cuda.i
 
 # target to preprocess a source file
-__/src/dtam_cuda.cpp.i:
-	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/dtam_cuda.cpp.i
-.PHONY : __/src/dtam_cuda.cpp.i
+__/src/dtam_cuda.cu.i:
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/dtam_cuda.cu.i
+.PHONY : __/src/dtam_cuda.cu.i
 
-__/src/dtam_cuda.s: __/src/dtam_cuda.cpp.s
+__/src/dtam_cuda.s: __/src/dtam_cuda.cu.s
 
 .PHONY : __/src/dtam_cuda.s
 
 # target to generate assembly for a file
-__/src/dtam_cuda.cpp.s:
-	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/dtam_cuda.cpp.s
-.PHONY : __/src/dtam_cuda.cpp.s
+__/src/dtam_cuda.cu.s:
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/dtam_cuda.cu.s
+.PHONY : __/src/dtam_cuda.cu.s
 
 __/src/image.o: __/src/image.cpp.o
 

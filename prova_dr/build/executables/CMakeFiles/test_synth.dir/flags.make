@@ -6,5 +6,5 @@ CXX_FLAGS = -Wall -std=c++11 -O3 -DNDEBUG -pthread -O3 -DNDEBUG
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/usr/local/include/eigen3 -I/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src -I/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/libs -isystem /usr/include/opencv 
+CXX_INCLUDES = -I/usr/local/include/eigen3 -I/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src -I/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/libs -isystem /usr/local/include/opencv4 
 

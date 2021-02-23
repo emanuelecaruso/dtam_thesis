@@ -3,7 +3,7 @@
 #include "camera.h"
 #include "image.h"
 #include "utils.h"
-#include "dtam_cuda.h"
+#include "dtam_cuda.cuh"
 #include <stdio.h>
 #include <cuda_runtime.h>
 
@@ -24,7 +24,7 @@ int main (int argc, char * argv[]) {
 
   float object_depth=2;
 
-  int resolution = 600;
+  int resolution = 200;
   float film = 0.024;
   float lens = 0.035;
   float aspect = 1;
@@ -43,7 +43,7 @@ int main (int argc, char * argv[]) {
   Eigen::Isometry3f frame_camera_wrt_world_r;
   frame_camera_wrt_world_r = frame_world_wrt_camera_r.inverse();
 
-  Camera* camera_r = new Camera("Camera_r",lens,aspect,film,resolution,max_depth,frame_camera_wrt_world_r,frame_world_wrt_camera_r);
+  Camera* camera_r = new Camera("Camera_r",lens,aspect,film,resolution,max_depth,&frame_camera_wrt_world_r,&frame_world_wrt_camera_r);
 
   Eigen::Vector3f t_m1(-offset_x_m1,-offset_y_m1,-object_depth+offset_z_m1);
   Eigen::Isometry3f frame_world_wrt_camera_m1;
@@ -52,7 +52,7 @@ int main (int argc, char * argv[]) {
   Eigen::Isometry3f frame_camera_wrt_world_m1;
   frame_camera_wrt_world_m1 = frame_world_wrt_camera_m1.inverse();
 
-  Camera* camera_m1 = new Camera("Camera_m1",lens,aspect,film,resolution,max_depth,frame_camera_wrt_world_m1,frame_world_wrt_camera_m1);
+  Camera* camera_m1 = new Camera("Camera_m1",lens,aspect,film,resolution,max_depth,&frame_camera_wrt_world_m1,&frame_world_wrt_camera_m1);
 
   Eigen::Vector3f t_m2(-offset_x_m2,-offset_y_m2,-object_depth+offset_z_m2);
   Eigen::Isometry3f frame_world_wrt_camera_m2;
@@ -61,7 +61,7 @@ int main (int argc, char * argv[]) {
   Eigen::Isometry3f frame_camera_wrt_world_m2;
   frame_camera_wrt_world_m2 = frame_world_wrt_camera_m2.inverse();
 
-  Camera* camera_m2 = new Camera("Camera_m2",lens,aspect,film,resolution,max_depth,frame_camera_wrt_world_m2,frame_world_wrt_camera_m2);
+  Camera* camera_m2 = new Camera("Camera_m2",lens,aspect,film,resolution,max_depth,&frame_camera_wrt_world_m2,&frame_world_wrt_camera_m2);
 
 
   camera_vector.push_back(camera_r);
@@ -128,13 +128,13 @@ int main (int argc, char * argv[]) {
   //############################################################################
 
   // Eigen::Vector2i pixel_coords_r(50,50);
-  Dtam* dtam = new Dtam(1);
+  Dtam* dtam = new Dtam(camera_vector);
 
   cerr << "computing discrete cost volume..." << endl;
   t_start_projection=getTime();
 
+  dtam->getDepthMap(100);
   // dtam->getDepthMap(camera_vector, 100, true);
-  dtam->getDepthMap(camera_vector,100);
   // dtam->getDepthMap(camera_vector, 0.25);
   // dtam->getDepthMap(camera_vector, 0.25, true);
 
@@ -148,7 +148,7 @@ int main (int argc, char * argv[]) {
     camera->image_rgb_->show(800/resolution);
     camera->depth_map_->show(800/resolution);
   }
-  depth_map_gt->show(800/resolution);
+  // depth_map_gt->show(800/resolution);
   // rgb_image_m_gt->show(800/resolution);
   cv::waitKey(0);
 

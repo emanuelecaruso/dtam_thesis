@@ -15,13 +15,13 @@ class Camera{
     float max_depth_;
     Image<float>* depth_map_;
     Image<cv::Vec3b>* image_rgb_;
-    Eigen::Isometry3f frame_world_wrt_camera_;
-    Eigen::Isometry3f frame_camera_wrt_world_;
+    Eigen::Isometry3f* frame_world_wrt_camera_;
+    Eigen::Isometry3f* frame_camera_wrt_world_;
 
 
 
     Camera(std::string name, float lens, float aspect, float width, int resolution,
-       float max_depth, Eigen::Isometry3f frame_camera_wrt_world, Eigen::Isometry3f frame_world_wrt_camera){
+       float max_depth, Eigen::Isometry3f* frame_camera_wrt_world, Eigen::Isometry3f* frame_world_wrt_camera){
        name_ = name;
        lens_ = lens;
        aspect_ = aspect;

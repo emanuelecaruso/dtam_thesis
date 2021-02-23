@@ -1,4 +1,4 @@
-#include "dtam_cuda.h"
+#include "dtam_cuda.cuh"
 #include "cuda_handler.cuh"
 #include <math.h>
 #include "utils.h"
@@ -7,7 +7,7 @@
 
 bool Dtam::get1stDepthWithUV(Camera* camera_r, Camera* camera_m, Eigen::Vector2f& uv_r, Eigen::Vector2f& uv_m, float& depth){
 
-  Eigen::Isometry3f T = camera_m->frame_world_wrt_camera_*camera_r->frame_camera_wrt_world_;
+  Eigen::Isometry3f T = (*(camera_m->frame_world_wrt_camera_))*(*(camera_r->frame_camera_wrt_world_));
   auto r=T.linear();
   auto t=T.translation();
   float f = camera_r->lens_;
@@ -28,19 +28,19 @@ struct cameraData{
   bool cam_r_in_front;
 };
 
-void Dtam::getDepthMap(CameraVector camera_vector, int num_interpolations, bool check){
+void Dtam::getDepthMap(int num_interpolations, bool check){
   double t_start;
   double t_end;
 
 
   std::vector<cameraData*> cameraData_vector;
-  cameraData_vector.reserve(camera_vector.size());
+  cameraData_vector.reserve(camera_vector_.size());
 
   // reference camera
-  Camera* camera_r = camera_vector[0];
+  Camera* camera_r = camera_vector_[0];
 
 
-  Eigen::Vector3f camera_r_p = camera_r->frame_camera_wrt_world_.translation();
+  Eigen::Vector3f camera_r_p = camera_r->frame_camera_wrt_world_->translation();
   float depth1_r=camera_r->lens_;
   float depth2_r=camera_r->max_depth_;
 
@@ -53,15 +53,15 @@ void Dtam::getDepthMap(CameraVector camera_vector, int num_interpolations, bool 
   float h=camera_r->width_/camera_r->aspect_;
 
 
-  for (int camera_iterator=0; camera_iterator<camera_vector.size()-1; camera_iterator++){
+  for (int camera_iterator=0; camera_iterator<camera_vector_.size()-1; camera_iterator++){
     cameraData* camera_data = new cameraData;
 
     // project camera_r on camera_m
     Eigen::Vector2f cam_r_projected_on_cam_m;
     float cam_r_depth_on_camera_m;
-    bool cam_r_in_front = camera_vector[camera_iterator+1]->projectPoint(camera_r_p, cam_r_projected_on_cam_m, cam_r_depth_on_camera_m);
+    bool cam_r_in_front = camera_vector_[camera_iterator+1]->projectPoint(camera_r_p, cam_r_projected_on_cam_m, cam_r_depth_on_camera_m);
 
-    Eigen::Isometry3f T = camera_r->frame_world_wrt_camera_*camera_vector[camera_iterator+1]->frame_camera_wrt_world_;
+    Eigen::Isometry3f T = (*camera_r->frame_world_wrt_camera_)*(*(camera_vector_[camera_iterator+1]->frame_camera_wrt_world_));
     Eigen::Matrix3f r=T.linear();
     Eigen::Vector3f t=T.translation();
     camera_data->r=r;
@@ -77,21 +77,8 @@ void Dtam::getDepthMap(CameraVector camera_vector, int num_interpolations, bool 
     cameraData_vector[camera_iterator]=camera_data;
   }
 
-  // std::cout << camera_vector[0]->depth_map_ << std::endl;
-  // std::cout << camera_vector[0]->image_rgb_ << std::endl;
-  // std::cout << camera_vector[0]->name_ << std::endl;
-  // std::cout << camera_vector[0]->lens_ << std::endl;
-  // std::cout << camera_vector[0]->aspect_ << std::endl;
-  // std::cout << camera_vector[0]->width_ << std::endl;
-  // std::cout << camera_vector[0]->resolution_ << std::endl;
-  // std::cout << camera_vector[0]->max_depth_ << std::endl;
-  std::cout << camera_vector[0]->frame_camera_wrt_world_.linear() << std::endl;
-  std::cout << camera_vector[0]->frame_camera_wrt_world_.translation() << std::endl;
-  std::cout << camera_vector[0]->frame_world_wrt_camera_.linear() << std::endl;
-  std::cout << camera_vector[0]->frame_world_wrt_camera_.translation() << std::endl;
-  std::cout << "" << std::endl;
-  
-  CostVolumeMin(camera_vector);
+
+  // CostVolumeMin(camera_vector_);
 
 
   for (int row = 0; row<rows; row++){
@@ -116,8 +103,8 @@ void Dtam::getDepthMap(CameraVector camera_vector, int num_interpolations, bool 
 
       bool invalid_pxl=false;
 
-      for (int camera_iterator=1; camera_iterator<camera_vector.size(); camera_iterator++){
-        Camera* camera_m = camera_vector[camera_iterator];
+      for (int camera_iterator=1; camera_iterator<camera_vector_.size(); camera_iterator++){
+        Camera* camera_m = camera_vector_[camera_iterator];
 
         auto cam_r_projected_on_cam_m = cameraData_vector[camera_iterator-1]->cam_r_projected_on_cam_m;
         auto cam_r_depth_on_camera_m = cameraData_vector[camera_iterator-1]->cam_r_depth_on_camera_m;
@@ -205,8 +192,8 @@ void Dtam::getDepthMap(CameraVector camera_vector, int num_interpolations, bool 
         int num_valid_projections = 0;
 
 
-        for (int camera_iterator=1; camera_iterator<camera_vector.size(); camera_iterator++){
-          Camera* camera_m = camera_vector[camera_iterator];
+        for (int camera_iterator=1; camera_iterator<camera_vector_.size(); camera_iterator++){
+          Camera* camera_m = camera_vector_[camera_iterator];
 
 
           auto uv1=cameraData_vector[camera_iterator-1]->uv1;
@@ -309,11 +296,11 @@ void Dtam::getDepthMap(CameraVector camera_vector, int num_interpolations, bool 
       //     }
       //   }
       // }
-      // float depth_value = depth_min/camera_vector[0]->max_depth_;
+      // float depth_value = depth_min/camera_vector_[0]->max_depth_;
       // if (depth_min==0)
-      //   camera_vector[0]->depth_map_->setPixel(pixel_coords_r,1.0);
+      //   camera_vector_[0]->depth_map_->setPixel(pixel_coords_r,1.0);
       // else
-      //   camera_vector[0]->depth_map_->setPixel(pixel_coords_r,depth_value);
+      //   camera_vector_[0]->depth_map_->setPixel(pixel_coords_r,depth_value);
 
 
       if (check)  {break;}

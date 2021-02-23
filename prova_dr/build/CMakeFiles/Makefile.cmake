@@ -13,6 +13,10 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/3.12.1/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.12.1/CMakeSystem.cmake"
   "../executables/CMakeLists.txt"
+  "/usr/local/lib/cmake/opencv4/OpenCVConfig-version.cmake"
+  "/usr/local/lib/cmake/opencv4/OpenCVConfig.cmake"
+  "/usr/local/lib/cmake/opencv4/OpenCVModules-release.cmake"
+  "/usr/local/lib/cmake/opencv4/OpenCVModules.cmake"
   "/usr/local/share/cmake-3.12/Modules/CMakeCInformation.cmake"
   "/usr/local/share/cmake-3.12/Modules/CMakeCUDAInformation.cmake"
   "/usr/local/share/cmake-3.12/Modules/CMakeCXXInformation.cmake"
@@ -43,10 +47,6 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/usr/local/share/eigen3/cmake/Eigen3Config.cmake"
   "/usr/local/share/eigen3/cmake/Eigen3ConfigVersion.cmake"
   "/usr/local/share/eigen3/cmake/Eigen3Targets.cmake"
-  "/usr/share/OpenCV/OpenCVConfig-version.cmake"
-  "/usr/share/OpenCV/OpenCVConfig.cmake"
-  "/usr/share/OpenCV/OpenCVModules-release.cmake"
-  "/usr/share/OpenCV/OpenCVModules.cmake"
   )
 
 # The corresponding makefile is:

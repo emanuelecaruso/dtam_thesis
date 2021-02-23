@@ -1,22 +1,22 @@
 Determining if the pthread_create exist failed with the following output:
 Change Dir: /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_9619d/fast"
-/usr/bin/make -f CMakeFiles/cmTC_9619d.dir/build.make CMakeFiles/cmTC_9619d.dir/build
+Run Build Command:"/usr/bin/make" "cmTC_89b1a/fast"
+/usr/bin/make -f CMakeFiles/cmTC_89b1a.dir/build.make CMakeFiles/cmTC_89b1a.dir/build
 make[1]: ingresso nella directory "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles/CMakeTmp"
-Building C object CMakeFiles/cmTC_9619d.dir/CheckSymbolExists.c.o
-/usr/bin/cc   -fPIC    -o CMakeFiles/cmTC_9619d.dir/CheckSymbolExists.c.o   -c /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
-Linking C executable cmTC_9619d
-/usr/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_9619d.dir/link.txt --verbose=1
-/usr/bin/cc -fPIC     -rdynamic CMakeFiles/cmTC_9619d.dir/CheckSymbolExists.c.o  -o cmTC_9619d 
-CMakeFiles/cmTC_9619d.dir/CheckSymbolExists.c.o: nella funzione "main":
+Building C object CMakeFiles/cmTC_89b1a.dir/CheckSymbolExists.c.o
+/usr/bin/cc   -fPIC    -o CMakeFiles/cmTC_89b1a.dir/CheckSymbolExists.c.o   -c /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_89b1a
+/usr/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_89b1a.dir/link.txt --verbose=1
+/usr/bin/cc -fPIC     -rdynamic CMakeFiles/cmTC_89b1a.dir/CheckSymbolExists.c.o  -o cmTC_89b1a 
+CMakeFiles/cmTC_89b1a.dir/CheckSymbolExists.c.o: nella funzione "main":
 CheckSymbolExists.c:(.text+0x1b): riferimento non definito a "pthread_create"
 collect2: error: ld returned 1 exit status
-CMakeFiles/cmTC_9619d.dir/build.make:86: recipe for target 'cmTC_9619d' failed
-make[1]: *** [cmTC_9619d] Error 1
+CMakeFiles/cmTC_89b1a.dir/build.make:86: recipe for target 'cmTC_89b1a' failed
+make[1]: *** [cmTC_89b1a] Error 1
 make[1]: uscita dalla directory "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles/CMakeTmp"
-Makefile:121: recipe for target 'cmTC_9619d/fast' failed
-make: *** [cmTC_9619d/fast] Error 2
+Makefile:121: recipe for target 'cmTC_89b1a/fast' failed
+make: *** [cmTC_89b1a/fast] Error 2
 
 File /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
 /* */
@@ -36,20 +36,20 @@ int main(int argc, char** argv)
 Determining if the function pthread_create exists in the pthreads failed with the following output:
 Change Dir: /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_58462/fast"
-/usr/bin/make -f CMakeFiles/cmTC_58462.dir/build.make CMakeFiles/cmTC_58462.dir/build
+Run Build Command:"/usr/bin/make" "cmTC_86441/fast"
+/usr/bin/make -f CMakeFiles/cmTC_86441.dir/build.make CMakeFiles/cmTC_86441.dir/build
 make[1]: ingresso nella directory "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles/CMakeTmp"
-Building C object CMakeFiles/cmTC_58462.dir/CheckFunctionExists.c.o
-/usr/bin/cc   -fPIC -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_58462.dir/CheckFunctionExists.c.o   -c /usr/local/share/cmake-3.12/Modules/CheckFunctionExists.c
-Linking C executable cmTC_58462
-/usr/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_58462.dir/link.txt --verbose=1
-/usr/bin/cc -fPIC -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_58462.dir/CheckFunctionExists.c.o  -o cmTC_58462 -lpthreads 
+Building C object CMakeFiles/cmTC_86441.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -fPIC -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_86441.dir/CheckFunctionExists.c.o   -c /usr/local/share/cmake-3.12/Modules/CheckFunctionExists.c
+Linking C executable cmTC_86441
+/usr/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_86441.dir/link.txt --verbose=1
+/usr/bin/cc -fPIC -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_86441.dir/CheckFunctionExists.c.o  -o cmTC_86441 -lpthreads 
 /usr/bin/ld: impossibile trovare -lpthreads
 collect2: error: ld returned 1 exit status
-CMakeFiles/cmTC_58462.dir/build.make:86: recipe for target 'cmTC_58462' failed
-make[1]: *** [cmTC_58462] Error 1
+CMakeFiles/cmTC_86441.dir/build.make:86: recipe for target 'cmTC_86441' failed
+make[1]: *** [cmTC_86441] Error 1
 make[1]: uscita dalla directory "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles/CMakeTmp"
-Makefile:121: recipe for target 'cmTC_58462/fast' failed
-make: *** [cmTC_58462/fast] Error 2
+Makefile:121: recipe for target 'cmTC_86441/fast' failed
+make: *** [cmTC_86441/fast] Error 2
 
 

@@ -55,7 +55,7 @@ void Camera::showWorldFrame(Eigen::Vector3f origin, float delta, int length){
   int rows=resolution_/aspect_;
 
   for (Cp cp : cps_world_frame){
-    Eigen::Vector3f p_cam = frame_world_wrt_camera_*cp.point;
+    Eigen::Vector3f p_cam = *frame_world_wrt_camera_*cp.point;
 
     if (p_cam.z()>-lens_)
       continue;
@@ -111,7 +111,7 @@ void Camera::pointAtDepth(Eigen::Vector2f& uv, float depth, Eigen::Vector3f& p){
   p_proj.y() = product.y();
   p_proj.z() = depth;
   Eigen::Vector3f p_cam = K.inverse()*p_proj;
-  p = frame_camera_wrt_world_*p_cam;
+  p = *frame_camera_wrt_world_*p_cam;
 
 }
 
@@ -120,7 +120,7 @@ bool Camera::projectPoint(Eigen::Vector3f& p, Eigen::Vector2f& uv, float& p_cam_
   Eigen::Matrix3f K;
   Camera::extractCameraMatrix(K);
 
-  Eigen::Vector3f p_cam = frame_world_wrt_camera_*p;
+  Eigen::Vector3f p_cam = *frame_world_wrt_camera_*p;
 
   // return wether the projected point is in front or behind the camera
   p_cam_z=-p_cam.z();

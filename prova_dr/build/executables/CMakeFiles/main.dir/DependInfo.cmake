@@ -18,7 +18,7 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "/usr/local/include/eigen3"
   "../src"
   "../libs"
-  "/usr/include/opencv"
+  "/usr/local/include/opencv4"
   )
 
 # Targets to which this target links.
