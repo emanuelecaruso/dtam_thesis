@@ -11,7 +11,9 @@ using namespace std;
 using namespace pr;
 
 
+
 int main (int argc, char * argv[]) {
+
 
   double t_start_projection=getTime();
   double t_end_projection=getTime();
@@ -24,7 +26,7 @@ int main (int argc, char * argv[]) {
 
   float object_depth=2;
 
-  int resolution = 200;
+  int resolution = 4;
   float film = 0.024;
   float lens = 0.035;
   float aspect = 1;

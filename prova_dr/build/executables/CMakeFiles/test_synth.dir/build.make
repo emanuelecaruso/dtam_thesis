@@ -186,8 +186,8 @@ executables/test_synth: /usr/local/lib/libopencv_videostab.so.4.2.0
 executables/test_synth: /usr/local/lib/libopencv_xfeatures2d.so.4.2.0
 executables/test_synth: /usr/local/lib/libopencv_xobjdetect.so.4.2.0
 executables/test_synth: /usr/local/lib/libopencv_xphoto.so.4.2.0
-executables/test_synth: /usr/local/lib/libopencv_shape.so.4.2.0
 executables/test_synth: /usr/local/lib/libopencv_highgui.so.4.2.0
+executables/test_synth: /usr/local/lib/libopencv_shape.so.4.2.0
 executables/test_synth: /usr/local/lib/libopencv_datasets.so.4.2.0
 executables/test_synth: /usr/local/lib/libopencv_plot.so.4.2.0
 executables/test_synth: /usr/local/lib/libopencv_text.so.4.2.0

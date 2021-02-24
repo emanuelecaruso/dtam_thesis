@@ -188,33 +188,6 @@ __/src/camera.cpp.s:
 	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/camera.cpp.s
 .PHONY : __/src/camera.cpp.s
 
-__/src/cuda_handler.o: __/src/cuda_handler.cu.o
-
-.PHONY : __/src/cuda_handler.o
-
-# target to build an object file
-__/src/cuda_handler.cu.o:
-	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/cuda_handler.cu.o
-.PHONY : __/src/cuda_handler.cu.o
-
-__/src/cuda_handler.i: __/src/cuda_handler.cu.i
-
-.PHONY : __/src/cuda_handler.i
-
-# target to preprocess a source file
-__/src/cuda_handler.cu.i:
-	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/cuda_handler.cu.i
-.PHONY : __/src/cuda_handler.cu.i
-
-__/src/cuda_handler.s: __/src/cuda_handler.cu.s
-
-.PHONY : __/src/cuda_handler.s
-
-# target to generate assembly for a file
-__/src/cuda_handler.cu.s:
-	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/cuda_handler.cu.s
-.PHONY : __/src/cuda_handler.cu.s
-
 __/src/dataset.o: __/src/dataset.cpp.o
 
 .PHONY : __/src/dataset.o
@@ -277,33 +250,6 @@ __/src/dtam.cpp.s:
 	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/main.dir/build.make executables/CMakeFiles/main.dir/__/src/dtam.cpp.s
 	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/dtam.cpp.s
 .PHONY : __/src/dtam.cpp.s
-
-__/src/dtam_cuda.o: __/src/dtam_cuda.cu.o
-
-.PHONY : __/src/dtam_cuda.o
-
-# target to build an object file
-__/src/dtam_cuda.cu.o:
-	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/dtam_cuda.cu.o
-.PHONY : __/src/dtam_cuda.cu.o
-
-__/src/dtam_cuda.i: __/src/dtam_cuda.cu.i
-
-.PHONY : __/src/dtam_cuda.i
-
-# target to preprocess a source file
-__/src/dtam_cuda.cu.i:
-	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/dtam_cuda.cu.i
-.PHONY : __/src/dtam_cuda.cu.i
-
-__/src/dtam_cuda.s: __/src/dtam_cuda.cu.s
-
-.PHONY : __/src/dtam_cuda.s
-
-# target to generate assembly for a file
-__/src/dtam_cuda.cu.s:
-	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/dtam_cuda.cu.s
-.PHONY : __/src/dtam_cuda.cu.s
 
 __/src/image.o: __/src/image.cpp.o
 
@@ -370,6 +316,87 @@ __/src/utils.cpp.s:
 	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/main.dir/build.make executables/CMakeFiles/main.dir/__/src/utils.cpp.s
 	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/utils.cpp.s
 .PHONY : __/src/utils.cpp.s
+
+__/src_cuda/camera_cuda.o: __/src_cuda/camera_cuda.cu.o
+
+.PHONY : __/src_cuda/camera_cuda.o
+
+# target to build an object file
+__/src_cuda/camera_cuda.cu.o:
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_cuda.cu.o
+.PHONY : __/src_cuda/camera_cuda.cu.o
+
+__/src_cuda/camera_cuda.i: __/src_cuda/camera_cuda.cu.i
+
+.PHONY : __/src_cuda/camera_cuda.i
+
+# target to preprocess a source file
+__/src_cuda/camera_cuda.cu.i:
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_cuda.cu.i
+.PHONY : __/src_cuda/camera_cuda.cu.i
+
+__/src_cuda/camera_cuda.s: __/src_cuda/camera_cuda.cu.s
+
+.PHONY : __/src_cuda/camera_cuda.s
+
+# target to generate assembly for a file
+__/src_cuda/camera_cuda.cu.s:
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_cuda.cu.s
+.PHONY : __/src_cuda/camera_cuda.cu.s
+
+__/src_cuda/cuda_handler.o: __/src_cuda/cuda_handler.cu.o
+
+.PHONY : __/src_cuda/cuda_handler.o
+
+# target to build an object file
+__/src_cuda/cuda_handler.cu.o:
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/cuda_handler.cu.o
+.PHONY : __/src_cuda/cuda_handler.cu.o
+
+__/src_cuda/cuda_handler.i: __/src_cuda/cuda_handler.cu.i
+
+.PHONY : __/src_cuda/cuda_handler.i
+
+# target to preprocess a source file
+__/src_cuda/cuda_handler.cu.i:
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/cuda_handler.cu.i
+.PHONY : __/src_cuda/cuda_handler.cu.i
+
+__/src_cuda/cuda_handler.s: __/src_cuda/cuda_handler.cu.s
+
+.PHONY : __/src_cuda/cuda_handler.s
+
+# target to generate assembly for a file
+__/src_cuda/cuda_handler.cu.s:
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/cuda_handler.cu.s
+.PHONY : __/src_cuda/cuda_handler.cu.s
+
+__/src_cuda/dtam_cuda.o: __/src_cuda/dtam_cuda.cu.o
+
+.PHONY : __/src_cuda/dtam_cuda.o
+
+# target to build an object file
+__/src_cuda/dtam_cuda.cu.o:
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o
+.PHONY : __/src_cuda/dtam_cuda.cu.o
+
+__/src_cuda/dtam_cuda.i: __/src_cuda/dtam_cuda.cu.i
+
+.PHONY : __/src_cuda/dtam_cuda.i
+
+# target to preprocess a source file
+__/src_cuda/dtam_cuda.cu.i:
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.i
+.PHONY : __/src_cuda/dtam_cuda.cu.i
+
+__/src_cuda/dtam_cuda.s: __/src_cuda/dtam_cuda.cu.s
+
+.PHONY : __/src_cuda/dtam_cuda.s
+
+# target to generate assembly for a file
+__/src_cuda/dtam_cuda.cu.s:
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.s
+.PHONY : __/src_cuda/dtam_cuda.cu.s
 
 main.o: main.cpp.o
 
@@ -466,24 +493,27 @@ help:
 	@echo "... __/src/camera.o"
 	@echo "... __/src/camera.i"
 	@echo "... __/src/camera.s"
-	@echo "... __/src/cuda_handler.o"
-	@echo "... __/src/cuda_handler.i"
-	@echo "... __/src/cuda_handler.s"
 	@echo "... __/src/dataset.o"
 	@echo "... __/src/dataset.i"
 	@echo "... __/src/dataset.s"
 	@echo "... __/src/dtam.o"
 	@echo "... __/src/dtam.i"
 	@echo "... __/src/dtam.s"
-	@echo "... __/src/dtam_cuda.o"
-	@echo "... __/src/dtam_cuda.i"
-	@echo "... __/src/dtam_cuda.s"
 	@echo "... __/src/image.o"
 	@echo "... __/src/image.i"
 	@echo "... __/src/image.s"
 	@echo "... __/src/utils.o"
 	@echo "... __/src/utils.i"
 	@echo "... __/src/utils.s"
+	@echo "... __/src_cuda/camera_cuda.o"
+	@echo "... __/src_cuda/camera_cuda.i"
+	@echo "... __/src_cuda/camera_cuda.s"
+	@echo "... __/src_cuda/cuda_handler.o"
+	@echo "... __/src_cuda/cuda_handler.i"
+	@echo "... __/src_cuda/cuda_handler.s"
+	@echo "... __/src_cuda/dtam_cuda.o"
+	@echo "... __/src_cuda/dtam_cuda.i"
+	@echo "... __/src_cuda/dtam_cuda.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

@@ -5,8 +5,9 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CUDA
-  "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/cuda_handler.cu" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src/cuda_handler.cu.o"
-  "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/dtam_cuda.cu" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src/dtam_cuda.cu.o"
+  "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/camera_cuda.cu" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_cuda.cu.o"
+  "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/cuda_handler.cu" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/cuda_handler.cu.o"
+  "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/dtam_cuda.cu" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o"
   )
 set(CMAKE_CUDA_COMPILER_ID "NVIDIA")
 
@@ -14,6 +15,7 @@ set(CMAKE_CUDA_COMPILER_ID "NVIDIA")
 set(CMAKE_CUDA_TARGET_INCLUDE_PATH
   "/usr/local/include/eigen3"
   "../src"
+  "../src_cuda"
   "../libs"
   "/usr/local/include/opencv4"
   )
@@ -30,6 +32,7 @@ set(CMAKE_CXX_COMPILER_ID "GNU")
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "/usr/local/include/eigen3"
   "../src"
+  "../src_cuda"
   "../libs"
   "/usr/local/include/opencv4"
   )

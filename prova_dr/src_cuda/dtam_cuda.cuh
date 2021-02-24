@@ -1,6 +1,7 @@
 #pragma once
 #include "camera.h"
 #include "image.h"
+#include <cuda_runtime.h>
 
 class Dtam{
   public:

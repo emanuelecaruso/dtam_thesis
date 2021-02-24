@@ -363,6 +363,9 @@ Eigen3_DIR:PATH=/usr/local/share/eigen3/cmake
 //The directory containing a CMake configuration file for OpenCV.
 OpenCV_DIR:PATH=/usr/local/lib/cmake/opencv4
 
+//Use Cuda
+USE_CUDA:BOOL=ON
+
 //Value Computed by CMake
 dense3Dtracking_BINARY_DIR:STATIC=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build
 

@@ -20,14 +20,16 @@ add_executable(test_synth test_synth.cpp
 )
 target_link_libraries(test_synth opencv_highgui)
 
-#synthetic simulator test
-add_executable(test_synth_cuda test_synth_cuda.cpp
-../src/dataset.cpp
-../src/camera.cpp
-../src/image.cpp
-../src/dtam_cuda.cu
-../src/utils.cpp
-../src/cuda_handler.cu
-)
-#target_link_libraries(test_synth opencv_highgui)
-target_link_libraries(test_synth ${OpenCV_LIBS})
+if (USE_CUDA)
+  #synthetic simulator test with cuda
+  add_executable(test_synth_cuda test_synth_cuda.cpp
+  ../src/dataset.cpp
+  ../src/camera.cpp
+  ../src/image.cpp
+  ../src_cuda/dtam_cuda.cu
+  ../src/utils.cpp
+  ../src_cuda/cuda_handler.cu
+  ../src_cuda/camera_cuda.cu
+  )
+  target_link_libraries(test_synth opencv_highgui)
+endif()

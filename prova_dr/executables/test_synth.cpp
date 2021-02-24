@@ -133,8 +133,8 @@ int main (int argc, char * argv[]) {
   cerr << "computing discrete cost volume..." << endl;
   t_start_projection=getTime();
 
-  dtam->getDepthMap(camera_vector,100, true);
-  // dtam->getDepthMap(camera_vector,100);
+  dtam->getDepthMap(camera_vector,100);
+  // dtam->getDepthMap(camera_vector,100, true);
   // dtam->getDepthMap(camera_vector, 0.25);
   // dtam->getDepthMap(camera_vector, 0.25, true);
 

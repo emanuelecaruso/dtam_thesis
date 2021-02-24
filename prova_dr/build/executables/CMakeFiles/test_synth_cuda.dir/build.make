@@ -109,17 +109,17 @@ executables/CMakeFiles/test_synth_cuda.dir/__/src/image.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_synth_cuda.dir/__/src/image.cpp.s"
 	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/image.cpp -o CMakeFiles/test_synth_cuda.dir/__/src/image.cpp.s
 
-executables/CMakeFiles/test_synth_cuda.dir/__/src/dtam_cuda.cu.o: executables/CMakeFiles/test_synth_cuda.dir/flags.make
-executables/CMakeFiles/test_synth_cuda.dir/__/src/dtam_cuda.cu.o: ../src/dtam_cuda.cu
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CUDA object executables/CMakeFiles/test_synth_cuda.dir/__/src/dtam_cuda.cu.o"
-	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/nvcc  $(CUDA_DEFINES) $(CUDA_INCLUDES) $(CUDA_FLAGS) -x cu -c /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/dtam_cuda.cu -o CMakeFiles/test_synth_cuda.dir/__/src/dtam_cuda.cu.o
+executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o: executables/CMakeFiles/test_synth_cuda.dir/flags.make
+executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o: ../src_cuda/dtam_cuda.cu
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CUDA object executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o"
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/nvcc  $(CUDA_DEFINES) $(CUDA_INCLUDES) $(CUDA_FLAGS) -x cu -c /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/dtam_cuda.cu -o CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o
 
-executables/CMakeFiles/test_synth_cuda.dir/__/src/dtam_cuda.cu.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CUDA source to CMakeFiles/test_synth_cuda.dir/__/src/dtam_cuda.cu.i"
+executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CUDA source to CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.i"
 	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CUDA_CREATE_PREPROCESSED_SOURCE
 
-executables/CMakeFiles/test_synth_cuda.dir/__/src/dtam_cuda.cu.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CUDA source to assembly CMakeFiles/test_synth_cuda.dir/__/src/dtam_cuda.cu.s"
+executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CUDA source to assembly CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.s"
 	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CUDA_CREATE_ASSEMBLY_SOURCE
 
 executables/CMakeFiles/test_synth_cuda.dir/__/src/utils.cpp.o: executables/CMakeFiles/test_synth_cuda.dir/flags.make
@@ -135,17 +135,30 @@ executables/CMakeFiles/test_synth_cuda.dir/__/src/utils.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_synth_cuda.dir/__/src/utils.cpp.s"
 	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/utils.cpp -o CMakeFiles/test_synth_cuda.dir/__/src/utils.cpp.s
 
-executables/CMakeFiles/test_synth_cuda.dir/__/src/cuda_handler.cu.o: executables/CMakeFiles/test_synth_cuda.dir/flags.make
-executables/CMakeFiles/test_synth_cuda.dir/__/src/cuda_handler.cu.o: ../src/cuda_handler.cu
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CUDA object executables/CMakeFiles/test_synth_cuda.dir/__/src/cuda_handler.cu.o"
-	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/nvcc  $(CUDA_DEFINES) $(CUDA_INCLUDES) $(CUDA_FLAGS) -x cu -c /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/cuda_handler.cu -o CMakeFiles/test_synth_cuda.dir/__/src/cuda_handler.cu.o
+executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/cuda_handler.cu.o: executables/CMakeFiles/test_synth_cuda.dir/flags.make
+executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/cuda_handler.cu.o: ../src_cuda/cuda_handler.cu
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CUDA object executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/cuda_handler.cu.o"
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/nvcc  $(CUDA_DEFINES) $(CUDA_INCLUDES) $(CUDA_FLAGS) -x cu -c /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/cuda_handler.cu -o CMakeFiles/test_synth_cuda.dir/__/src_cuda/cuda_handler.cu.o
 
-executables/CMakeFiles/test_synth_cuda.dir/__/src/cuda_handler.cu.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CUDA source to CMakeFiles/test_synth_cuda.dir/__/src/cuda_handler.cu.i"
+executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/cuda_handler.cu.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CUDA source to CMakeFiles/test_synth_cuda.dir/__/src_cuda/cuda_handler.cu.i"
 	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CUDA_CREATE_PREPROCESSED_SOURCE
 
-executables/CMakeFiles/test_synth_cuda.dir/__/src/cuda_handler.cu.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CUDA source to assembly CMakeFiles/test_synth_cuda.dir/__/src/cuda_handler.cu.s"
+executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/cuda_handler.cu.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CUDA source to assembly CMakeFiles/test_synth_cuda.dir/__/src_cuda/cuda_handler.cu.s"
+	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CUDA_CREATE_ASSEMBLY_SOURCE
+
+executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_cuda.cu.o: executables/CMakeFiles/test_synth_cuda.dir/flags.make
+executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_cuda.cu.o: ../src_cuda/camera_cuda.cu
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CUDA object executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_cuda.cu.o"
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/nvcc  $(CUDA_DEFINES) $(CUDA_INCLUDES) $(CUDA_FLAGS) -x cu -c /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/camera_cuda.cu -o CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_cuda.cu.o
+
+executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_cuda.cu.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CUDA source to CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_cuda.cu.i"
+	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CUDA_CREATE_PREPROCESSED_SOURCE
+
+executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_cuda.cu.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CUDA source to assembly CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_cuda.cu.s"
 	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CUDA_CREATE_ASSEMBLY_SOURCE
 
 # Object files for target test_synth_cuda
@@ -154,9 +167,10 @@ test_synth_cuda_OBJECTS = \
 "CMakeFiles/test_synth_cuda.dir/__/src/dataset.cpp.o" \
 "CMakeFiles/test_synth_cuda.dir/__/src/camera.cpp.o" \
 "CMakeFiles/test_synth_cuda.dir/__/src/image.cpp.o" \
-"CMakeFiles/test_synth_cuda.dir/__/src/dtam_cuda.cu.o" \
+"CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o" \
 "CMakeFiles/test_synth_cuda.dir/__/src/utils.cpp.o" \
-"CMakeFiles/test_synth_cuda.dir/__/src/cuda_handler.cu.o"
+"CMakeFiles/test_synth_cuda.dir/__/src_cuda/cuda_handler.cu.o" \
+"CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_cuda.cu.o"
 
 # External object files for target test_synth_cuda
 test_synth_cuda_EXTERNAL_OBJECTS =
@@ -165,9 +179,10 @@ executables/CMakeFiles/test_synth_cuda.dir/cmake_device_link.o: executables/CMak
 executables/CMakeFiles/test_synth_cuda.dir/cmake_device_link.o: executables/CMakeFiles/test_synth_cuda.dir/__/src/dataset.cpp.o
 executables/CMakeFiles/test_synth_cuda.dir/cmake_device_link.o: executables/CMakeFiles/test_synth_cuda.dir/__/src/camera.cpp.o
 executables/CMakeFiles/test_synth_cuda.dir/cmake_device_link.o: executables/CMakeFiles/test_synth_cuda.dir/__/src/image.cpp.o
-executables/CMakeFiles/test_synth_cuda.dir/cmake_device_link.o: executables/CMakeFiles/test_synth_cuda.dir/__/src/dtam_cuda.cu.o
+executables/CMakeFiles/test_synth_cuda.dir/cmake_device_link.o: executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o
 executables/CMakeFiles/test_synth_cuda.dir/cmake_device_link.o: executables/CMakeFiles/test_synth_cuda.dir/__/src/utils.cpp.o
-executables/CMakeFiles/test_synth_cuda.dir/cmake_device_link.o: executables/CMakeFiles/test_synth_cuda.dir/__/src/cuda_handler.cu.o
+executables/CMakeFiles/test_synth_cuda.dir/cmake_device_link.o: executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/cuda_handler.cu.o
+executables/CMakeFiles/test_synth_cuda.dir/cmake_device_link.o: executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_cuda.cu.o
 executables/CMakeFiles/test_synth_cuda.dir/cmake_device_link.o: executables/CMakeFiles/test_synth_cuda.dir/build.make
 executables/CMakeFiles/test_synth_cuda.dir/cmake_device_link.o: /usr/local/lib/libopencv_gapi.so.4.2.0
 executables/CMakeFiles/test_synth_cuda.dir/cmake_device_link.o: /usr/local/lib/libopencv_stitching.so.4.2.0
@@ -229,7 +244,7 @@ executables/CMakeFiles/test_synth_cuda.dir/cmake_device_link.o: /usr/local/lib/l
 executables/CMakeFiles/test_synth_cuda.dir/cmake_device_link.o: /usr/local/lib/libopencv_core.so.4.2.0
 executables/CMakeFiles/test_synth_cuda.dir/cmake_device_link.o: /usr/local/lib/libopencv_cudev.so.4.2.0
 executables/CMakeFiles/test_synth_cuda.dir/cmake_device_link.o: executables/CMakeFiles/test_synth_cuda.dir/dlink.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking CUDA device code CMakeFiles/test_synth_cuda.dir/cmake_device_link.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CUDA device code CMakeFiles/test_synth_cuda.dir/cmake_device_link.o"
 	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/test_synth_cuda.dir/dlink.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -243,9 +258,10 @@ test_synth_cuda_OBJECTS = \
 "CMakeFiles/test_synth_cuda.dir/__/src/dataset.cpp.o" \
 "CMakeFiles/test_synth_cuda.dir/__/src/camera.cpp.o" \
 "CMakeFiles/test_synth_cuda.dir/__/src/image.cpp.o" \
-"CMakeFiles/test_synth_cuda.dir/__/src/dtam_cuda.cu.o" \
+"CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o" \
 "CMakeFiles/test_synth_cuda.dir/__/src/utils.cpp.o" \
-"CMakeFiles/test_synth_cuda.dir/__/src/cuda_handler.cu.o"
+"CMakeFiles/test_synth_cuda.dir/__/src_cuda/cuda_handler.cu.o" \
+"CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_cuda.cu.o"
 
 # External object files for target test_synth_cuda
 test_synth_cuda_EXTERNAL_OBJECTS =
@@ -254,9 +270,10 @@ executables/test_synth_cuda: executables/CMakeFiles/test_synth_cuda.dir/test_syn
 executables/test_synth_cuda: executables/CMakeFiles/test_synth_cuda.dir/__/src/dataset.cpp.o
 executables/test_synth_cuda: executables/CMakeFiles/test_synth_cuda.dir/__/src/camera.cpp.o
 executables/test_synth_cuda: executables/CMakeFiles/test_synth_cuda.dir/__/src/image.cpp.o
-executables/test_synth_cuda: executables/CMakeFiles/test_synth_cuda.dir/__/src/dtam_cuda.cu.o
+executables/test_synth_cuda: executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o
 executables/test_synth_cuda: executables/CMakeFiles/test_synth_cuda.dir/__/src/utils.cpp.o
-executables/test_synth_cuda: executables/CMakeFiles/test_synth_cuda.dir/__/src/cuda_handler.cu.o
+executables/test_synth_cuda: executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/cuda_handler.cu.o
+executables/test_synth_cuda: executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_cuda.cu.o
 executables/test_synth_cuda: executables/CMakeFiles/test_synth_cuda.dir/build.make
 executables/test_synth_cuda: /usr/local/lib/libopencv_gapi.so.4.2.0
 executables/test_synth_cuda: /usr/local/lib/libopencv_stitching.so.4.2.0
@@ -319,7 +336,7 @@ executables/test_synth_cuda: /usr/local/lib/libopencv_core.so.4.2.0
 executables/test_synth_cuda: /usr/local/lib/libopencv_cudev.so.4.2.0
 executables/test_synth_cuda: executables/CMakeFiles/test_synth_cuda.dir/cmake_device_link.o
 executables/test_synth_cuda: executables/CMakeFiles/test_synth_cuda.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX executable test_synth_cuda"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Linking CXX executable test_synth_cuda"
 	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/test_synth_cuda.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
