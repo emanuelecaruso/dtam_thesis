@@ -216,18 +216,4 @@ namespace pr {
 
   typedef std::vector<IntPair > IntPairVector;
 
-  struct Cp // Colored point (in 3D)
-  {
-    Eigen::Vector3f point;
-    cv::Vec3b color;
-  };
-
-  struct Cuv  // Colored UV (uv coordinates on image plane)
-  {
-    Eigen::Vector2f point;
-    cv::Vec3b color;
-  };
-
-  typedef std::vector<Cp> cpVector;
-  typedef std::vector<Cuv> cuvVector;
 }

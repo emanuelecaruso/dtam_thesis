@@ -7,7 +7,9 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/camera.cpp" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/main.dir/__/src/camera.cpp.o"
   "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/dataset.cpp" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/main.dir/__/src/dataset.cpp.o"
   "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/dtam.cpp" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/main.dir/__/src/dtam.cpp.o"
+  "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/environment.cpp" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/main.dir/__/src/environment.cpp.o"
   "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/image.cpp" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/main.dir/__/src/image.cpp.o"
+  "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/renderer.cpp" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/main.dir/__/src/renderer.cpp.o"
   "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/utils.cpp" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/main.dir/__/src/utils.cpp.o"
   "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/executables/main.cpp" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/main.dir/main.cpp.o"
   )

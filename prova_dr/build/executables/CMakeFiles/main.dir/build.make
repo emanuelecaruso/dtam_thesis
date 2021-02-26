@@ -109,9 +109,35 @@ executables/CMakeFiles/main.dir/__/src/image.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/main.dir/__/src/image.cpp.s"
 	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/image.cpp -o CMakeFiles/main.dir/__/src/image.cpp.s
 
+executables/CMakeFiles/main.dir/__/src/renderer.cpp.o: executables/CMakeFiles/main.dir/flags.make
+executables/CMakeFiles/main.dir/__/src/renderer.cpp.o: ../src/renderer.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object executables/CMakeFiles/main.dir/__/src/renderer.cpp.o"
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/main.dir/__/src/renderer.cpp.o -c /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/renderer.cpp
+
+executables/CMakeFiles/main.dir/__/src/renderer.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/main.dir/__/src/renderer.cpp.i"
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/renderer.cpp > CMakeFiles/main.dir/__/src/renderer.cpp.i
+
+executables/CMakeFiles/main.dir/__/src/renderer.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/main.dir/__/src/renderer.cpp.s"
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/renderer.cpp -o CMakeFiles/main.dir/__/src/renderer.cpp.s
+
+executables/CMakeFiles/main.dir/__/src/environment.cpp.o: executables/CMakeFiles/main.dir/flags.make
+executables/CMakeFiles/main.dir/__/src/environment.cpp.o: ../src/environment.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object executables/CMakeFiles/main.dir/__/src/environment.cpp.o"
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/main.dir/__/src/environment.cpp.o -c /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/environment.cpp
+
+executables/CMakeFiles/main.dir/__/src/environment.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/main.dir/__/src/environment.cpp.i"
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/environment.cpp > CMakeFiles/main.dir/__/src/environment.cpp.i
+
+executables/CMakeFiles/main.dir/__/src/environment.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/main.dir/__/src/environment.cpp.s"
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/environment.cpp -o CMakeFiles/main.dir/__/src/environment.cpp.s
+
 executables/CMakeFiles/main.dir/__/src/dtam.cpp.o: executables/CMakeFiles/main.dir/flags.make
 executables/CMakeFiles/main.dir/__/src/dtam.cpp.o: ../src/dtam.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object executables/CMakeFiles/main.dir/__/src/dtam.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object executables/CMakeFiles/main.dir/__/src/dtam.cpp.o"
 	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/main.dir/__/src/dtam.cpp.o -c /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/dtam.cpp
 
 executables/CMakeFiles/main.dir/__/src/dtam.cpp.i: cmake_force
@@ -124,7 +150,7 @@ executables/CMakeFiles/main.dir/__/src/dtam.cpp.s: cmake_force
 
 executables/CMakeFiles/main.dir/__/src/utils.cpp.o: executables/CMakeFiles/main.dir/flags.make
 executables/CMakeFiles/main.dir/__/src/utils.cpp.o: ../src/utils.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object executables/CMakeFiles/main.dir/__/src/utils.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object executables/CMakeFiles/main.dir/__/src/utils.cpp.o"
 	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/main.dir/__/src/utils.cpp.o -c /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/utils.cpp
 
 executables/CMakeFiles/main.dir/__/src/utils.cpp.i: cmake_force
@@ -141,6 +167,8 @@ main_OBJECTS = \
 "CMakeFiles/main.dir/__/src/dataset.cpp.o" \
 "CMakeFiles/main.dir/__/src/camera.cpp.o" \
 "CMakeFiles/main.dir/__/src/image.cpp.o" \
+"CMakeFiles/main.dir/__/src/renderer.cpp.o" \
+"CMakeFiles/main.dir/__/src/environment.cpp.o" \
 "CMakeFiles/main.dir/__/src/dtam.cpp.o" \
 "CMakeFiles/main.dir/__/src/utils.cpp.o"
 
@@ -151,6 +179,8 @@ executables/main: executables/CMakeFiles/main.dir/main.cpp.o
 executables/main: executables/CMakeFiles/main.dir/__/src/dataset.cpp.o
 executables/main: executables/CMakeFiles/main.dir/__/src/camera.cpp.o
 executables/main: executables/CMakeFiles/main.dir/__/src/image.cpp.o
+executables/main: executables/CMakeFiles/main.dir/__/src/renderer.cpp.o
+executables/main: executables/CMakeFiles/main.dir/__/src/environment.cpp.o
 executables/main: executables/CMakeFiles/main.dir/__/src/dtam.cpp.o
 executables/main: executables/CMakeFiles/main.dir/__/src/utils.cpp.o
 executables/main: executables/CMakeFiles/main.dir/build.make
@@ -214,7 +244,7 @@ executables/main: /usr/local/lib/libopencv_cudaarithm.so.4.2.0
 executables/main: /usr/local/lib/libopencv_core.so.4.2.0
 executables/main: /usr/local/lib/libopencv_cudev.so.4.2.0
 executables/main: executables/CMakeFiles/main.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable main"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX executable main"
 	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/main.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

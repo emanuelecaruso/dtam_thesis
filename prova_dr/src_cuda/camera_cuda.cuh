@@ -40,14 +40,14 @@ class CameraGPU{
 
     };
 
-    __device__ void clearImgs();
+    // __device__ void clearImgs();
 
     __device__ void pixelCoords2uv(Eigen::Vector2i& pixel_coords, Eigen::Vector2f& uv);
     __device__ void uv2pixelCoords( Eigen::Vector2f& uv, Eigen::Vector2i& pixel_coords);
 
     __device__ void pointAtDepth(Eigen::Vector2f& uv, float depth, Eigen::Vector3f& p);
     __device__ bool projectPoint(Eigen::Vector3f& p, Eigen::Vector2f& uv, float& p_cam_z );
-    __device__ bool projectPixel(Cp& p);
+    // __device__ bool projectPixel(Cp& p);
     // __device__ void projectPixels(cpVector& cp_vector);
 
 

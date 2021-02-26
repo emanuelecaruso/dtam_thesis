@@ -5,6 +5,8 @@ add_executable(main main.cpp
 ../src/dataset.cpp
 ../src/camera.cpp
 ../src/image.cpp
+../src/renderer.cpp
+../src/environment.cpp
 ../src/dtam.cpp
 ../src/utils.cpp
 )
@@ -15,6 +17,8 @@ add_executable(test_synth test_synth.cpp
 ../src/dataset.cpp
 ../src/camera.cpp
 ../src/image.cpp
+../src/renderer.cpp
+../src/environment.cpp
 ../src/dtam.cpp
 ../src/utils.cpp
 )
@@ -26,6 +30,8 @@ if (USE_CUDA)
   ../src/dataset.cpp
   ../src/camera.cpp
   ../src/image.cpp
+  ../src/renderer.cpp
+  ../src/environment.cpp
   ../src_cuda/dtam_cuda.cu
   ../src/utils.cpp
   ../src_cuda/cuda_handler.cu

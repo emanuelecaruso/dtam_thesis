@@ -3,6 +3,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/test_synth_cuda.dir/__/src/dataset.cpp.o"
   "CMakeFiles/test_synth_cuda.dir/__/src/camera.cpp.o"
   "CMakeFiles/test_synth_cuda.dir/__/src/image.cpp.o"
+  "CMakeFiles/test_synth_cuda.dir/__/src/renderer.cpp.o"
+  "CMakeFiles/test_synth_cuda.dir/__/src/environment.cpp.o"
   "CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o"
   "CMakeFiles/test_synth_cuda.dir/__/src/utils.cpp.o"
   "CMakeFiles/test_synth_cuda.dir/__/src_cuda/cuda_handler.cu.o"

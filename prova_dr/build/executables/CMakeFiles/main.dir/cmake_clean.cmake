@@ -3,6 +3,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/main.dir/__/src/dataset.cpp.o"
   "CMakeFiles/main.dir/__/src/camera.cpp.o"
   "CMakeFiles/main.dir/__/src/image.cpp.o"
+  "CMakeFiles/main.dir/__/src/renderer.cpp.o"
+  "CMakeFiles/main.dir/__/src/environment.cpp.o"
   "CMakeFiles/main.dir/__/src/dtam.cpp.o"
   "CMakeFiles/main.dir/__/src/utils.cpp.o"
   "main.pdb"

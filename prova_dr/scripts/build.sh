@@ -1,4 +1,4 @@
 cd build
-cmake -D CUDA_NVCC_FLAGS=--expt-relaxed-constexpr ..
-make -j8
+cmake ..
+make -j4
 cd ..

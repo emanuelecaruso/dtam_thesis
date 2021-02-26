@@ -251,6 +251,39 @@ __/src/dtam.cpp.s:
 	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/dtam.cpp.s
 .PHONY : __/src/dtam.cpp.s
 
+__/src/environment.o: __/src/environment.cpp.o
+
+.PHONY : __/src/environment.o
+
+# target to build an object file
+__/src/environment.cpp.o:
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/environment.cpp.o
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/main.dir/build.make executables/CMakeFiles/main.dir/__/src/environment.cpp.o
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/environment.cpp.o
+.PHONY : __/src/environment.cpp.o
+
+__/src/environment.i: __/src/environment.cpp.i
+
+.PHONY : __/src/environment.i
+
+# target to preprocess a source file
+__/src/environment.cpp.i:
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/environment.cpp.i
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/main.dir/build.make executables/CMakeFiles/main.dir/__/src/environment.cpp.i
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/environment.cpp.i
+.PHONY : __/src/environment.cpp.i
+
+__/src/environment.s: __/src/environment.cpp.s
+
+.PHONY : __/src/environment.s
+
+# target to generate assembly for a file
+__/src/environment.cpp.s:
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/environment.cpp.s
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/main.dir/build.make executables/CMakeFiles/main.dir/__/src/environment.cpp.s
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/environment.cpp.s
+.PHONY : __/src/environment.cpp.s
+
 __/src/image.o: __/src/image.cpp.o
 
 .PHONY : __/src/image.o
@@ -283,6 +316,39 @@ __/src/image.cpp.s:
 	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/main.dir/build.make executables/CMakeFiles/main.dir/__/src/image.cpp.s
 	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/image.cpp.s
 .PHONY : __/src/image.cpp.s
+
+__/src/renderer.o: __/src/renderer.cpp.o
+
+.PHONY : __/src/renderer.o
+
+# target to build an object file
+__/src/renderer.cpp.o:
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/renderer.cpp.o
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/main.dir/build.make executables/CMakeFiles/main.dir/__/src/renderer.cpp.o
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/renderer.cpp.o
+.PHONY : __/src/renderer.cpp.o
+
+__/src/renderer.i: __/src/renderer.cpp.i
+
+.PHONY : __/src/renderer.i
+
+# target to preprocess a source file
+__/src/renderer.cpp.i:
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/renderer.cpp.i
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/main.dir/build.make executables/CMakeFiles/main.dir/__/src/renderer.cpp.i
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/renderer.cpp.i
+.PHONY : __/src/renderer.cpp.i
+
+__/src/renderer.s: __/src/renderer.cpp.s
+
+.PHONY : __/src/renderer.s
+
+# target to generate assembly for a file
+__/src/renderer.cpp.s:
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/renderer.cpp.s
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/main.dir/build.make executables/CMakeFiles/main.dir/__/src/renderer.cpp.s
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/renderer.cpp.s
+.PHONY : __/src/renderer.cpp.s
 
 __/src/utils.o: __/src/utils.cpp.o
 
@@ -499,9 +565,15 @@ help:
 	@echo "... __/src/dtam.o"
 	@echo "... __/src/dtam.i"
 	@echo "... __/src/dtam.s"
+	@echo "... __/src/environment.o"
+	@echo "... __/src/environment.i"
+	@echo "... __/src/environment.s"
 	@echo "... __/src/image.o"
 	@echo "... __/src/image.i"
 	@echo "... __/src/image.s"
+	@echo "... __/src/renderer.o"
+	@echo "... __/src/renderer.i"
+	@echo "... __/src/renderer.s"
 	@echo "... __/src/utils.o"
 	@echo "... __/src/utils.i"
 	@echo "... __/src/utils.s"

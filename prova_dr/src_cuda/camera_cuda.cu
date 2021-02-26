@@ -8,10 +8,10 @@ using namespace pr;
 
 
 
-__device__ void CameraGPU::clearImgs(){
-  // depth_map_->image_=1.0;
-  // image_rgb_->image_=cv::Vec3b(255,255,255);
-}
+// __device__ void CameraGPU::clearImgs(){
+//   // depth_map_->image_=1.0;
+//   // image_rgb_->image_=cv::Vec3b(255,255,255);
+// }
 
 
 __device__ void CameraGPU::pixelCoords2uv(Eigen::Vector2i& pixel_coords, Eigen::Vector2f& uv){
@@ -75,16 +75,12 @@ __device__ bool CameraGPU::projectPoint(Eigen::Vector3f& p, Eigen::Vector2f& uv,
 //
 //   float depth = depth_cam/max_depth_;
 //
-//   float evaluated_pixel;
-//   // depth_map_->evalPixel(pixel_coords,evaluated_pixel);
+//   float evaluated_pixel = depth_map_(pixel_coords.x(),pixel_coords.y());
 //
 //   if (evaluated_pixel<depth)
 //     return false;
 //
-//   if (depth>1 || depth>255 || cp.color[0]>255 || cp.color[1]>255 || cp.color[2]>255)
-//     return false;
-//
-//
+//   image_rgb_(pixel_coords.x(),pixel_coords.y()) = cp.color;
 //   // image_rgb_->setPixel(pixel_coords, cp.color);
 //   // depth_map_->setPixel(pixel_coords,depth);
 //

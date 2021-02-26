@@ -43,7 +43,7 @@ class Camera{
     };
 
     bool extractCameraMatrix(Eigen::Matrix3f& K);
-    void showWorldFrame(Eigen::Vector3f origin, float delta,int length);
+    // void showWorldFrame(Eigen::Vector3f origin, float delta,int length);
 
     void clearImgs();
 
@@ -116,9 +116,9 @@ class Camera{
 
     void pointAtDepth(Eigen::Vector2f& uv, float depth, Eigen::Vector3f& p);
     bool projectPoint(Eigen::Vector3f& p, Eigen::Vector2f& uv, float& p_cam_z );
-    bool projectPixel(Cp& p);
-    void projectPixels(cpVector& cp_vector);
-    void projectPixels_parallell(cpVector& cp_vector);
+    // bool projectPixel(Cp& p);
+    // void projectPixels(cpVector& cp_vector);
+    // void projectPixels_parallell(cpVector& cp_vector);
 
     bool resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2, float& depth1, float& depth2, bool& resized1, bool& resized2);
 

@@ -2,7 +2,9 @@
 #include "dataset.h"
 #include "camera.h"
 #include "image.h"
+#include "renderer.h"
 #include "utils.h"
+#pragma diag_suppress 2739
 
 using namespace std;
 using namespace pr;
@@ -34,7 +36,7 @@ int main (int argc, char * argv[]) {
 
   for (Camera* camera : camera_vector)
   {
-    camera->showWorldFrame(o,0.01,20);
+    // camera->showWorldFrame(o,0.01,20);
     camera->image_rgb_->show();
   }
   for (Image<cv::Vec3b>* image : image_vector)
