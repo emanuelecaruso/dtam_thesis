@@ -17,116 +17,74 @@ using namespace pr;
 
 int main (int argc, char * argv[]) {
 
-  //
-  // double t_start_projection=getTime();
-  // double t_end_projection=getTime();
-  //
-  // //############################################################################
-  // // generate 2 cameras (in this case same orientation, shift on x axis)
-  // //############################################################################
-  //
-  // CameraVector camera_vector; // initialize vector containing pointers to camera objects for each pose
-  //
-  // float object_depth=2;
-  //
-  // int resolution = 4;
-  // float film = 0.024;
-  // float lens = 0.035;
-  // float aspect = 1;
-  // float offset_x_m1 = -0.1;
-  // float offset_y_m1 = -0.1;
-  // float offset_z_m1 = -0.1;
-  // float offset_x_m2 = 0.1;
-  // float offset_y_m2 = 0.1;
-  // float offset_z_m2 = -0.1;
-  // float max_depth=4.2;
-  //
-  // Eigen::Vector3f t_r(0,0,-object_depth);
-  // Eigen::Isometry3f frame_world_wrt_camera_r;
-  // frame_world_wrt_camera_r.linear().setIdentity();
-  // frame_world_wrt_camera_r.translation()=t_r;
-  // Eigen::Isometry3f frame_camera_wrt_world_r;
-  // frame_camera_wrt_world_r = frame_world_wrt_camera_r.inverse();
-  //
-  // Camera* camera_r = new Camera("Camera_r",lens,aspect,film,resolution,max_depth,&frame_camera_wrt_world_r,&frame_world_wrt_camera_r);
-  //
-  // Eigen::Vector3f t_m1(-offset_x_m1,-offset_y_m1,-object_depth+offset_z_m1);
-  // Eigen::Isometry3f frame_world_wrt_camera_m1;
-  // frame_world_wrt_camera_m1.linear().setIdentity();
-  // frame_world_wrt_camera_m1.translation()=t_m1;
-  // Eigen::Isometry3f frame_camera_wrt_world_m1;
-  // frame_camera_wrt_world_m1 = frame_world_wrt_camera_m1.inverse();
-  //
-  // Camera* camera_m1 = new Camera("Camera_m1",lens,aspect,film,resolution,max_depth,&frame_camera_wrt_world_m1,&frame_world_wrt_camera_m1);
-  //
-  // Eigen::Vector3f t_m2(-offset_x_m2,-offset_y_m2,-object_depth+offset_z_m2);
-  // Eigen::Isometry3f frame_world_wrt_camera_m2;
-  // frame_world_wrt_camera_m2.linear().setIdentity();
-  // frame_world_wrt_camera_m2.translation()=t_m2;
-  // Eigen::Isometry3f frame_camera_wrt_world_m2;
-  // frame_camera_wrt_world_m2 = frame_world_wrt_camera_m2.inverse();
-  //
-  // Camera* camera_m2 = new Camera("Camera_m2",lens,aspect,film,resolution,max_depth,&frame_camera_wrt_world_m2,&frame_world_wrt_camera_m2);
-  //
-  //
-  // camera_vector.push_back(camera_r);
-  // camera_vector.push_back(camera_m1);
-  // // camera_vector.push_back(camera_m2);
-  //
-  //
-  //
-  // //############################################################################
-  // // generate depth map groundtruth and rgb images of cameras
-  // //############################################################################
-  //
-  //
-  // cpVector cp_vector;
-  // // generate a "super dense" cloud of points in world frame
-  // float left_bound=-object_depth/3-(0.1*object_depth);
-  // float right_bound=(object_depth/3)+(0.1*object_depth);
-  // int density=7000;
-  // cout << "generating the super dense cloud of points .." << endl;
-  // t_start_projection=getTime();
-  //
-  //
-  // for (int x=0; x<density; x++)
-  //   for (int y=0; y<density; y++){
-  //     float x_ = ((float)x/(float)density)*(right_bound-left_bound)+left_bound;
-  //     float y_ = ((float)y/(float)density)*(-left_bound-left_bound)+left_bound;
-  //
-  //     float depth = ((sin((x_)*(6*3.14))*sin((x_)*(6*3.14))+sin((y_)*(6*3.14))*sin((y_)*(6*3.14)))/2.0);
-  //
-  //     // int clr_x = ((float)x/(float)density)*255*(sin((x_)*(6*3.14))*sin((x_)*(6*3.14)));
-  //     // int clr_y = ((float)y/(float)density)*255*(sin((y_)*(6*3.14))*sin((y_)*(6*3.14)));
-  //     // int clr_z = depth*(255.0/object_depth);
-  //
-  //     int clr_x = ((float)x/(float)density)*255*depth;
-  //     int clr_y = ((float)y/(float)density)*255*depth;
-  //     int clr_z = depth*(255.0/object_depth);
-  //
-  //
-  //     Cp cp;
-  //     cp.point=Eigen::Vector3f(x_,y_,depth);
-  //     cp.color=cv::Vec3b(clr_x,clr_y,clr_z);
-  //     cp_vector.push_back(cp);
-  //   }
-  // t_end_projection=getTime();
-  // cerr << "super dense cloud generation took: " << (t_end_projection-t_start_projection) << " ms" << endl;
-  //
-  // cerr << "projecting super dense cloud of points on cameras..." << endl;
-  // t_start_projection=getTime();
-  // for (Camera* camera : camera_vector){
-  //   camera->projectPixels_parallell(cp_vector);
-  // }
-  // t_end_projection=getTime();
-  // cerr << "projection took: " << (t_end_projection-t_start_projection) << " ms" << endl;
-  //
-  // Image<float>* depth_map_gt = camera_r->depth_map_->clone("depth map gt");
-  // // Image<cv::Vec3b>* rgb_image_m_gt = camera_m1->image_rgb_->clone("rgb image m gt");
-  //
-  // for (Camera* camera : camera_vector)
-  //   camera->depth_map_->image_=1.0;
-  //
+
+
+  //############################################################################
+  // initialization
+  //############################################################################
+
+  double t_start=getTime();  // time start for computing computation time
+  double t_end=getTime();    // time end for computing computation time
+
+  cpVector cp_vector; // vector of colored points populating the world
+  CameraVector camera_vector; // vector containing pointers to camera objects
+
+  EnvGenerator* env_generator = new EnvGenerator(); // environment generator object (pointer)
+  Renderer* renderer = new Renderer(cp_vector); // renderer object (pointer)
+  // Dtam* dtam = new Dtam(1); // dense mapper and tracker
+
+  //############################################################################
+  // generate 2 cameras (in this case same orientation, shift on x axis)
+  //############################################################################
+
+  // --------------------------------------
+  // generate cameras
+  float object_depth=2;
+
+  Camera* camera_r = env_generator->generateCamera("camera_r", 0,0,-object_depth, 0,0,0);
+  Camera* camera_m1 = env_generator->generateCamera("camera_m1", 0.1,0.1,-object_depth-0.1, 0,0,0);
+  Camera* camera_m2 = env_generator->generateCamera("camera_m2", -0.1,-0.1,-object_depth-0.1, 0,0,0);
+
+  camera_vector.push_back(camera_r);
+  camera_vector.push_back(camera_m1);
+  camera_vector.push_back(camera_m2);
+
+  // --------------------------------------
+  // generate environment
+  cerr << "generating environment.." << endl;
+  t_start=getTime();
+
+  int density=7000;
+  env_generator->generateSinusoidalSurface(object_depth, density, cp_vector);
+
+  t_end=getTime();
+  cerr << "environment generation took: " << (t_end-t_start) << " ms" << endl;
+  // --------------------------------------
+
+
+  //############################################################################
+  // generate depth map groundtruth and rgb images of cameras
+  //############################################################################
+
+  // --------------------------------------
+  // rendering environment on cameras
+  cerr << "rendering environment on cameras..." << endl;
+  t_start=getTime();
+
+  for (Camera* camera : camera_vector)
+    renderer->renderImage_naive(cp_vector, camera);
+
+  t_end=getTime();
+  cerr << "rendering took: " << (t_end-t_start) << " ms" << endl;
+  // --------------------------------------
+
+  Image<float>* depth_map_gt = camera_r->depth_map_->clone("depth map gt");
+  // Image<cv::Vec3b>* rgb_image_m_gt = camera_m1->image_rgb_->clone("rgb image m gt");
+
+  // clear depth maps
+  for (Camera* camera : camera_vector)
+    camera->depth_map_->image_=1.0;
+
   //
   // //############################################################################
   // // compute depth map

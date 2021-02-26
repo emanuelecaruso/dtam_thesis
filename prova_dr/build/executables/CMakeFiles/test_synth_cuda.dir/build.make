@@ -109,18 +109,18 @@ executables/CMakeFiles/test_synth_cuda.dir/__/src/image.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_synth_cuda.dir/__/src/image.cpp.s"
 	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/image.cpp -o CMakeFiles/test_synth_cuda.dir/__/src/image.cpp.s
 
-executables/CMakeFiles/test_synth_cuda.dir/__/src/renderer.cpp.o: executables/CMakeFiles/test_synth_cuda.dir/flags.make
-executables/CMakeFiles/test_synth_cuda.dir/__/src/renderer.cpp.o: ../src/renderer.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object executables/CMakeFiles/test_synth_cuda.dir/__/src/renderer.cpp.o"
-	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/test_synth_cuda.dir/__/src/renderer.cpp.o -c /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/renderer.cpp
+executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/renderer.cu.o: executables/CMakeFiles/test_synth_cuda.dir/flags.make
+executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/renderer.cu.o: ../src_cuda/renderer.cu
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CUDA object executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/renderer.cu.o"
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/nvcc  $(CUDA_DEFINES) $(CUDA_INCLUDES) $(CUDA_FLAGS) -x cu -c /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/renderer.cu -o CMakeFiles/test_synth_cuda.dir/__/src_cuda/renderer.cu.o
 
-executables/CMakeFiles/test_synth_cuda.dir/__/src/renderer.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_synth_cuda.dir/__/src/renderer.cpp.i"
-	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/renderer.cpp > CMakeFiles/test_synth_cuda.dir/__/src/renderer.cpp.i
+executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/renderer.cu.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CUDA source to CMakeFiles/test_synth_cuda.dir/__/src_cuda/renderer.cu.i"
+	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CUDA_CREATE_PREPROCESSED_SOURCE
 
-executables/CMakeFiles/test_synth_cuda.dir/__/src/renderer.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_synth_cuda.dir/__/src/renderer.cpp.s"
-	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/renderer.cpp -o CMakeFiles/test_synth_cuda.dir/__/src/renderer.cpp.s
+executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/renderer.cu.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CUDA source to assembly CMakeFiles/test_synth_cuda.dir/__/src_cuda/renderer.cu.s"
+	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CUDA_CREATE_ASSEMBLY_SOURCE
 
 executables/CMakeFiles/test_synth_cuda.dir/__/src/environment.cpp.o: executables/CMakeFiles/test_synth_cuda.dir/flags.make
 executables/CMakeFiles/test_synth_cuda.dir/__/src/environment.cpp.o: ../src/environment.cpp
@@ -193,7 +193,7 @@ test_synth_cuda_OBJECTS = \
 "CMakeFiles/test_synth_cuda.dir/__/src/dataset.cpp.o" \
 "CMakeFiles/test_synth_cuda.dir/__/src/camera.cpp.o" \
 "CMakeFiles/test_synth_cuda.dir/__/src/image.cpp.o" \
-"CMakeFiles/test_synth_cuda.dir/__/src/renderer.cpp.o" \
+"CMakeFiles/test_synth_cuda.dir/__/src_cuda/renderer.cu.o" \
 "CMakeFiles/test_synth_cuda.dir/__/src/environment.cpp.o" \
 "CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o" \
 "CMakeFiles/test_synth_cuda.dir/__/src/utils.cpp.o" \
@@ -207,7 +207,7 @@ executables/CMakeFiles/test_synth_cuda.dir/cmake_device_link.o: executables/CMak
 executables/CMakeFiles/test_synth_cuda.dir/cmake_device_link.o: executables/CMakeFiles/test_synth_cuda.dir/__/src/dataset.cpp.o
 executables/CMakeFiles/test_synth_cuda.dir/cmake_device_link.o: executables/CMakeFiles/test_synth_cuda.dir/__/src/camera.cpp.o
 executables/CMakeFiles/test_synth_cuda.dir/cmake_device_link.o: executables/CMakeFiles/test_synth_cuda.dir/__/src/image.cpp.o
-executables/CMakeFiles/test_synth_cuda.dir/cmake_device_link.o: executables/CMakeFiles/test_synth_cuda.dir/__/src/renderer.cpp.o
+executables/CMakeFiles/test_synth_cuda.dir/cmake_device_link.o: executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/renderer.cu.o
 executables/CMakeFiles/test_synth_cuda.dir/cmake_device_link.o: executables/CMakeFiles/test_synth_cuda.dir/__/src/environment.cpp.o
 executables/CMakeFiles/test_synth_cuda.dir/cmake_device_link.o: executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o
 executables/CMakeFiles/test_synth_cuda.dir/cmake_device_link.o: executables/CMakeFiles/test_synth_cuda.dir/__/src/utils.cpp.o
@@ -288,7 +288,7 @@ test_synth_cuda_OBJECTS = \
 "CMakeFiles/test_synth_cuda.dir/__/src/dataset.cpp.o" \
 "CMakeFiles/test_synth_cuda.dir/__/src/camera.cpp.o" \
 "CMakeFiles/test_synth_cuda.dir/__/src/image.cpp.o" \
-"CMakeFiles/test_synth_cuda.dir/__/src/renderer.cpp.o" \
+"CMakeFiles/test_synth_cuda.dir/__/src_cuda/renderer.cu.o" \
 "CMakeFiles/test_synth_cuda.dir/__/src/environment.cpp.o" \
 "CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o" \
 "CMakeFiles/test_synth_cuda.dir/__/src/utils.cpp.o" \
@@ -302,7 +302,7 @@ executables/test_synth_cuda: executables/CMakeFiles/test_synth_cuda.dir/test_syn
 executables/test_synth_cuda: executables/CMakeFiles/test_synth_cuda.dir/__/src/dataset.cpp.o
 executables/test_synth_cuda: executables/CMakeFiles/test_synth_cuda.dir/__/src/camera.cpp.o
 executables/test_synth_cuda: executables/CMakeFiles/test_synth_cuda.dir/__/src/image.cpp.o
-executables/test_synth_cuda: executables/CMakeFiles/test_synth_cuda.dir/__/src/renderer.cpp.o
+executables/test_synth_cuda: executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/renderer.cu.o
 executables/test_synth_cuda: executables/CMakeFiles/test_synth_cuda.dir/__/src/environment.cpp.o
 executables/test_synth_cuda: executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o
 executables/test_synth_cuda: executables/CMakeFiles/test_synth_cuda.dir/__/src/utils.cpp.o
