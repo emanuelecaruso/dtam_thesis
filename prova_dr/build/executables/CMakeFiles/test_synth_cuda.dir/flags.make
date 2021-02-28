@@ -3,7 +3,7 @@
 
 # compile CUDA with /usr/bin/nvcc
 # compile CXX with /usr/bin/c++
-CUDA_FLAGS = -O3 -DNDEBUG   -D USE_CUDA
+CUDA_FLAGS = -O3 -DNDEBUG   -D USE_CUDA -dc
 
 CUDA_DEFINES = 
 

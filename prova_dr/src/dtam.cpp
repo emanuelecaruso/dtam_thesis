@@ -302,6 +302,4 @@ void Dtam::getDepthMap(CameraVector& camera_vector, int num_interpolations, bool
   }
 
 
-  std::cerr << "depth conversion took: " << (t_end-t_start) << " ms" << std::endl;
-
 }

@@ -1,10 +1,11 @@
 #pragma once
 #include "defs.h"
 #include "image.h"
+#include <cuda_runtime.h>
 
 using namespace pr;
 
-class CameraGPU{
+class Camera_gpu{
   public:
 
     std::string name_;
@@ -22,7 +23,7 @@ class CameraGPU{
 
 
 
-    CameraGPU(std::string name, float lens, float aspect, float width, int resolution,
+    Camera_gpu(std::string name, float lens, float aspect, float width, int resolution,
        float max_depth, Eigen::Matrix3f K, Eigen::Matrix3f Kinv, Eigen::Isometry3f frame_camera_wrt_world,
        Eigen::Isometry3f frame_world_wrt_camera, cv::cuda::PtrStepSz<float> depth_map, cv::cuda::PtrStepSz<uchar3> image_rgb){
        name_ = name;
@@ -42,6 +43,8 @@ class CameraGPU{
 
     // __device__ void clearImgs();
 
+    void printMembers();
+
     __device__ void pixelCoords2uv(Eigen::Vector2i& pixel_coords, Eigen::Vector2f& uv);
     __device__ void uv2pixelCoords( Eigen::Vector2f& uv, Eigen::Vector2i& pixel_coords);
 
@@ -51,10 +54,10 @@ class CameraGPU{
     // __device__ void projectPixels(cpVector& cp_vector);
 
 
-    inline CameraGPU* clone(){
-      return new CameraGPU(*this);
+    inline Camera_gpu* clone(){
+      return new Camera_gpu(*this);
     }
 
 };
 
-typedef std::vector<CameraGPU*> CameraGPUVector;
+typedef std::vector<Camera_gpu*> Camera_gpuVector;

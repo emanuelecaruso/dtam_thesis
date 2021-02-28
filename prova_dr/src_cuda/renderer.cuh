@@ -1,7 +1,8 @@
 #pragma once
 #include "defs.h"
 #include "image.h"
-#include "camera.h"
+#include "camera_cpu.cuh"
+#include <cuda_runtime.h>
 
 using namespace pr;
 
@@ -13,17 +14,13 @@ struct Cp // Colored point (in 3D)
 
 typedef std::vector<Cp> cpVector;
 
-__global__ void renderPoint_gpu(Cp& cp, Camera* camera, bool& valid);
+__global__ void renderPoint_gpu( Cp* cp, Camera_gpu* camera );
+// __global__ void renderPoint_gpu(Cp& cp, Camera_cpu* camera );
 
 class Renderer{
   public:
-    cpVector cp_vector_;
 
-    Renderer(cpVector cp_vector){
-      cp_vector_ = cp_vector;
-    };
-
-    bool renderPoint(Cp& cp, Camera* camera);
-    void renderImage_naive(cpVector& cp_vector, Camera* camera);
-    void renderImage_parallel_gpu(cpVector& cp_vector, Camera* camera);
+    bool renderPoint(Cp& cp, Camera_cpu* camera);
+    void renderImage_naive(cpVector& cp_vector, Camera_cpu* camera);
+    bool renderImage_parallel_gpu(Cp* cp_d, int cp_size, Camera_gpu* camera_gpu_d, Camera_cpu* camera_cpu);
 };

@@ -6,16 +6,6 @@
 using namespace std;
 using namespace pr;
 
-bool Camera::extractCameraMatrix(Eigen::Matrix3f& K){
-  float height= width_/aspect_;
-
-  K <<
-    lens_,   0   ,  -width_/2 ,
-    0    ,  -lens_, -height/2,
-    0    ,   0   ,   -1       ;
-
-  return true;
-}
 
 
 void Camera::clearImgs(){
@@ -102,30 +92,25 @@ void Camera::uv2pixelCoords( Eigen::Vector2f& uv, Eigen::Vector2i& pixel_coords)
 
 void Camera::pointAtDepth(Eigen::Vector2f& uv, float depth, Eigen::Vector3f& p){
 
-  Eigen::Matrix3f K;
-  Camera::extractCameraMatrix(K);
-
   Eigen::Vector3f p_proj;
   Eigen::Vector2f product = uv * depth;
   p_proj.x() = product.x();
   p_proj.y() = product.y();
   p_proj.z() = depth;
-  Eigen::Vector3f p_cam = K.inverse()*p_proj;
+  Eigen::Vector3f p_cam = Kinv_*p_proj;
   p = *frame_camera_wrt_world_*p_cam;
 
 }
 
 bool Camera::projectPoint(Eigen::Vector3f& p, Eigen::Vector2f& uv, float& p_cam_z ){
 
-  Eigen::Matrix3f K;
-  Camera::extractCameraMatrix(K);
 
   Eigen::Vector3f p_cam = *frame_world_wrt_camera_*p;
 
   // return wether the projected point is in front or behind the camera
   p_cam_z=-p_cam.z();
 
-  Eigen::Vector3f p_proj = K*p_cam;
+  Eigen::Vector3f p_proj = K_*p_cam;
 
   uv = p_proj.head<2>()*(1./p_proj.z());
 

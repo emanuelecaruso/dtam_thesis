@@ -5,9 +5,10 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CUDA
-  "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/camera_cuda.cu" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_cuda.cu.o"
+  "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/camera_cpu.cu" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_cpu.cu.o"
+  "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/camera_gpu.cu" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_gpu.cu.o"
   "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/cuda_handler.cu" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/cuda_handler.cu.o"
-  "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/dtam_cuda.cu" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o"
+  "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/environment.cu" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/environment.cu.o"
   "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/renderer.cu" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/renderer.cu.o"
   )
 set(CMAKE_CUDA_COMPILER_ID "NVIDIA")
@@ -21,9 +22,7 @@ set(CMAKE_CUDA_TARGET_INCLUDE_PATH
   "/usr/local/include/opencv4"
   )
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/camera.cpp" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src/camera.cpp.o"
   "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/dataset.cpp" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src/dataset.cpp.o"
-  "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/environment.cpp" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src/environment.cpp.o"
   "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/image.cpp" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src/image.cpp.o"
   "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/utils.cpp" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src/utils.cpp.o"
   "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/executables/test_synth_cuda.cpp" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/test_synth_cuda.cpp.o"

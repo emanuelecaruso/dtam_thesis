@@ -6,12 +6,6 @@
 
 #IncludeRegexTransform: 
 
-../src/camera.h
-defs.h
-../src/defs.h
-image.h
-../src/image.h
-
 ../src/defs.h
 Eigen/Core
 -
@@ -36,23 +30,53 @@ dirent.h
 defs.h
 ../src/defs.h
 
-/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/renderer.cu
-renderer.cuh
-/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/renderer.cuh
+../src/utils.h
+iostream
+-
+future
+-
 thread
 -
 vector
 -
-mutex
+
+/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/camera_cpu.cuh
+defs.h
+/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/defs.h
+image.h
+/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/image.h
+camera_gpu.cuh
+/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/camera_gpu.cuh
+
+/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/camera_gpu.cuh
+defs.h
+/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/defs.h
+image.h
+/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/image.h
+cuda_runtime.h
 -
+
+/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/environment.cu
+environment.cuh
+/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/environment.cuh
+utils.h
+/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/utils.h
+
+/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/environment.cuh
+renderer.cuh
+/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/renderer.cuh
+camera_cpu.cuh
+/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/camera_cpu.cuh
 
 /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/renderer.cuh
 defs.h
 /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/defs.h
 image.h
 /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/image.h
-camera.h
-/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/camera.h
+camera_cpu.cuh
+/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/camera_cpu.cuh
+cuda_runtime.h
+-
 
 /usr/local/include/eigen3/Eigen/Cholesky
 Core

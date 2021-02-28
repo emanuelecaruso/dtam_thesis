@@ -8,7 +8,6 @@
 #include "dtam.h"
 #include <stdio.h>
 #include <cuda_runtime.h>
-#pragma diag_suppress 2739
 
 using namespace std;
 using namespace pr;

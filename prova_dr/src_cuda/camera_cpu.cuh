@@ -1,11 +1,13 @@
 #pragma once
 #include "defs.h"
 #include "image.h"
+#include "camera_gpu.cuh"
+
 
 using namespace pr;
 
 
-class Camera{
+class Camera_cpu{
   public:
 
     std::string name_;
@@ -23,7 +25,7 @@ class Camera{
     cv::cuda::GpuMat depth_map_gpu_;
     cv::cuda::GpuMat image_rgb_gpu_;
 
-    Camera(std::string name, float lens, float aspect, float width, int resolution,
+    Camera_cpu(std::string name, float lens, float aspect, float width, int resolution,
        float max_depth, Eigen::Isometry3f* frame_camera_wrt_world, Eigen::Isometry3f* frame_world_wrt_camera){
        name_ = name;
        lens_ = lens;
@@ -52,9 +54,15 @@ class Camera{
        Kinv_=K_.inverse();
     };
 
-    void showWorldFrame(Eigen::Vector3f origin, float delta,int length);
+    // bool extractCameraMatrix(Eigen::Matrix3f& K);
+    // void showWorldFrame(Eigen::Vector3f origin, float delta,int length);
 
     void clearImgs();
+
+    void gpuFree();
+    Camera_gpu* getCamera_gpu();
+
+    void printMembers();
 
     void pixelCoords2uv(Eigen::Vector2i& pixel_coords, Eigen::Vector2f& uv);
     void uv2pixelCoords( Eigen::Vector2f& uv, Eigen::Vector2i& pixel_coords);
@@ -67,10 +75,10 @@ class Camera{
 
     bool resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2, float& depth1, float& depth2, bool& resized1, bool& resized2);
 
-    inline Camera* clone(){
-      return new Camera(*this);
+    inline Camera_cpu* clone(){
+      return new Camera_cpu(*this);
     }
 
 };
 
-typedef std::vector<Camera*> CameraVector;
+typedef std::vector<Camera_cpu*> CameraVector_cpu;

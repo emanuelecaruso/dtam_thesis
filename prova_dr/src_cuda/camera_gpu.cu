@@ -1,4 +1,4 @@
-#include "camera_cuda.cuh"
+#include "camera_gpu.cuh"
 #include <thread>
 #include <vector>
 #include <mutex>
@@ -8,26 +8,43 @@ using namespace pr;
 
 
 
-// __device__ void CameraGPU::clearImgs(){
+// __device__ void Camera_gpu::clearImgs(){
 //   // depth_map_->image_=1.0;
 //   // image_rgb_->image_=cv::Vec3b(255,255,255);
 // }
 
+void Camera_gpu::printMembers(){
 
-__device__ void CameraGPU::pixelCoords2uv(Eigen::Vector2i& pixel_coords, Eigen::Vector2f& uv){
+  std::cout << "name: " << name_ << std::endl;
+  std::cout << "lens: " << lens_ << std::endl;
+  std::cout << "aspect: " << aspect_ << std::endl;
+  std::cout << "width: " << width_ << std::endl;
+  std::cout << "resolution: " << resolution_ << std::endl;
+  std::cout << "max_depth: " << max_depth_ << std::endl;
+  std::cout << "K: " << K_ << std::endl;
+  std::cout << "Kinv: " << Kinv_ << std::endl;
+  std::cout << "frame_world_wrt_camera LINEAR:\n" << frame_world_wrt_camera_.linear() << std::endl;
+  std::cout << "frame_world_wrt_camera TRANSL:\n" << frame_world_wrt_camera_.translation() << std::endl;
+  std::cout << "frame_camera_wrt_world LINEAR:\n" << frame_camera_wrt_world_.linear() << std::endl;
+  std::cout << "frame_camera_wrt_world TRANSL:\n" << frame_camera_wrt_world_.translation() << std::endl;
+  std::cout << "\n" << std::endl;
+
+}
+
+__device__ void Camera_gpu::pixelCoords2uv(Eigen::Vector2i& pixel_coords, Eigen::Vector2f& uv){
   float pixel_width = width_/resolution_;
 
   uv.x()=((float)pixel_coords.x()/(resolution_))*width_+(pixel_width/2);
   uv.y()=(((float)pixel_coords.y())/(float)((resolution_)/aspect_))*(float)(width_/aspect_)+(pixel_width/2);
 }
 
-__device__ void CameraGPU::uv2pixelCoords( Eigen::Vector2f& uv, Eigen::Vector2i& pixel_coords){
+__device__ void Camera_gpu::uv2pixelCoords( Eigen::Vector2f& uv, Eigen::Vector2i& pixel_coords){
 
   pixel_coords.x()=(int)((uv.x()/width_)*resolution_);
   pixel_coords.y()=(int)((uv.y()/(width_/aspect_))*(resolution_/aspect_));
 }
 
-__device__ void CameraGPU::pointAtDepth(Eigen::Vector2f& uv, float depth, Eigen::Vector3f& p){
+__device__ void Camera_gpu::pointAtDepth(Eigen::Vector2f& uv, float depth, Eigen::Vector3f& p){
 
   Eigen::Vector3f p_proj;
   Eigen::Vector2f product = uv * depth;
@@ -39,7 +56,7 @@ __device__ void CameraGPU::pointAtDepth(Eigen::Vector2f& uv, float depth, Eigen:
 
 }
 
-__device__ bool CameraGPU::projectPoint(Eigen::Vector3f& p, Eigen::Vector2f& uv, float& p_cam_z ){
+__device__ bool Camera_gpu::projectPoint(Eigen::Vector3f& p, Eigen::Vector2f& uv, float& p_cam_z ){
 
   Eigen::Vector3f p_cam = frame_world_wrt_camera_*p;
 
@@ -57,11 +74,11 @@ __device__ bool CameraGPU::projectPoint(Eigen::Vector3f& p, Eigen::Vector2f& uv,
 
 }
 
-// __device__ bool CameraGPU::projectPixel(Cp& cp){
+// __device__ bool Camera_gpu::projectPixel(Cp& cp){
 //
 //   Eigen::Vector2f uv;
 //   float depth_cam;
-//   bool point_in_front_of_camera = CameraGPU::projectPoint(cp.point, uv, depth_cam );
+//   bool point_in_front_of_camera = Camera_gpu::projectPoint(cp.point, uv, depth_cam );
 //   if (!point_in_front_of_camera)
 //     return false;
 //
@@ -71,7 +88,7 @@ __device__ bool CameraGPU::projectPoint(Eigen::Vector3f& p, Eigen::Vector2f& uv,
 //     return false;
 //
 //   Eigen::Vector2i pixel_coords;
-//   CameraGPU::uv2pixelCoords( uv, pixel_coords);
+//   Camera_gpu::uv2pixelCoords( uv, pixel_coords);
 //
 //   float depth = depth_cam/max_depth_;
 //
@@ -87,10 +104,10 @@ __device__ bool CameraGPU::projectPoint(Eigen::Vector3f& p, Eigen::Vector2f& uv,
 //   return true;
 // }
 
-// __device__ void CameraGPU::projectPixels(cpVector& cp_vector){
-//   CameraGPU::clearImgs();
+// __device__ void Camera_gpu::projectPixels(cpVector& cp_vector){
+//   Camera_gpu::clearImgs();
 //   for (Cp cp : cp_vector)
 //   {
-//     CameraGPU::projectPixel(cp);
+//     Camera_gpu::projectPixel(cp);
 //   }
 // }
