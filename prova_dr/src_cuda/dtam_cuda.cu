@@ -62,12 +62,15 @@ void Dtam::CostVolumeMin(CameraVector_gpu camera_vector_gpu, cameraData* d_camer
   // // cudaMalloc(&d_depth_map, size);
   // // cudaMemcpy(d_depth_map, h_depth_map, size, cudaMemcpyHostToDevice);
   // //
-  // // Kernel invocation
-  // const int N = 1;
-  // dim3 threadsPerBlock(2, 2);
-  // dim3 numBlocks(1, 1);
-  //
-  // // CostVolumeMin_kernel<<<numBlocks,threadsPerBlock>>>(depth_map_gpu, d_cameraData_vector, n_cameras);
+
+  // Kernel invocation
+  const int N = 1;
+  dim3 threadsPerBlock( camera_vector_gpu[0]->width_/32, 32, 100);
+  dim3 numBlocks( (camera_vector_gpu[0]->width_/camera_vector_gpu[0]->aspect_) / 32, 100);
+
+  for (int i=0; i<camera_vector_gpu.size(); i++){
+    CostVolumeMin_kernel<<<numBlocks,threadsPerBlock>>>(camera_vector_gpu[i], d_cameraData_vector, n_cameras);
+  }
   // CostVolumeMin_kernel<<<1,1>>>(depth_map_gpu, d_cameraData_vector, n_cameras);
   //
   // depth_map_gpu.download(depth_map);
