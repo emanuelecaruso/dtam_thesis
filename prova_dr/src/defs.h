@@ -219,7 +219,7 @@ namespace pr {
   struct Cp // Colored point (in 3D)
   {
     Eigen::Vector3f point;
-    int color[3];
+    unsigned char color[3];
   };
 
   typedef std::vector<Cp> cpVector;

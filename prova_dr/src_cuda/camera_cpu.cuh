@@ -24,6 +24,13 @@ class Camera_cpu{
     Eigen::Isometry3f* frame_camera_wrt_world_;
     cv::cuda::GpuMat depth_map_gpu_;
     cv::cuda::GpuMat image_rgb_gpu_;
+    // camera data for dtam
+    Eigen::Matrix3f T_r;
+    Eigen::Vector3f T_t;
+    float cam_r_projected_on_cam_m;
+    float cam_r_depth_on_camera_m;
+    bool cam_r_in_front;
+    Eigen::Vector2f  uv1_fixed;
 
     Camera_cpu(std::string name, float lens, float aspect, float width, int resolution,
        float max_depth, Eigen::Isometry3f* frame_camera_wrt_world, Eigen::Isometry3f* frame_world_wrt_camera){
@@ -63,6 +70,7 @@ class Camera_cpu{
     Camera_gpu* getCamera_gpu();
 
     void printMembers();
+    void computeDataForDtam(int index_r);
 
     void pixelCoords2uv(Eigen::Vector2i& pixel_coords, Eigen::Vector2f& uv);
     void uv2pixelCoords( Eigen::Vector2f& uv, Eigen::Vector2i& pixel_coords);

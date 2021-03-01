@@ -18,9 +18,9 @@ void Environment::generateSinusoidalSurface(float picks_depth, int density){
       // int clr_y = ((float)y/(float)density)*255*(sin((y_)*(6*3.14))*sin((y_)*(6*3.14)));
       // int clr_z = depth*(255.0/picks_depth);
 
-      int clr_x = ((float)x/(float)density)*255*depth;
-      int clr_y = ((float)y/(float)density)*255*depth;
-      int clr_z = depth*(255.0/picks_depth);
+      unsigned char clr_x = ((float)x/(float)density)*255*depth;
+      unsigned char clr_y = ((float)y/(float)density)*255*depth;
+      unsigned char clr_z = depth*(255.0/picks_depth);
 
 
       Cp cp;

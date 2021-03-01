@@ -19,6 +19,7 @@ void Camera_cpu::gpuFree(){
   depth_map_gpu_.release();
 }
 
+
 Camera_gpu* Camera_cpu::getCamera_gpu(){
 
   image_rgb_gpu_.upload(image_rgb_->image_);

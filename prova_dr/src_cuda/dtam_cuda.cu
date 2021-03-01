@@ -68,9 +68,9 @@ void Dtam::CostVolumeMin(CameraVector_gpu camera_vector_gpu, cameraData* d_camer
   dim3 threadsPerBlock( camera_vector_gpu[0]->width_/32, 32, 100);
   dim3 numBlocks( (camera_vector_gpu[0]->width_/camera_vector_gpu[0]->aspect_) / 32, 100);
 
-  for (int i=0; i<camera_vector_gpu.size(); i++){
-    CostVolumeMin_kernel<<<numBlocks,threadsPerBlock>>>(camera_vector_gpu[i], d_cameraData_vector, n_cameras);
-  }
+  // for (int i=0; i<camera_vector_gpu.size(); i++){
+  //   CostVolumeMin_kernel<<<numBlocks,threadsPerBlock>>>(camera_vector_gpu[i], d_cameraData_vector, n_cameras);
+  // }
   // CostVolumeMin_kernel<<<1,1>>>(depth_map_gpu, d_cameraData_vector, n_cameras);
   //
   // depth_map_gpu.download(depth_map);
