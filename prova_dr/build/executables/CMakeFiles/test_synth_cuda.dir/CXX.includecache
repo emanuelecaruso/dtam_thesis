@@ -407,24 +407,30 @@ cuda_runtime.h
 -
 
 ../src_cuda/dtam_cuda.cuh
-camera.h
-../src_cuda/camera.h
+camera_cpu.cuh
+../src_cuda/camera_cpu.cuh
+camera_gpu.cuh
+../src_cuda/camera_gpu.cuh
 image.h
 ../src_cuda/image.h
 cuda_runtime.h
 -
 
 ../src_cuda/environment.cuh
-renderer.cuh
-../src_cuda/renderer.cuh
+defs.h
+../src_cuda/defs.h
 camera_cpu.cuh
 ../src_cuda/camera_cpu.cuh
+camera_gpu.cuh
+../src_cuda/camera_gpu.cuh
 
 ../src_cuda/renderer.cuh
 defs.h
 ../src_cuda/defs.h
 image.h
 ../src_cuda/image.h
+environment.cuh
+../src_cuda/environment.cuh
 camera_cpu.cuh
 ../src_cuda/camera_cpu.cuh
 cuda_runtime.h
@@ -439,10 +445,10 @@ camera_cpu.cuh
 /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/executables/camera_cpu.cuh
 image.h
 /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/executables/image.h
-renderer.cuh
-/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/executables/renderer.cuh
 environment.cuh
 /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/executables/environment.cuh
+renderer.cuh
+/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/executables/renderer.cuh
 utils.h
 /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/executables/utils.h
 dtam_cuda.cuh

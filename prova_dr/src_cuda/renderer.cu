@@ -96,10 +96,11 @@ void Renderer::renderImage_naive(cpVector& cp_vector, Camera_cpu* camera){
     }
 
 }
-
-bool Renderer::renderImage_parallel_gpu(Cp* cp_d, int cp_size, Camera_gpu* camera_gpu_d, Camera_cpu* camera_cpu){
+bool Renderer::renderImages_parallel_gpu(Environment* environment){
 
   cudaError_t err ;
+  Cp* cp_d = environment->cp_d_;
+  int cp_size = environment->cp_vector_.size();
 
   int numThreads = 32;
   int numBlocks = cp_size / numThreads;
@@ -107,19 +108,28 @@ bool Renderer::renderImage_parallel_gpu(Cp* cp_d, int cp_size, Camera_gpu* camer
   if (cp_size % numThreads != 0)
     return false;
 
-  renderPoint_gpu<<<numBlocks,numThreads>>>( cp_d, camera_gpu_d );
-  // renderPoint_gpu<<<1,1>>>( cp_d, camera_gpu_d );
-  err = cudaGetLastError();
-  if (err != cudaSuccess)
-      printf("Error executing rendering kernel: %s\n", cudaGetErrorString(err));
+  for (int i=0; i<environment->camera_vector_cpu_.size(); i++){
+    Camera_cpu* camera_cpu = environment->camera_vector_cpu_[i];
+    Camera_gpu* camera_gpu = environment->camera_vector_gpu_[i];
 
-  // auto a = camera_cpu->image_rgb_gpu_;
 
-  camera_cpu->image_rgb_gpu_.download(camera_cpu->image_rgb_->image_);
-  camera_cpu->depth_map_gpu_.download(camera_cpu->depth_map_->image_);
-  // camera_cpu->image_rgb_gpu_.download(image_rgb_->image_);
-  // cudaMemcpy(valid_h, valid_d, sizeof(bool), cudaMemcpyDeviceToHost);
-  // std::cout << *valid_h << std::endl;
+    renderPoint_gpu<<<numBlocks,numThreads>>>( cp_d, camera_gpu );
+    // renderPoint_gpu<<<1,1>>>( cp_d, camera_gpu_d );
+    err = cudaGetLastError();
+    if (err != cudaSuccess)
+        printf("Error executing rendering kernel: %s\n", cudaGetErrorString(err));
+
+    // auto a = camera_cpu->image_rgb_gpu_;
+
+    camera_cpu->image_rgb_gpu_.download(camera_cpu->image_rgb_->image_);
+    camera_cpu->depth_map_gpu_.download(camera_cpu->depth_map_->image_);
+    // camera_cpu->image_rgb_gpu_.download(image_rgb_->image_);
+    // cudaMemcpy(valid_h, valid_d, sizeof(bool), cudaMemcpyDeviceToHost);
+    // std::cout << *valid_h << std::endl;
+
+  }
+
+
 
   return true;
 

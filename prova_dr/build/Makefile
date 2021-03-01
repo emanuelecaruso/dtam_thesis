@@ -123,32 +123,6 @@ test_synth_cuda/fast:
 	$(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/build
 .PHONY : test_synth_cuda/fast
 
-#=============================================================================
-# Target rules for targets named main
-
-# Build rule for target.
-main: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 main
-.PHONY : main
-
-# fast build rule for target.
-main/fast:
-	$(MAKE) -f executables/CMakeFiles/main.dir/build.make executables/CMakeFiles/main.dir/build
-.PHONY : main/fast
-
-#=============================================================================
-# Target rules for targets named test_synth
-
-# Build rule for target.
-test_synth: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 test_synth
-.PHONY : test_synth
-
-# fast build rule for target.
-test_synth/fast:
-	$(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/build
-.PHONY : test_synth/fast
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -158,8 +132,6 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... test_synth_cuda"
-	@echo "... main"
-	@echo "... test_synth"
 .PHONY : help
 
 

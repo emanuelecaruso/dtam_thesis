@@ -69,15 +69,11 @@ CMAKE_BINARY_DIR = /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build
 
 # Convenience name for "all" pass in the directory.
 executables/all: executables/CMakeFiles/test_synth_cuda.dir/all
-executables/all: executables/CMakeFiles/main.dir/all
-executables/all: executables/CMakeFiles/test_synth.dir/all
 
 .PHONY : executables/all
 
 # Convenience name for "clean" pass in the directory.
 executables/clean: executables/CMakeFiles/test_synth_cuda.dir/clean
-executables/clean: executables/CMakeFiles/main.dir/clean
-executables/clean: executables/CMakeFiles/test_synth.dir/clean
 
 .PHONY : executables/clean
 
@@ -93,7 +89,7 @@ executables/preinstall:
 executables/CMakeFiles/test_synth_cuda.dir/all:
 	$(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/depend
 	$(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=19,20,21,22,23,24,25,26,27,28,29 "Built target test_synth_cuda"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11 "Built target test_synth_cuda"
 .PHONY : executables/CMakeFiles/test_synth_cuda.dir/all
 
 # Include target in all.
@@ -120,80 +116,6 @@ executables/CMakeFiles/test_synth_cuda.dir/clean:
 
 # clean rule for target.
 clean: executables/CMakeFiles/test_synth_cuda.dir/clean
-
-.PHONY : clean
-
-#=============================================================================
-# Target rules for target executables/CMakeFiles/main.dir
-
-# All Build rule for target.
-executables/CMakeFiles/main.dir/all:
-	$(MAKE) -f executables/CMakeFiles/main.dir/build.make executables/CMakeFiles/main.dir/depend
-	$(MAKE) -f executables/CMakeFiles/main.dir/build.make executables/CMakeFiles/main.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9 "Built target main"
-.PHONY : executables/CMakeFiles/main.dir/all
-
-# Include target in all.
-all: executables/CMakeFiles/main.dir/all
-
-.PHONY : all
-
-# Build rule for subdir invocation for target.
-executables/CMakeFiles/main.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles 9
-	$(MAKE) -f CMakeFiles/Makefile2 executables/CMakeFiles/main.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles 0
-.PHONY : executables/CMakeFiles/main.dir/rule
-
-# Convenience name for target.
-main: executables/CMakeFiles/main.dir/rule
-
-.PHONY : main
-
-# clean rule for target.
-executables/CMakeFiles/main.dir/clean:
-	$(MAKE) -f executables/CMakeFiles/main.dir/build.make executables/CMakeFiles/main.dir/clean
-.PHONY : executables/CMakeFiles/main.dir/clean
-
-# clean rule for target.
-clean: executables/CMakeFiles/main.dir/clean
-
-.PHONY : clean
-
-#=============================================================================
-# Target rules for target executables/CMakeFiles/test_synth.dir
-
-# All Build rule for target.
-executables/CMakeFiles/test_synth.dir/all:
-	$(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/depend
-	$(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=10,11,12,13,14,15,16,17,18 "Built target test_synth"
-.PHONY : executables/CMakeFiles/test_synth.dir/all
-
-# Include target in all.
-all: executables/CMakeFiles/test_synth.dir/all
-
-.PHONY : all
-
-# Build rule for subdir invocation for target.
-executables/CMakeFiles/test_synth.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles 9
-	$(MAKE) -f CMakeFiles/Makefile2 executables/CMakeFiles/test_synth.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles 0
-.PHONY : executables/CMakeFiles/test_synth.dir/rule
-
-# Convenience name for target.
-test_synth: executables/CMakeFiles/test_synth.dir/rule
-
-.PHONY : test_synth
-
-# clean rule for target.
-executables/CMakeFiles/test_synth.dir/clean:
-	$(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/clean
-.PHONY : executables/CMakeFiles/test_synth.dir/clean
-
-# clean rule for target.
-clean: executables/CMakeFiles/test_synth.dir/clean
 
 .PHONY : clean
 

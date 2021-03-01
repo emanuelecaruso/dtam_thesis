@@ -1,30 +1,91 @@
 #include "dtam_cuda.cuh"
-#include "cuda_handler.cuh"
+// #include "cuda_handler.cuh"
 #include <math.h>
 #include "utils.h"
 #include <stdlib.h>
 
 
-bool Dtam::get1stDepthWithUV(Camera* camera_r, Camera* camera_m, Eigen::Vector2f& uv_r, Eigen::Vector2f& uv_m, float& depth){
+// bool Dtam::get1stDepthWithUV(Camera* camera_r, Camera* camera_m, Eigen::Vector2f& uv_r, Eigen::Vector2f& uv_m, float& depth){
+//
+//   Eigen::Isometry3f T = (*(camera_m->frame_world_wrt_camera_))*(*(camera_r->frame_camera_wrt_world_));
+//   auto r=T.linear();
+//   auto t=T.translation();
+//   float f = camera_r->lens_;
+//   float w=camera_m->width_;
+//   float h=camera_m->width_/camera_m->aspect_;
+//   depth = (2*f*(f+t(2)))/(2*f*r(2,2)-2*r(2,0)*uv_r.x()+r(2,0)*w-r(2,1)*(h-2*uv_r.y()));
+//   uv_m.x() = t(0)+(w/2)-depth*r(0,2)+((depth*r(0,0)*(2*uv_r.x()-w))/(2*f))+((depth*r(0,1)*(h-2*uv_r.y()))/(2*f));
+//   uv_m.y() = (h/2)-t(1)+depth*r(1,2)-((depth*r(1,0)*(2*uv_r.x()-w))/(2*f))-((depth*r(1,1)*(h-2*uv_r.y()))/(2*f));
+//   return true;
+// }
 
-  Eigen::Isometry3f T = (*(camera_m->frame_world_wrt_camera_))*(*(camera_r->frame_camera_wrt_world_));
-  auto r=T.linear();
-  auto t=T.translation();
-  float f = camera_r->lens_;
-  float w=camera_m->width_;
-  float h=camera_m->width_/camera_m->aspect_;
-  depth = (2*f*(f+t(2)))/(2*f*r(2,2)-2*r(2,0)*uv_r.x()+r(2,0)*w-r(2,1)*(h-2*uv_r.y()));
-  uv_m.x() = t(0)+(w/2)-depth*r(0,2)+((depth*r(0,0)*(2*uv_r.x()-w))/(2*f))+((depth*r(0,1)*(h-2*uv_r.y()))/(2*f));
-  uv_m.y() = (h/2)-t(1)+depth*r(1,2)-((depth*r(1,0)*(2*uv_r.x()-w))/(2*f))-((depth*r(1,1)*(h-2*uv_r.y()))/(2*f));
-  return true;
+__global__ void CostVolumeMin_kernel(cv::cuda::PtrStepSz<uchar3> dOutput, cameraData* d_cameraData_vector, int n_cameras){
+  // int row = blockIdx.x * blockDim.x + threadIdx.x;
+  // int col = blockIdx.y * blockDim.y + threadIdx.y;
+  //
+  // // (*d_depth_map).at<float>(0,0) = 0.0;
+  // // d_depth_map[0] = 0.0;
+  // // printf("\n");
+  // // printf(d_depth_map[0]);
+  // // printf("\n");
+  // // d_depth_map[0] = static_cast<unsigned char>(0.0);
+  // // dOutput(1, 1)=0.0;
+  // dOutput(row, col).x = 0;
+  // dOutput(row, col).y = 0;
+  // dOutput(row, col).z = 255;
+  // // a.x=1;
+  // // printf("\n");
+  // // printf(a.val[0]);
+  // // printf("\n");
+  //
+  // // struct cameraData camera_data;
+  // // camera_data = d_cameraData_vector[0];  //index into array
+
 }
 
+void Dtam::CostVolumeMin(CameraVector_gpu camera_vector_gpu, cameraData* d_cameraData_vector, int n_cameras){
 
-void Dtam::getDepthMap(int num_interpolations, bool check){
-  double t_start;
-  double t_end;
 
-  int cameraData_size = camera_vector_.size()-1;
+  // // int* h_msg = (int*)malloc(sizeof(int));
+  // // *h_msg = -1;
+  // // // int msg = *h_msg;
+  // //
+  // cv::Mat_<cv::Vec3b> depth_map = camera_vector_gpu[0]->image_rgb_->image_;
+  // cv::cuda::GpuMat depth_map_gpu;
+  // depth_map_gpu.upload(depth_map);
+  //
+  //
+  // // auto size = sizeof(depth_map);
+  // // float* d_depth_map;
+  // // unsigned char* h_depth_map = depth_map.ptr();
+  //
+  // // cudaMalloc(&d_depth_map, size);
+  // // cudaMemcpy(d_depth_map, h_depth_map, size, cudaMemcpyHostToDevice);
+  // //
+  // // Kernel invocation
+  // const int N = 1;
+  // dim3 threadsPerBlock(2, 2);
+  // dim3 numBlocks(1, 1);
+  //
+  // // CostVolumeMin_kernel<<<numBlocks,threadsPerBlock>>>(depth_map_gpu, d_cameraData_vector, n_cameras);
+  // CostVolumeMin_kernel<<<1,1>>>(depth_map_gpu, d_cameraData_vector, n_cameras);
+  //
+  // depth_map_gpu.download(depth_map);
+  //
+  // depth_map_gpu.release();
+  // //
+  // // cudaMemcpy(h_depth_map, d_depth_map, grayBytes, cudaMemcpyDeviceToHost);
+  // // cudaFree(d_depth_map);
+  //
+  // //
+  // // std::cout << *h_msg << std::endl;
+
+}
+
+void Dtam::getDepthMap(int num_interpolations, CameraVector_cpu& camera_vector_cpu, CameraVector_gpu& camera_vector_gpu, bool check){
+
+
+  int cameraData_size = camera_vector_cpu.size()-1;
 
   cameraData cameraData_vector[cameraData_size];
   cameraData* d_cameraData_vector;
@@ -32,7 +93,7 @@ void Dtam::getDepthMap(int num_interpolations, bool check){
 
 
   // reference camera
-  Camera* camera_r = camera_vector_[0];
+  Camera_cpu* camera_r = camera_vector_cpu[0];
 
 
   Eigen::Vector3f camera_r_p = camera_r->frame_camera_wrt_world_->translation();
@@ -54,9 +115,9 @@ void Dtam::getDepthMap(int num_interpolations, bool check){
     // project camera_r on camera_m
     Eigen::Vector2f cam_r_projected_on_cam_m;
     float cam_r_depth_on_camera_m;
-    bool cam_r_in_front = camera_vector_[camera_iterator+1]->projectPoint(camera_r_p, cam_r_projected_on_cam_m, cam_r_depth_on_camera_m);
+    bool cam_r_in_front = camera_vector_cpu[camera_iterator+1]->projectPoint(camera_r_p, cam_r_projected_on_cam_m, cam_r_depth_on_camera_m);
 
-    Eigen::Isometry3f T = (*camera_r->frame_world_wrt_camera_)*(*(camera_vector_[camera_iterator+1]->frame_camera_wrt_world_));
+    Eigen::Isometry3f T = (*camera_r->frame_world_wrt_camera_)*(*(camera_vector_cpu[camera_iterator+1]->frame_camera_wrt_world_));
     Eigen::Matrix3f r=T.linear();
     Eigen::Vector3f t=T.translation();
     camera_data.r=r;
@@ -77,12 +138,10 @@ void Dtam::getDepthMap(int num_interpolations, bool check){
     // cudaMemcpy(d_cameraData_vector_device, &cameraData_vector_device[0], sz, cudaMemcpyHostToDevice);
   }
 
-  cudaDeviceSynchronize();
+  // cudaDeviceSynchronize();
   cudaMemcpy(d_cameraData_vector, &cameraData_vector, sizeof(struct cameraData)* cameraData_size, cudaMemcpyHostToDevice);
 
-
-
-  CostVolumeMin(camera_vector_,d_cameraData_vector, cameraData_size);
+  CostVolumeMin(camera_vector_gpu,d_cameraData_vector, cameraData_size);
 
   cudaFree(d_cameraData_vector);
 
@@ -109,8 +168,8 @@ void Dtam::getDepthMap(int num_interpolations, bool check){
   //
   //     bool invalid_pxl=false;
   //
-  //     for (int camera_iterator=1; camera_iterator<camera_vector_.size(); camera_iterator++){
-  //       Camera* camera_m = camera_vector_[camera_iterator];
+  //     for (int camera_iterator=1; camera_iterator<camera_vector_cpu.size(); camera_iterator++){
+  //       Camera* camera_m = camera_vector_cpu[camera_iterator];
   //
   //       auto cam_r_projected_on_cam_m = cameraData_vector_host[camera_iterator-1]->cam_r_projected_on_cam_m;
   //       auto cam_r_depth_on_camera_m = cameraData_vector_host[camera_iterator-1]->cam_r_depth_on_camera_m;
@@ -198,8 +257,8 @@ void Dtam::getDepthMap(int num_interpolations, bool check){
   //       int num_valid_projections = 0;
   //
   //
-  //       for (int camera_iterator=1; camera_iterator<camera_vector_.size(); camera_iterator++){
-  //         Camera* camera_m = camera_vector_[camera_iterator];
+  //       for (int camera_iterator=1; camera_iterator<camera_vector_cpu.size(); camera_iterator++){
+  //         Camera* camera_m = camera_vector_cpu[camera_iterator];
   //
   //
   //         auto uv1=cameraData_vector_host[camera_iterator-1]->uv1;
@@ -302,11 +361,11 @@ void Dtam::getDepthMap(int num_interpolations, bool check){
   //     //     }
   //     //   }
   //     // }
-  //     // float depth_value = depth_min/camera_vector_[0]->max_depth_;
+  //     // float depth_value = depth_min/camera_vector_cpu[0]->max_depth_;
   //     // if (depth_min==0)
-  //     //   camera_vector_[0]->depth_map_->setPixel(pixel_coords_r,1.0);
+  //     //   camera_vector_cpu[0]->depth_map_->setPixel(pixel_coords_r,1.0);
   //     // else
-  //     //   camera_vector_[0]->depth_map_->setPixel(pixel_coords_r,depth_value);
+  //     //   camera_vector_cpu[0]->depth_map_->setPixel(pixel_coords_r,depth_value);
   //
   //
   //     if (check)  {break;}
@@ -314,7 +373,5 @@ void Dtam::getDepthMap(int num_interpolations, bool check){
   //   if (check)  {break;}
   // }
 
-
-  std::cerr << "depth conversion took: " << (t_end-t_start) << " ms" << std::endl;
 
 }

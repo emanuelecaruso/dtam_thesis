@@ -7,7 +7,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_CHECK_CUDA
   "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/camera_cpu.cu" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_cpu.cu.o"
   "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/camera_gpu.cu" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_gpu.cu.o"
-  "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/cuda_handler.cu" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/cuda_handler.cu.o"
+  "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/dtam_cuda.cu" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o"
   "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/environment.cu" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/environment.cu.o"
   "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/renderer.cu" "/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/renderer.cu.o"
   )

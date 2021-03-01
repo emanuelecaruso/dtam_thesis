@@ -60,4 +60,4 @@ class Camera_gpu{
 
 };
 
-typedef std::vector<Camera_gpu*> Camera_gpuVector;
+typedef std::vector<Camera_gpu*> CameraVector_gpu;
