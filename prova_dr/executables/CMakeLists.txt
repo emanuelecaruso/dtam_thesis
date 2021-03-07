@@ -34,7 +34,6 @@ if (USE_CUDA)
   ../src_cuda/environment.cu
   ../src_cuda/dtam_cuda.cu
   ../src/utils.cpp
-  #../src_cuda/cuda_handler.cu
   ../src_cuda/camera_gpu.cu
   )
   target_link_libraries(test_synth_cuda opencv_highgui)

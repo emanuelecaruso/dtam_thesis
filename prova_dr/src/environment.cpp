@@ -1,7 +1,7 @@
 #include "environment.h"
 #include "utils.h"
 
-void EnvGenerator::generateSinusoidalSurface(float picks_depth, int density, cpVector& cp_vector){
+void Environment::generateSinusoidalSurface(float picks_depth, int density){
 
   // generate a "super dense" cloud of points expressed in camera_r frame
   float left_bound=-picks_depth/3-(0.1*picks_depth);
@@ -28,12 +28,12 @@ void EnvGenerator::generateSinusoidalSurface(float picks_depth, int density, cpV
       cp.color[0]=clr_x;
       cp.color[1]=clr_y;
       cp.color[2]=clr_z;
-      cp_vector.push_back(cp);
+      cp_vector_.push_back(cp);
     }
 
 }
 
-Camera* EnvGenerator::generateCamera(std::string name, float t1, float t2, float t3, float alpha1, float alpha2, float alpha3){
+void Environment::generateCamera(std::string name, float t1, float t2, float t3, float alpha1, float alpha2, float alpha3){
   Eigen::Vector3f t_r(t1,t2,t3);
   Eigen::Isometry3f* frame_world_wrt_camera_r = new Eigen::Isometry3f;
   frame_world_wrt_camera_r->linear().setIdentity();  //TODO implement orientation
@@ -41,6 +41,6 @@ Camera* EnvGenerator::generateCamera(std::string name, float t1, float t2, float
   Eigen::Isometry3f* frame_camera_wrt_world_r = new Eigen::Isometry3f;
   *frame_camera_wrt_world_r = frame_world_wrt_camera_r->inverse();
   Camera* camera = new Camera(name,lens_,aspect_,film_,resolution_,max_depth_,frame_camera_wrt_world_r,frame_world_wrt_camera_r);
-  return camera;
+  camera_vector_.push_back(camera);
 
 }

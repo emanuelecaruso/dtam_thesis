@@ -52,10 +52,10 @@ bool Renderer::renderImage_naive(cpVector& cp_vector, Camera* camera){
   return true;
 }
 
-bool Renderer::renderImage_parallel_cpu(cpVector& cp_vector, Camera* camera){
+bool Renderer::renderImage_parallel_cpu(Environment* environment){
 
-  camera->clearImgs();
-  const size_t nloop = cp_vector.size();
+  // camera->clearImgs();
+  const size_t nloop = environment->cp_vector_.size();
   const size_t nthreads = std::thread::hardware_concurrency();
   {
     // Pre loop
@@ -71,7 +71,11 @@ bool Renderer::renderImage_parallel_cpu(cpVector& cp_vector, Camera* camera){
           {
             // inner loop
             {
-              Renderer::renderPoint(cp_vector[i], camera);
+              for (int j=0; j<environment->camera_vector_.size(); j++){
+                Renderer::renderPoint(environment->cp_vector_[i],
+                   environment->camera_vector_[j]);
+              }
+
             }
           }
         },t*nloop/nthreads,(t+1)==nthreads?nloop:(t+1)*nloop/nthreads,t));

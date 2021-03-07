@@ -1004,7 +1004,6 @@ executables/CMakeFiles/test_synth.dir/__/src/environment.cpp.o
  /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/environment.cpp
  /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/environment.h
  /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/image.h
- /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/renderer.h
  /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/utils.h
  /usr/local/include/eigen3/Eigen/Cholesky
  /usr/local/include/eigen3/Eigen/Core
@@ -1665,6 +1664,7 @@ executables/CMakeFiles/test_synth.dir/__/src/image.cpp.o
 executables/CMakeFiles/test_synth.dir/__/src/renderer.cpp.o
  /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/camera.h
  /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/defs.h
+ /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/environment.h
  /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/image.h
  /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/renderer.cpp
  /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src/renderer.h

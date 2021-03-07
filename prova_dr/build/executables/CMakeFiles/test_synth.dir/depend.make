@@ -1003,7 +1003,6 @@ executables/CMakeFiles/test_synth.dir/__/src/environment.cpp.o: ../src/defs.h
 executables/CMakeFiles/test_synth.dir/__/src/environment.cpp.o: ../src/environment.cpp
 executables/CMakeFiles/test_synth.dir/__/src/environment.cpp.o: ../src/environment.h
 executables/CMakeFiles/test_synth.dir/__/src/environment.cpp.o: ../src/image.h
-executables/CMakeFiles/test_synth.dir/__/src/environment.cpp.o: ../src/renderer.h
 executables/CMakeFiles/test_synth.dir/__/src/environment.cpp.o: ../src/utils.h
 executables/CMakeFiles/test_synth.dir/__/src/environment.cpp.o: /usr/local/include/eigen3/Eigen/Cholesky
 executables/CMakeFiles/test_synth.dir/__/src/environment.cpp.o: /usr/local/include/eigen3/Eigen/Core
@@ -1664,6 +1663,7 @@ executables/CMakeFiles/test_synth.dir/__/src/image.cpp.o: /usr/local/include/ope
 
 executables/CMakeFiles/test_synth.dir/__/src/renderer.cpp.o: ../src/camera.h
 executables/CMakeFiles/test_synth.dir/__/src/renderer.cpp.o: ../src/defs.h
+executables/CMakeFiles/test_synth.dir/__/src/renderer.cpp.o: ../src/environment.h
 executables/CMakeFiles/test_synth.dir/__/src/renderer.cpp.o: ../src/image.h
 executables/CMakeFiles/test_synth.dir/__/src/renderer.cpp.o: ../src/renderer.cpp
 executables/CMakeFiles/test_synth.dir/__/src/renderer.cpp.o: ../src/renderer.h

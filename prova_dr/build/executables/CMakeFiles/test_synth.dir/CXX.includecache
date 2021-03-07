@@ -383,8 +383,6 @@ image.h
 ../src/image.h
 
 ../src/environment.h
-renderer.h
-../src/renderer.h
 camera.h
 ../src/camera.h
 
@@ -395,6 +393,8 @@ defs.h
 ../src/renderer.h
 defs.h
 ../src/defs.h
+environment.h
+../src/environment.h
 image.h
 ../src/image.h
 camera.h
@@ -419,10 +419,10 @@ camera.h
 /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/executables/camera.h
 image.h
 /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/executables/image.h
-renderer.h
-/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/executables/renderer.h
 environment.h
 /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/executables/environment.h
+renderer.h
+/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/executables/renderer.h
 utils.h
 /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/executables/utils.h
 dtam.h
