@@ -22,10 +22,12 @@ int main (int argc, char * argv[]) {
   double t_start=getTime();  // time start for computing computation time
   double t_end=getTime();    // time end for computing computation time
 
+  int resolution = 600;
+
   cpVector cp_vector; // vector of colored points populating the world
   CameraVector camera_vector; // vector containing pointers to camera objects
 
-  EnvGenerator* env_generator = new EnvGenerator(); // environment generator object (pointer)
+  EnvGenerator* env_generator = new EnvGenerator(600); // environment generator object (pointer)
   Renderer* renderer = new Renderer(cp_vector); // renderer object (pointer)
   Dtam* dtam = new Dtam(1); // dense mapper and tracker
 
@@ -39,18 +41,18 @@ int main (int argc, char * argv[]) {
 
   Camera* camera_r = env_generator->generateCamera("camera_r", 0,0,-object_depth, 0,0,0);
   Camera* camera_m1 = env_generator->generateCamera("camera_m1", 0.1,0.1,-object_depth-0.1, 0,0,0);
-  Camera* camera_m2 = env_generator->generateCamera("camera_m2", -0.1,-0.1,-object_depth-0.1, 0,0,0);
+  // Camera* camera_m2 = env_generator->generateCamera("camera_m2", -0.1,-0.1,-object_depth-0.1, 0,0,0);
 
   camera_vector.push_back(camera_r);
   camera_vector.push_back(camera_m1);
-  camera_vector.push_back(camera_m2);
+  // camera_vector.push_back(camera_m2);
 
   // --------------------------------------
   // generate environment
   cerr << "generating environment.." << endl;
   t_start=getTime();
 
-  int density=7000;
+  int density=6000;
   env_generator->generateSinusoidalSurface(object_depth, density, cp_vector);
 
   t_end=getTime();

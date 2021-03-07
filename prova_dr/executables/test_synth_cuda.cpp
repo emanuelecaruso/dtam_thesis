@@ -25,7 +25,9 @@ int main (int argc, char * argv[]) {
   double t_start=getTime();  // time start for computing computation time
   double t_end=getTime();    // time end for computing computation time
 
-  Environment* environment = new Environment(); // environment generator object (pointer)
+  int resolution = 600;
+
+  Environment* environment = new Environment(resolution); // environment generator object (pointer)
   Renderer* renderer = new Renderer(); // renderer object (pointer)
   Dtam* dtam = new Dtam(); // dense mapper and tracker
 
@@ -39,7 +41,7 @@ int main (int argc, char * argv[]) {
 
   environment->generateCamera("camera_r", 0,0,-object_depth, 0,0,0);
   environment->generateCamera("camera_m1", 0.1,0.1,-object_depth-0.1, 0,0,0);
-  environment->generateCamera("camera_m2", -0.1,-0.1,-object_depth-0.1, 0,0,0);
+  // environment->generateCamera("camera_m2", -0.1,-0.1,-object_depth-0.1, 0,0,0);
 
   // --------------------------------------
   // generate environment
@@ -74,25 +76,36 @@ int main (int argc, char * argv[]) {
   // Image<cv::Vec3b>* rgb_image_m_gt = camera_m1->image_rgb_->clone("rgb image m gt");
 
   // clear depth maps
-  for (Camera_cpu* camera : environment->camera_vector_cpu_)
+  for (Camera_cpu* camera : environment->camera_vector_cpu_){
     camera->depth_map_->image_=1.0;
+    camera->depth_map_gpu_.setTo(cv::Scalar::all(1.0));
 
+  }
 
 
   //############################################################################
   // compute depth map
   //############################################################################
 
+  // --------------------------------------
+  // load cameras for dtam
+
+  dtam->loadCameras(environment->camera_vector_cpu_, environment->camera_vector_gpu_);
+  dtam->setReferenceCamera(0);
+
+  // --------------------------------------
   cout << "computing discrete cost volume..." << endl;
   t_start=getTime();
 
-  dtam->getDepthMap(100, environment->camera_vector_cpu_, environment->camera_vector_gpu_);
+
+  dtam->getDepthMap(64);
   // dtam->getDepthMap(camera_vector, 100, true);
   // dtam->getDepthMap(camera_vector, 0.25);
   // dtam->getDepthMap(camera_vector, 0.25, true);
 
   t_end=getTime();
   cout << "discrete cost volume computation took: " << (t_end-t_start) << " ms" << endl;
+  // --------------------------------------
 
 
   for (Camera_cpu* camera : environment->camera_vector_cpu_){

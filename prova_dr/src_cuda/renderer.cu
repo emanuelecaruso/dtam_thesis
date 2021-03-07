@@ -77,7 +77,7 @@ __global__ void renderPoint_gpu(Cp* cp, Camera_gpu* camera_gpu_d ){
   if (evaluated_pixel<depth)
     valid = false;
 
-  if (depth>1 || depth>255 || cp[i].color[0]>255 || cp[i].color[1]>255 || cp[i].color[2]>255)
+  if (depth<0 || depth>1 || cp[i].color[0]>255 || cp[i].color[1]>255 || cp[i].color[2]>255)
     valid = false;
 
   if (valid){
@@ -123,6 +123,7 @@ bool Renderer::renderImages_parallel_gpu(Environment* environment){
 
     camera_cpu->image_rgb_gpu_.download(camera_cpu->image_rgb_->image_);
     camera_cpu->depth_map_gpu_.download(camera_cpu->depth_map_->image_);
+
     // camera_cpu->image_rgb_gpu_.download(image_rgb_->image_);
     // cudaMemcpy(valid_h, valid_d, sizeof(bool), cudaMemcpyDeviceToHost);
     // std::cout << *valid_h << std::endl;

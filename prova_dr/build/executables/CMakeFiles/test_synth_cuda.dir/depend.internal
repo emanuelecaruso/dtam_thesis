@@ -672,6 +672,7 @@ executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o
  /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/camera_gpu.cuh
  /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/dtam_cuda.cu
  /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/dtam_cuda.cuh
+ /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/environment.cuh
  /usr/local/include/eigen3/Eigen/Cholesky
  /usr/local/include/eigen3/Eigen/Core
  /usr/local/include/eigen3/Eigen/Geometry

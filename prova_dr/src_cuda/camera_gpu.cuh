@@ -23,7 +23,7 @@ class Camera_gpu{
     // camera data for dtam
     Eigen::Matrix3f T_r;
     Eigen::Vector3f T_t;
-    float cam_r_projected_on_cam_m;
+    Eigen::Vector2f cam_r_projected_on_cam_m;
     float cam_r_depth_on_camera_m;
     bool cam_r_in_front;
     Eigen::Vector2f  uv1_fixed;

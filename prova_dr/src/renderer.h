@@ -5,14 +5,6 @@
 
 using namespace pr;
 
-struct Cp // Colored point (in 3D)
-{
-  Eigen::Vector3f point;
-  int color[3];
-};
-
-typedef std::vector<Cp> cpVector;
-
 class Renderer{
   public:
     cpVector cp_vector_;

@@ -3,23 +3,29 @@
 #include "camera_gpu.cuh"
 #include "image.h"
 #include <cuda_runtime.h>
+#include "environment.cuh"
 
-struct cameraData{
-  Eigen::Vector2f uv1, uv2, uv1_fixed, uv2_fixed;
-  float depth1_m, depth2_m, depth1_m_fixed, depth2_m_fixed;
-  Eigen::Matrix3f r;
-  Eigen::Vector3f t;
-  Eigen::Vector2f cam_r_projected_on_cam_m;
-  float cam_r_depth_on_camera_m;
-  bool cam_r_in_front;
-};
 
-__global__ void CostVolumeMin_kernel(cv::cuda::PtrStepSz<uchar3> dOutput, cameraData* d_cameraData_vector_device, int n_cameras);
+
+__global__ void ComputeCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camera_m, int num_interpolations,
+        int index_r, cv::cuda::PtrStepSz<int> cost_matrix,cv::cuda::PtrStepSz<uchar> n_valid_proj_matrix);
+
+__global__ void ComputeDepthMap(Camera_gpu* camera_r, const int num_interpolations,
+        cv::cuda::PtrStepSz<int> cost_matrix,cv::cuda::PtrStepSz<uchar> n_valid_proj_matrix);
 
 class Dtam{
   public:
+    CameraVector_cpu camera_vector_cpu_;
+    CameraVector_gpu camera_vector_gpu_;
+    int index_r_;
+    cv::cuda::GpuMat cost_matrix_;
+    cv::cuda::GpuMat n_valid_proj_matrix_;
 
-    void CostVolumeMin(CameraVector_gpu camera_vector_gpu, cameraData* d_cameraData_vector, int n_cameras);
+    void loadCameras(CameraVector_cpu camera_vector_cpu, CameraVector_gpu camera_vector_gpu);
+    void addCamera(Camera_cpu* camera_cpu, Camera_gpu* camera_gpu);
+    bool setReferenceCamera(int index_r);
+
+    // void CostVolumeMin(int num_interpolations);
     // bool get1stDepthWithUV(Camera* camera_r, Camera* camera_m, Eigen::Vector2f& uv_r, Eigen::Vector2f& uv_m, float& depth);
-    void getDepthMap(int num_interpolations, CameraVector_cpu& camera_vector_cpu, CameraVector_gpu& camera_vector_gpu, bool check=false);
+    void getDepthMap(int num_interpolations, bool check=false);
 };

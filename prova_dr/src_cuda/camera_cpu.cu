@@ -42,6 +42,8 @@ Camera_gpu* Camera_cpu::getCamera_gpu(){
   if (err != cudaSuccess)
       printf("cudaMemcpy %s%s",name_," Error: %s\n", cudaGetErrorString(err));
 
+  delete camera_gpu_h;
+  
   return camera_gpu_d;
 }
 

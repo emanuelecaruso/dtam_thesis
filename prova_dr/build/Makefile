@@ -111,6 +111,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named test_synth
+
+# Build rule for target.
+test_synth: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test_synth
+.PHONY : test_synth
+
+# fast build rule for target.
+test_synth/fast:
+	$(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/build
+.PHONY : test_synth/fast
+
+#=============================================================================
 # Target rules for targets named test_synth_cuda
 
 # Build rule for target.
@@ -131,6 +144,7 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
+	@echo "... test_synth"
 	@echo "... test_synth_cuda"
 .PHONY : help
 

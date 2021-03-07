@@ -8,7 +8,7 @@
 using namespace pr;
 
 
-__global__ void renderPoint_gpu( Cp* cp, Camera_gpu* camera );
+__global__ void renderPoint_gpu( Cp* cp, Camera_gpu* camera_gpu_d );
 // __global__ void renderPoint_gpu(Cp& cp, Camera_cpu* camera );
 
 class Renderer{
