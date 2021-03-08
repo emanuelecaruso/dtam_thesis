@@ -35,7 +35,7 @@ bool Dtam::setReferenceCamera(int index_r){
       float cam_r_depth_on_camera_m;
       bool cam_r_in_front = camera_m->projectPoint(camera_r_p, cam_r_projected_on_cam_m, cam_r_depth_on_camera_m);
 
-      Eigen::Isometry3f T = (*(camera_r->frame_world_wrt_camera_))*(*(camera_m->frame_camera_wrt_world_));
+      Eigen::Isometry3f T = (*(camera_m->frame_world_wrt_camera_))*(*(camera_r->frame_camera_wrt_world_));
       Eigen::Matrix3f r=T.linear();
       Eigen::Vector3f t=T.translation();
 
@@ -135,19 +135,10 @@ __global__ void ComputeCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camer
       stop=true;
     // if query point is in front of camera m whereas camera r is on the back
     else if (query_in_front && !cam_r_in_front){
-      // std::cout << "query in front" << std::endl;
-      // uv2=query_p_projected_on_cam_m;
-      // depth2=query_depth_on_camera_m;
-      // Dtam::get1stDepthWithUV(camera_r, camera_m, uv_r, uv1, depth1);
-      // depth1=camera_r->lens_;
-      // bool flag = camera_m->resizeLine(uv1 , uv2, depth1, depth2);
-      // if (!flag)
-      //   return false;
       uv1_fixed=cam_r_projected_on_cam_m;
       uv2_fixed=query_p_projected_on_cam_m;
       depth1_m_fixed=cam_r_depth_on_camera_m;
       depth2_m_fixed=query_depth_on_camera_m;
-
     }
     // if camera r is in front of camera m whereas query point is on the back
     else if (!query_in_front && cam_r_in_front){
@@ -157,19 +148,11 @@ __global__ void ComputeCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camer
     // if both camera r and query point are in front of camera m
     else {
 
-      // std::cout << "both in front" << std::endl;
-      // uv1=cam_r_projected_on_cam_m;
-      // uv2=query_p_projected_on_cam_m;
       uv1_fixed=cam_r_projected_on_cam_m;
       uv2_fixed=query_p_projected_on_cam_m;
-      // depth1_m=cam_r_depth_on_camera_m;
-      // depth2_m=query_depth_on_camera_m;
       depth1_m_fixed=cam_r_depth_on_camera_m;
       depth2_m_fixed=query_depth_on_camera_m;
-      // invalid_pxl = camera_m->resizeLine(uv1 , uv2, depth1_m, depth2_m, resized1, resized2);
 
-      // if (!invalid_pxl)
-      //   continue;
     }
 
   }

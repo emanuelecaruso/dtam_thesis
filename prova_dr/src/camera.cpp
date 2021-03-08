@@ -9,8 +9,8 @@ using namespace pr;
 
 
 void Camera::clearImgs(){
-  depth_map_->image_=1.0;
-  image_rgb_->image_=cv::Vec3b(255,255,255);
+  depth_map_->setAllPixels(1.0);
+  image_rgb_->setAllPixels(cv::Vec3b(255,255,255));
 }
 
 
@@ -121,78 +121,6 @@ bool Camera::projectPoint(Eigen::Vector3f& p, Eigen::Vector2f& uv, float& p_cam_
 
 }
 
-// bool Camera::projectPixel(Cp& cp){
-//
-//   Eigen::Vector2f uv;
-//   float depth_cam;
-//   bool point_in_front_of_camera = Camera::projectPoint(cp.point, uv, depth_cam );
-//   if (!point_in_front_of_camera)
-//     return false;
-//
-//   if(uv.x()<0 || uv.x()>width_)
-//     return false;
-//   if(uv.y()<0 || uv.y()>width_/aspect_)
-//     return false;
-//
-//   Eigen::Vector2i pixel_coords;
-//   Camera::uv2pixelCoords( uv, pixel_coords);
-//
-//   float depth = depth_cam/max_depth_;
-//
-//   float evaluated_pixel;
-//   depth_map_->evalPixel(pixel_coords,evaluated_pixel);
-//
-//   if (evaluated_pixel<depth)
-//     return false;
-//
-//   if (depth>1 || depth>255 || cp.color[0]>255 || cp.color[1]>255 || cp.color[2]>255)
-//     return false;
-//
-//
-//   image_rgb_->setPixel(pixel_coords, cp.color);
-//   depth_map_->setPixel(pixel_coords,depth);
-//
-//   return true;
-// }
-
-// void Camera::projectPixels(cpVector& cp_vector){
-//   Camera::clearImgs();
-//   for (Cp cp : cp_vector)
-//   {
-//     Camera::projectPixel(cp);
-//   }
-// }
-
-
-// void Camera::projectPixels_parallell(cpVector& cp_vector){
-//
-//   Camera::clearImgs();
-//   const size_t nloop = cp_vector.size();
-//   const size_t nthreads = std::thread::hardware_concurrency();
-//   {
-//     // Pre loop
-//     std::vector<std::thread> threads(nthreads);
-//     std::mutex critical;
-//     for(int t = 0;t<nthreads;t++)
-//     {
-//       threads[t] = std::thread(std::bind(
-//         [&](const int bi, const int ei, const int t)
-//         {
-//           // loop over all items
-//           for(int i = bi;i<ei;i++)
-//           {
-//             // inner loop
-//             {
-//               Camera::projectPixel(cp_vector[i]);
-//             }
-//           }
-//         },t*nloop/nthreads,(t+1)==nthreads?nloop:(t+1)*nloop/nthreads,t));
-//     }
-//     std::for_each(threads.begin(),threads.end(),[](std::thread& x){x.join();});
-//     // Post loop
-//   }
-//
-// }
 
 bool Camera::resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2, float& depth1, float& depth2, bool& resized1, bool& resized2){
 

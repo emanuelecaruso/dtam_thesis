@@ -24,9 +24,9 @@ int main (int argc, char * argv[]) {
 
   int resolution = 600;
 
-  Environment* environment = new Environment(600); // environment generator object (pointer)
+  Environment* environment = new Environment(resolution); // environment generator object (pointer)
   Renderer* renderer = new Renderer(); // renderer object (pointer)
-  Dtam* dtam = new Dtam(1); // dense mapper and tracker
+  Dtam* dtam = new Dtam(); // dense mapper and tracker
 
   //############################################################################
   // generate 2 cameras (in this case same orientation, shift on x axis)
@@ -37,7 +37,7 @@ int main (int argc, char * argv[]) {
   float object_depth=2;
 
   environment->generateCamera("camera_r", 0,0,-object_depth, 0,0,0);
-  environment->generateCamera("camera_m1", 0.1,0.1,-object_depth-0.5, 0,0,0);
+  environment->generateCamera("camera_m1", 0.1,0.1,-object_depth-0.1, 0,0,0);
   // environment->generateCamera("camera_m2", -0.1,-0.1,-object_depth-0.1, 0,0,0);
 
 
@@ -82,13 +82,19 @@ int main (int argc, char * argv[]) {
   // compute depth map
   //############################################################################
 
+  // --------------------------------------
+  // load cameras for dtam
+
+  dtam->loadCameras(environment->camera_vector_);
+  dtam->setReferenceCamera(0);
+
+  // --------------------------------------
   cerr << "computing discrete cost volume..." << endl;
   t_start=getTime();
 
-  // dtam->getDepthMap(camera_vector,100);
-  // // dtam->getDepthMap(camera_vector,100, true);
-  // // dtam->getDepthMap(camera_vector, 0.25);
-  // // dtam->getDepthMap(camera_vector, 0.25, true);
+  dtam->getDepthMap(64);
+  // dtam->getDepthMap(64, true);
+
   //
   t_end=getTime();
   cerr << "discrete cost volume computation took: " << (t_end-t_start) << " ms" << endl;

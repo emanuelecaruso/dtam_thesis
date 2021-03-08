@@ -20,8 +20,12 @@ class Camera{
     Image<cv::Vec3b>* image_rgb_;
     Eigen::Isometry3f* frame_world_wrt_camera_;
     Eigen::Isometry3f* frame_camera_wrt_world_;
-    cv::cuda::GpuMat depth_map_gpu_;
-    cv::cuda::GpuMat image_rgb_gpu_;
+    // camera data for dtam
+    Eigen::Matrix3f T_r;
+    Eigen::Vector3f T_t;
+    Eigen::Vector2f cam_r_projected_on_cam_m;
+    float cam_r_depth_on_camera_m;
+    bool cam_r_in_front;
 
     Camera(std::string name, float lens, float aspect, float width, int resolution,
        float max_depth, Eigen::Isometry3f* frame_camera_wrt_world, Eigen::Isometry3f* frame_world_wrt_camera){
@@ -37,12 +41,10 @@ class Camera{
        image_rgb_ = new Image< cv::Vec3b >("rgb image "+name_);
 
        // initialize images with white color
-       cv::Mat_< float > depth_map((int)(resolution_/aspect_),resolution_);
-       depth_map=1.0;
-       depth_map_->image_=depth_map;
-       cv::Mat_< cv::Vec3b > rgb_image((int)(resolution_/aspect_),resolution_);
-       rgb_image=cv::Vec3b(255,255,255);
-       image_rgb_->image_=rgb_image;
+       depth_map_->initImage(resolution_/aspect_,resolution_);
+       depth_map_->setAllPixels(1.0);
+       image_rgb_->initImage(resolution_/aspect_,resolution_);
+       image_rgb_->setAllPixels(cv::Vec3b(255,255,255));
 
        // compute camera matrix and its inverse
        K_ <<
@@ -61,9 +63,6 @@ class Camera{
 
     void pointAtDepth(Eigen::Vector2f& uv, float depth, Eigen::Vector3f& p);
     bool projectPoint(Eigen::Vector3f& p, Eigen::Vector2f& uv, float& p_cam_z );
-    // bool projectPixel(Cp& p);
-    // void projectPixels(cpVector& cp_vector);
-    // void projectPixels_parallell(cpVector& cp_vector);
 
     bool resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2, float& depth1, float& depth2, bool& resized1, bool& resized2);
 

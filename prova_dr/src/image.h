@@ -12,6 +12,14 @@ class Image{
       name_ = name;
     };
 
+    inline void initImage(int rows, int cols){
+      image_ = cv::Mat_< T >(rows ,cols);
+    }
+
+    inline void setAllPixels( T color){
+      image_ = color;
+    }
+
     inline void loadJpg(std::string path){
       image_ = cv::imread(path);
       if(image_.empty())
