@@ -71,19 +71,7 @@ bool Dtam::setReferenceCamera(int index_r){
   return true;
 
 }
-// bool Dtam::get1stDepthWithUV(Camera* camera_r, Camera* camera_m, Eigen::Vector2f& uv_r, Eigen::Vector2f& uv_m, float& depth){
-//
-//   Eigen::Isometry3f T = (*(camera_m->frame_world_wrt_camera_))*(*(camera_r->frame_camera_wrt_world_));
-//   auto r=T.linear();
-//   auto t=T.translation();
-//   float f = camera_r->lens_;
-//   float w=camera_m->width_;
-//   float h=camera_m->width_/camera_m->aspect_;
-//   depth = (2*f*(f+t(2)))/(2*f*r(2,2)-2*r(2,0)*uv_r.x()+r(2,0)*w-r(2,1)*(h-2*uv_r.y()));
-//   uv_m.x() = t(0)+(w/2)-depth*r(0,2)+((depth*r(0,0)*(2*uv_r.x()-w))/(2*f))+((depth*r(0,1)*(h-2*uv_r.y()))/(2*f));
-//   uv_m.y() = (h/2)-t(1)+depth*r(1,2)-((depth*r(1,0)*(2*uv_r.x()-w))/(2*f))-((depth*r(1,1)*(h-2*uv_r.y()))/(2*f));
-//   return true;
-// }
+
 
 __global__ void ComputeCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camera_m, int num_interpolations,
             cv::cuda::PtrStepSz<int> cost_matrix,cv::cuda::PtrStepSz<uchar> n_valid_proj_matrix){
@@ -130,30 +118,15 @@ __global__ void ComputeCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camer
     bool query_in_front = camera_m->projectPoint(query_p, query_p_projected_on_cam_m, query_depth_on_camera_m);
 
 
-    // if both camera r and query point are on back of camera m return false
-    if (!query_in_front && !cam_r_in_front)
-      stop=true;
-    // if query point is in front of camera m whereas camera r is on the back
-    else if (query_in_front && !cam_r_in_front){
-      uv1_fixed=cam_r_projected_on_cam_m;
-      uv2_fixed=query_p_projected_on_cam_m;
-      depth1_m_fixed=cam_r_depth_on_camera_m;
-      depth2_m_fixed=query_depth_on_camera_m;
-    }
+    // if both camera r and query point are on back of camera m return false or
     // if camera r is in front of camera m whereas query point is on the back
-    else if (!query_in_front && cam_r_in_front){
-      // TODO
+    if ((!query_in_front && !cam_r_in_front) || (!query_in_front && cam_r_in_front))
       stop=true;
-    }
-    // if both camera r and query point are in front of camera m
-    else {
 
-      uv1_fixed=cam_r_projected_on_cam_m;
-      uv2_fixed=query_p_projected_on_cam_m;
-      depth1_m_fixed=cam_r_depth_on_camera_m;
-      depth2_m_fixed=query_depth_on_camera_m;
-
-    }
+    uv1_fixed=cam_r_projected_on_cam_m;
+    uv2_fixed=query_p_projected_on_cam_m;
+    depth1_m_fixed=cam_r_depth_on_camera_m;
+    depth2_m_fixed=query_depth_on_camera_m;
 
   }
 

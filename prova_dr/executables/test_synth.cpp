@@ -16,17 +16,22 @@ using namespace pr;
 int main (int argc, char * argv[]) {
 
   //############################################################################
+  // choose parameters
+  //############################################################################
+
+  int resolution = 600;
+  int num_interpolations = 64;
+
+  //############################################################################
   // initialization
   //############################################################################
 
   double t_start=getTime();  // time start for computing computation time
   double t_end=getTime();    // time end for computing computation time
 
-  int resolution = 600;
-
   Environment* environment = new Environment(resolution); // environment generator object (pointer)
   Renderer* renderer = new Renderer(); // renderer object (pointer)
-  Dtam* dtam = new Dtam(); // dense mapper and tracker
+  Dtam* dtam = new Dtam(environment, num_interpolations); // dense mapper and tracker
 
   //############################################################################
   // generate 2 cameras (in this case same orientation, shift on x axis)
@@ -35,11 +40,9 @@ int main (int argc, char * argv[]) {
   // --------------------------------------
   // generate cameras
   float object_depth=2;
-
   environment->generateCamera("camera_r", 0,0,-object_depth, 0,0,0);
   environment->generateCamera("camera_m1", 0.1,0.1,-object_depth-0.1, 0,0,0);
   // environment->generateCamera("camera_m2", -0.1,-0.1,-object_depth-0.1, 0,0,0);
-
 
   // --------------------------------------
   // generate environment
@@ -52,7 +55,6 @@ int main (int argc, char * argv[]) {
   t_end=getTime();
   cerr << "environment generation took: " << (t_end-t_start) << " ms" << endl;
   // --------------------------------------
-
 
   //############################################################################
   // generate depth map groundtruth and rgb images of cameras
@@ -71,34 +73,40 @@ int main (int argc, char * argv[]) {
 
   Camera* camera_r = environment->camera_vector_[0];
   Image<float>* depth_map_gt = camera_r->depth_map_->clone("depth map gt");
-  // Image<cv::Vec3b>* rgb_image_m_gt = camera_m1->image_rgb_->clone("rgb image m gt");
-
   // clear depth maps
   for (Camera* camera : environment->camera_vector_)
-    camera->depth_map_->image_=1.0;
+    camera->depth_map_->setAllPixels(1.0);
+
 
 
   //############################################################################
   // compute depth map
   //############################################################################
 
-  // --------------------------------------
-  // load cameras for dtam
+  int num_cameras = environment->camera_vector_.size();
+  for (int it=0; it<num_cameras; it++){
+    // --------------------------------------
+    // for the first camera, set it as the reference camera
+    if (it==0){
+      dtam->addCamera(environment->camera_vector_[it]);
+      dtam->setReferenceCamera(it);
+      continue;
+    }
 
-  dtam->loadCameras(environment->camera_vector_);
-  dtam->setReferenceCamera(0);
+    // --------------------------------------
+    cerr << "computing discrete cost volume " << it << "/" << num_cameras-1 << endl;
+    t_start=getTime();
 
-  // --------------------------------------
-  cerr << "computing discrete cost volume..." << endl;
-  t_start=getTime();
+    dtam->addCamera(environment->camera_vector_[it]);
+    dtam->prepareCameraForDtam(it);
+    dtam->updateDepthMap_parallel_cpu(it);
 
-  dtam->getDepthMap(64);
-  // dtam->getDepthMap(64, true);
+    t_end=getTime();
+    cerr << "discrete cost volume computation took: " << (t_end-t_start) << " ms " << it << "/" << num_cameras-1 << endl;
+    // --------------------------------------
 
-  //
-  t_end=getTime();
-  cerr << "discrete cost volume computation took: " << (t_end-t_start) << " ms" << endl;
 
+  }
   // --------------------------------------
   // show camera rgb images and depth maps
   for (Camera* camera : environment->camera_vector_){
@@ -106,9 +114,7 @@ int main (int argc, char * argv[]) {
     camera->depth_map_->show(800/camera->resolution_);
   }
   depth_map_gt->show(800/environment->camera_vector_[0]->resolution_);
-  // rgb_image_m_gt->show(800/resolution);
   cv::waitKey(0);
   // --------------------------------------
-
   return 1;
 }

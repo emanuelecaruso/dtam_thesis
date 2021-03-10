@@ -13,10 +13,14 @@ using namespace std;
 using namespace pr;
 
 
-
 int main (int argc, char * argv[]) {
 
+  //############################################################################
+  // choose parameters
+  //############################################################################
 
+  int resolution = 600;
+  int num_interpolations = 64;
 
   //############################################################################
   // initialization
@@ -24,8 +28,6 @@ int main (int argc, char * argv[]) {
 
   double t_start=getTime();  // time start for computing computation time
   double t_end=getTime();    // time end for computing computation time
-
-  int resolution = 600;
 
   Environment* environment = new Environment(resolution); // environment generator object (pointer)
   Renderer* renderer = new Renderer(); // renderer object (pointer)
@@ -55,7 +57,6 @@ int main (int argc, char * argv[]) {
   cout << "environment generation took: " << (t_end-t_start) << " ms" << endl;
   // --------------------------------------
 
-
   //############################################################################
   // generate depth map groundtruth and rgb images of cameras
   //############################################################################
@@ -77,54 +78,46 @@ int main (int argc, char * argv[]) {
 
   // clear depth maps
   for (Camera_cpu* camera : environment->camera_vector_cpu_){
-    camera->depth_map_->image_=1.0;
+    camera->depth_map_->setAllPixels(1.0);
     camera->depth_map_gpu_.setTo(cv::Scalar::all(1.0));
-
   }
-
 
   //############################################################################
   // compute depth map
   //############################################################################
 
+  int num_cameras = environment->camera_vector_cpu_.size();
+  for (int it=0; it<num_cameras; it++){
+    // --------------------------------------
+    // for the first camera, set it as the reference camera
+    if (it==0){
+      dtam->addCamera(environment->camera_vector_cpu_[it],environment->camera_vector_gpu_[it]);
+      dtam->setReferenceCamera(it);
+      continue;
+    }
+
+    // --------------------------------------
+    cerr << "computing discrete cost volume " << it << "/" << num_cameras-1 << endl;
+    t_start=getTime();
+
+    dtam->addCamera(environment->camera_vector_cpu_[it],environment->camera_vector_gpu_[it]);
+    // dtam->prepareCameraForDtam(it);
+    // dtam->updateDepthMap_parallel_cpu(it);
+
+    t_end=getTime();
+    cerr << "discrete cost volume computation took: " << (t_end-t_start) << " ms " << it << "/" << num_cameras-1 << endl;
+    // --------------------------------------
+
+
+  }
   // --------------------------------------
-  // load cameras for dtam
-
-  dtam->loadCameras(environment->camera_vector_cpu_, environment->camera_vector_gpu_);
-  dtam->setReferenceCamera(0);
-
-  // --------------------------------------
-  cout << "computing discrete cost volume..." << endl;
-  t_start=getTime();
-
-
-  dtam->getDepthMap(64);
-  // dtam->getDepthMap(camera_vector, 100, true);
-  // dtam->getDepthMap(camera_vector, 0.25);
-  // dtam->getDepthMap(camera_vector, 0.25, true);
-
-  t_end=getTime();
-  cout << "discrete cost volume computation took: " << (t_end-t_start) << " ms" << endl;
-  // --------------------------------------
-
-
+  // show camera rgb images and depth maps
   for (Camera_cpu* camera : environment->camera_vector_cpu_){
     camera->image_rgb_->show(800/camera->resolution_);
     camera->depth_map_->show(800/camera->resolution_);
   }
-  depth_map_gt->show(800/camera_r->resolution_);
-  // rgb_image_m_gt->show(800/resolution);
+  depth_map_gt->show(800/environment->camera_vector_cpu_[0]->resolution_);
   cv::waitKey(0);
-  //
-  //
-  //
-  // // Eigen::Vector3f o(0,0,0);
-  // // camera_r->showWorldFrame(o,0.01,20);
-  // // camera_m1->showWorldFrame(o,0.01,20);
-  // // camera_r->image_rgb_->show();
-  // // camera_m1->image_rgb_->show();
-  // // cv::waitKey(0);
-
-
+  // --------------------------------------
   return 1;
 }

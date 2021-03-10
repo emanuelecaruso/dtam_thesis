@@ -20,12 +20,6 @@ class Camera{
     Image<cv::Vec3b>* image_rgb_;
     Eigen::Isometry3f* frame_world_wrt_camera_;
     Eigen::Isometry3f* frame_camera_wrt_world_;
-    // camera data for dtam
-    Eigen::Matrix3f T_r;
-    Eigen::Vector3f T_t;
-    Eigen::Vector2f cam_r_projected_on_cam_m;
-    float cam_r_depth_on_camera_m;
-    bool cam_r_in_front;
 
     Camera(std::string name, float lens, float aspect, float width, int resolution,
        float max_depth, Eigen::Isometry3f* frame_camera_wrt_world, Eigen::Isometry3f* frame_world_wrt_camera){
