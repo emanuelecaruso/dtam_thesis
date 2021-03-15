@@ -123,7 +123,6 @@ __global__ void ComputeCostVolumeParallelGpu_kernel(Camera_gpu* camera_r, Camera
   int col = blockIdx.y * blockDim.y + threadIdx.y;
   int i = blockIdx.z * blockDim.z + threadIdx.z;
 
-
   // initializations
   Eigen::Vector2f uv_r;
   bool stop = false;
@@ -178,28 +177,28 @@ __global__ void ComputeCostVolumeParallelGpu_kernel(Camera_gpu* camera_r, Camera
       stop=true;
   }
 
+  int col_ = camera_m->resolution_*i+col;
 
   if (!stop){
 
     uchar3 clr_current = camera_m->image_rgb_(pixel_current.y(),pixel_current.x());
 
     int cost_current=((clr_r.x-clr_current.x)*(clr_r.x-clr_current.x)+(clr_r.y-clr_current.y)*(clr_r.y-clr_current.y)+(clr_r.z-clr_current.z)*(clr_r.z-clr_current.z));
+    int n_valid_proj_current = n_valid_proj_matrix(row,col_);
 
-    int col_ = camera_m->resolution_*i+col;
-
-    if (cost_matrix(row,col_)>=999998){
+    if (cost_matrix(row,col_)==999999){
       cost_matrix(row,col_) = cost_current;
     }
     else{
-      cost_matrix(row,col_) = (cost_matrix(row,col_)*n_valid_proj_matrix(row,col_)+cost_current)/(n_valid_proj_matrix(row,col_)+1);
+      cost_matrix(row,col_) = (cost_matrix(row,col_)*n_valid_proj_current+cost_current)/(n_valid_proj_current+1);
     }
-    n_valid_proj_matrix(row,col_)+=1;
+    n_valid_proj_matrix(row,col_)=n_valid_proj_current+1;
 
   }
 
   extern __shared__ int cost_array[];
 
-  cost_array[i]=cost_matrix(row,camera_r->resolution_*i+col);
+  cost_array[i]=cost_matrix(row,col_);
 
 
   __syncthreads();
@@ -209,8 +208,6 @@ __global__ void ComputeCostVolumeParallelGpu_kernel(Camera_gpu* camera_r, Camera
     int min_value=999999;
     int min_index=num_interpolations;
     for (int j=0; j<num_interpolations; j++){
-      // if (row==0 && col==0)
-      //   printf("%i\n", cost_array[j]);
 
       if (cost_array[j]<min_value){
         min_value=cost_array[j];

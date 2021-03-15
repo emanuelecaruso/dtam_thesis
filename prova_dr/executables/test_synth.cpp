@@ -40,12 +40,16 @@ int main (int argc, char * argv[]) {
   // --------------------------------------
   // generate cameras
   float object_depth=2;
+
   environment->generateCamera("camera_r", 0,0,-object_depth, 0,0,0);
   environment->generateCamera("camera_m1", 0.1,0.1,-object_depth-0.1, 0,0,0);
-  environment->generateCamera("camera_m2", -0.1,-0.1,-object_depth-0.1, 0,0,0);
-  environment->generateCamera("camera_m3", 0.1,-0.1,-object_depth-0.1, 0,0,0);
-  environment->generateCamera("camera_m4", -0.1,0.1,-object_depth-0.1, 0,0,0);
-
+  environment->generateCamera("camera_m2", -0.1,0.1,-object_depth-0.1, 0,0,0);
+  environment->generateCamera("camera_m3", 0,0.1,-object_depth-0.1, 0,0,0);
+  environment->generateCamera("camera_m4", 0.1,-0.1,-object_depth-0.1, 0,0,0);
+  environment->generateCamera("camera_m5", -0.1,-0.1,-object_depth-0.1, 0,0,0);
+  environment->generateCamera("camera_m6", 0,-0.1,-object_depth-0.1, 0,0,0);
+  environment->generateCamera("camera_m7", -0.1,0,-object_depth-0.1, 0,0,0);
+  environment->generateCamera("camera_m8", 0.1,0,-object_depth-0.1, 0,0,0);
   // --------------------------------------
   // generate environment
   cerr << "generating environment.." << endl;
@@ -102,6 +106,7 @@ int main (int argc, char * argv[]) {
     dtam->addCamera(environment->camera_vector_[it]);
     dtam->prepareCameraForDtam(it);
     // dtam->updateDepthMap(it);
+    // dtam->updateDepthMap(it, true);
     dtam->updateDepthMap_parallel_cpu(it);
 
 
