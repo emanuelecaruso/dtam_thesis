@@ -30,6 +30,7 @@ if (USE_CUDA)
   ../src/dataset.cpp
   ../src_cuda/camera_cpu.cu
   ../src/image.cpp
+  ../src/camera.cpp
   ../src_cuda/renderer.cu
   ../src_cuda/environment.cu
   ../src_cuda/dtam_cuda.cu

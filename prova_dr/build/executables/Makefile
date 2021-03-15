@@ -147,6 +147,7 @@ __/src/camera.o: __/src/camera.cpp.o
 # target to build an object file
 __/src/camera.cpp.o:
 	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/camera.cpp.o
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/camera.cpp.o
 .PHONY : __/src/camera.cpp.o
 
 __/src/camera.i: __/src/camera.cpp.i
@@ -156,6 +157,7 @@ __/src/camera.i: __/src/camera.cpp.i
 # target to preprocess a source file
 __/src/camera.cpp.i:
 	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/camera.cpp.i
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/camera.cpp.i
 .PHONY : __/src/camera.cpp.i
 
 __/src/camera.s: __/src/camera.cpp.s
@@ -165,6 +167,7 @@ __/src/camera.s: __/src/camera.cpp.s
 # target to generate assembly for a file
 __/src/camera.cpp.s:
 	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/camera.cpp.s
+	cd /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/camera.cpp.s
 .PHONY : __/src/camera.cpp.s
 
 __/src/dataset.o: __/src/dataset.cpp.o

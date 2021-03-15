@@ -109,7 +109,7 @@ void Dtam::updateDepthMap(int index_m, bool check){
 
     for (int i=0; i<num_interpolations_; i++){
 
-      float depth_r = depth_r_vector_[i];
+      float depth_r = depth_r_array_[i];
 
       // initializations
       Eigen::Vector2f uv1_fixed, uv2_fixed;
@@ -257,7 +257,7 @@ void Dtam::updateDepthMap_parallel_cpu(int index_m, bool check){
 
               for (int j=0; j<num_interpolations_; j++){
 
-                float depth_r = depth_r_vector_[j];
+                float depth_r = depth_r_array_[j];
 
                 // initializations
                 Eigen::Vector2f uv1_fixed, uv2_fixed;

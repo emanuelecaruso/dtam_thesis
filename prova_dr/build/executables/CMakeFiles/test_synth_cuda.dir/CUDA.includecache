@@ -6,6 +6,12 @@
 
 #IncludeRegexTransform: 
 
+../src/camera.h
+defs.h
+../src/defs.h
+image.h
+../src/image.h
+
 ../src/defs.h
 Eigen/Core
 -
@@ -45,6 +51,8 @@ defs.h
 /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/defs.h
 image.h
 /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/image.h
+camera.h
+/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/camera.h
 camera_gpu.cuh
 /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/camera_gpu.cuh
 
@@ -53,6 +61,8 @@ defs.h
 /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/defs.h
 image.h
 /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/image.h
+camera.h
+/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/src_cuda/camera.h
 cuda_runtime.h
 -
 

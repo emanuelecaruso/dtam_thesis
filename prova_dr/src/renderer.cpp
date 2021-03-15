@@ -52,7 +52,7 @@ bool Renderer::renderImage_naive(cpVector& cp_vector, Camera* camera){
   return true;
 }
 
-bool Renderer::renderImage_parallel_cpu(Environment* environment){
+bool Renderer::renderImages_parallel_cpu(Environment* environment){
 
   // camera->clearImgs();
   const size_t nloop = environment->cp_vector_.size();

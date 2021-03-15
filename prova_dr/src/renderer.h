@@ -11,5 +11,5 @@ class Renderer{
 
     bool renderPoint(Cp& cp, Camera* camera);
     bool renderImage_naive(cpVector& cp_vector, Camera* camera);
-    bool renderImage_parallel_cpu(Environment* environment);
+    bool renderImages_parallel_cpu(Environment* environment);
 };

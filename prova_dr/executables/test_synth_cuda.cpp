@@ -31,7 +31,7 @@ int main (int argc, char * argv[]) {
 
   Environment* environment = new Environment(resolution); // environment generator object (pointer)
   Renderer* renderer = new Renderer(); // renderer object (pointer)
-  Dtam* dtam = new Dtam(); // dense mapper and tracker
+  Dtam* dtam = new Dtam(environment, num_interpolations); // dense mapper and tracker
 
   //############################################################################
   // generate cameras (in this case same orientation)
@@ -43,7 +43,9 @@ int main (int argc, char * argv[]) {
 
   environment->generateCamera("camera_r", 0,0,-object_depth, 0,0,0);
   environment->generateCamera("camera_m1", 0.1,0.1,-object_depth-0.1, 0,0,0);
-  // environment->generateCamera("camera_m2", -0.1,-0.1,-object_depth-0.1, 0,0,0);
+  environment->generateCamera("camera_m2", -0.1,-0.1,-object_depth-0.1, 0,0,0);
+  environment->generateCamera("camera_m3", 0.1,-0.1,-object_depth-0.1, 0,0,0);
+  environment->generateCamera("camera_m4", -0.1,0.1,-object_depth-0.1, 0,0,0);
 
   // --------------------------------------
   // generate environment
@@ -66,7 +68,7 @@ int main (int argc, char * argv[]) {
   cout << "rendering environment on cameras..." << endl;
   t_start=getTime();
 
-  renderer->renderImages_parallel_gpu(environment);
+  renderer->renderImages_naive(environment);
 
   t_end=getTime();
   cout << "rendering took: " << (t_end-t_start) << " ms" << endl;
@@ -74,7 +76,6 @@ int main (int argc, char * argv[]) {
 
   Camera_cpu* camera_r = environment->camera_vector_cpu_[0];
   Image<float>* depth_map_gt = camera_r->depth_map_->clone("depth map gt");
-  // Image<cv::Vec3b>* rgb_image_m_gt = camera_m1->image_rgb_->clone("rgb image m gt");
 
   // clear depth maps
   for (Camera_cpu* camera : environment->camera_vector_cpu_){
@@ -101,8 +102,8 @@ int main (int argc, char * argv[]) {
     t_start=getTime();
 
     dtam->addCamera(environment->camera_vector_cpu_[it],environment->camera_vector_gpu_[it]);
-    // dtam->prepareCameraForDtam(it);
-    // dtam->updateDepthMap_parallel_cpu(it);
+    dtam->prepareCameraForDtam(it);
+    dtam->updateDepthMap_parallel_gpu(it);
 
     t_end=getTime();
     cerr << "discrete cost volume computation took: " << (t_end-t_start) << " ms " << it << "/" << num_cameras-1 << endl;

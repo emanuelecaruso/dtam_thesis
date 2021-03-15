@@ -48,7 +48,8 @@ class Camera{
        Kinv_=K_.inverse();
     };
 
-    void showWorldFrame(Eigen::Vector3f origin, float delta,int length);
+    // void showWorldFrame(Eigen::Vector3f origin, float delta,int length);
+    void printMembers();
 
     void clearImgs();
 
@@ -57,8 +58,6 @@ class Camera{
 
     void pointAtDepth(Eigen::Vector2f& uv, float depth, Eigen::Vector3f& p);
     bool projectPoint(Eigen::Vector3f& p, Eigen::Vector2f& uv, float& p_cam_z );
-
-    bool resizeLine(Eigen::Vector2f& uv1 ,Eigen::Vector2f& uv2, float& depth1, float& depth2, bool& resized1, bool& resized2);
 
     inline Camera* clone(){
       return new Camera(*this);

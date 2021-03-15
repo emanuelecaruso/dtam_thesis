@@ -42,7 +42,9 @@ int main (int argc, char * argv[]) {
   float object_depth=2;
   environment->generateCamera("camera_r", 0,0,-object_depth, 0,0,0);
   environment->generateCamera("camera_m1", 0.1,0.1,-object_depth-0.1, 0,0,0);
-  // environment->generateCamera("camera_m2", -0.1,-0.1,-object_depth-0.1, 0,0,0);
+  environment->generateCamera("camera_m2", -0.1,-0.1,-object_depth-0.1, 0,0,0);
+  environment->generateCamera("camera_m3", 0.1,-0.1,-object_depth-0.1, 0,0,0);
+  environment->generateCamera("camera_m4", -0.1,0.1,-object_depth-0.1, 0,0,0);
 
   // --------------------------------------
   // generate environment
@@ -65,7 +67,7 @@ int main (int argc, char * argv[]) {
   cerr << "rendering environment on cameras..." << endl;
   t_start=getTime();
 
-  renderer->renderImage_parallel_cpu(environment);
+  renderer->renderImages_parallel_cpu(environment);
 
   t_end=getTime();
   cerr << "rendering took: " << (t_end-t_start) << " ms" << endl;
@@ -99,7 +101,9 @@ int main (int argc, char * argv[]) {
 
     dtam->addCamera(environment->camera_vector_[it]);
     dtam->prepareCameraForDtam(it);
+    // dtam->updateDepthMap(it);
     dtam->updateDepthMap_parallel_cpu(it);
+
 
     t_end=getTime();
     cerr << "discrete cost volume computation took: " << (t_end-t_start) << " ms " << it << "/" << num_cameras-1 << endl;

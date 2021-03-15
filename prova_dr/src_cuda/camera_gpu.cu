@@ -8,29 +8,6 @@ using namespace pr;
 
 
 
-// __device__ void Camera_gpu::clearImgs(){
-//   // depth_map_->image_=1.0;
-//   // image_rgb_->image_=cv::Vec3b(255,255,255);
-// }
-
-void Camera_gpu::printMembers(){
-
-  std::cout << "name: " << name_ << std::endl;
-  std::cout << "lens: " << lens_ << std::endl;
-  std::cout << "aspect: " << aspect_ << std::endl;
-  std::cout << "width: " << width_ << std::endl;
-  std::cout << "resolution: " << resolution_ << std::endl;
-  std::cout << "max_depth: " << max_depth_ << std::endl;
-  std::cout << "K: " << K_ << std::endl;
-  std::cout << "Kinv: " << Kinv_ << std::endl;
-  std::cout << "frame_world_wrt_camera LINEAR:\n" << frame_world_wrt_camera_.linear() << std::endl;
-  std::cout << "frame_world_wrt_camera TRANSL:\n" << frame_world_wrt_camera_.translation() << std::endl;
-  std::cout << "frame_camera_wrt_world LINEAR:\n" << frame_camera_wrt_world_.linear() << std::endl;
-  std::cout << "frame_camera_wrt_world TRANSL:\n" << frame_camera_wrt_world_.translation() << std::endl;
-  std::cout << "\n" << std::endl;
-
-}
-
 __device__ void Camera_gpu::pixelCoords2uv(Eigen::Vector2i& pixel_coords, Eigen::Vector2f& uv){
   float pixel_width = width_/resolution_;
 

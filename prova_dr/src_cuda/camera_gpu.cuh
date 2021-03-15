@@ -1,6 +1,7 @@
 #pragma once
 #include "defs.h"
 #include "image.h"
+#include "camera.h"
 #include <cuda_runtime.h>
 
 using namespace pr;
@@ -20,13 +21,7 @@ class Camera_gpu{
     cv::cuda::PtrStepSz<uchar3> image_rgb_;
     Eigen::Isometry3f frame_world_wrt_camera_;
     Eigen::Isometry3f frame_camera_wrt_world_;
-    // camera data for dtam
-    Eigen::Matrix3f T_r;
-    Eigen::Vector3f T_t;
-    Eigen::Vector2f cam_r_projected_on_cam_m;
-    float cam_r_depth_on_camera_m;
-    bool cam_r_in_front;
-    Eigen::Vector2f  uv1_fixed;
+
 
     Camera_gpu(std::string name, float lens, float aspect, float width, int resolution,
        float max_depth, Eigen::Matrix3f K, Eigen::Matrix3f Kinv, Eigen::Isometry3f frame_camera_wrt_world,
@@ -46,17 +41,12 @@ class Camera_gpu{
 
     };
 
-    // __device__ void clearImgs();
-
-    void printMembers();
 
     __device__ void pixelCoords2uv(Eigen::Vector2i& pixel_coords, Eigen::Vector2f& uv);
     __device__ void uv2pixelCoords( Eigen::Vector2f& uv, Eigen::Vector2i& pixel_coords);
 
     __device__ void pointAtDepth(Eigen::Vector2f& uv, float depth, Eigen::Vector3f& p);
     __device__ bool projectPoint(Eigen::Vector3f& p, Eigen::Vector2f& uv, float& p_cam_z );
-    // __device__ bool projectPixel(Cp& p);
-    // __device__ void projectPixels(cpVector& cp_vector);
 
 
     inline Camera_gpu* clone(){

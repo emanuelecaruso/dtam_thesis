@@ -128,7 +128,7 @@ clean: executables/CMakeFiles/test_synth.dir/clean
 executables/CMakeFiles/test_synth_cuda.dir/all:
 	$(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/depend
 	$(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=10,11,12,13,14,15,16,17,18,19,20 "Built target test_synth_cuda"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles --progress-num=10,11,12,13,14,15,16,17,18,19,20,21 "Built target test_synth_cuda"
 .PHONY : executables/CMakeFiles/test_synth_cuda.dir/all
 
 # Include target in all.
@@ -138,7 +138,7 @@ all: executables/CMakeFiles/test_synth_cuda.dir/all
 
 # Build rule for subdir invocation for target.
 executables/CMakeFiles/test_synth_cuda.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles 11
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles 12
 	$(MAKE) -f CMakeFiles/Makefile2 executables/CMakeFiles/test_synth_cuda.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles 0
 .PHONY : executables/CMakeFiles/test_synth_cuda.dir/rule

@@ -19,7 +19,7 @@ class Dtam{
     CameraVector camera_vector_;
     int index_r_;
     int num_interpolations_;
-    std::vector<float> depth_r_vector_;
+    float* depth_r_array_;
     Image<int>* cost_matrix_;
     Image<int>* n_valid_proj_matrix_;
     cameraDataForDtam camera_data_for_dtam_;
@@ -34,17 +34,14 @@ class Dtam{
       int cols = environment->resolution_;
       float depth1_r=environment->lens_;
       float depth2_r=environment->max_depth_;
+      depth_r_array_ = new float[num_interpolations_];
 
       for (int i=0; i<num_interpolations_; i++){
         float ratio_depth_r = (float)i/((float)num_interpolations_-1);
         float depth_r = depth1_r+ratio_depth_r*(depth2_r-depth1_r);
-        depth_r_vector_.push_back(depth_r);
+        depth_r_array_[i]=depth_r;
       }
 
-      cost_matrix_->initImage(rows,cols*num_interpolations);
-      cost_matrix_->setAllPixels(999999);
-      n_valid_proj_matrix_->initImage(rows,cols*num_interpolations);
-      n_valid_proj_matrix_->setAllPixels(0);
     }
 
     void loadCameras(CameraVector camera_vector);

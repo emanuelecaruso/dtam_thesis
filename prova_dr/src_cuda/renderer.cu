@@ -42,7 +42,6 @@ bool Renderer::renderPoint(Cp& cp, Camera_cpu* camera){
 }
 
 __global__ void renderPoint_gpu(Cp* cp, Camera_gpu* camera_gpu_d ){
-// __global__ void renderPoint_gpu( ){
 
   unsigned int i = blockIdx.x * blockDim.x + threadIdx.x;
 
@@ -66,12 +65,6 @@ __global__ void renderPoint_gpu(Cp* cp, Camera_gpu* camera_gpu_d ){
 
   float depth = depth_cam/camera_gpu_d->max_depth_;
 
-  // printf("\n");
-  // printf("%f",cp[i].point.x());
-  // printf("%f",cp[i].point.y());
-  // printf("%f",cp[i].point.z());
-  // printf("\n");
-
   float evaluated_pixel = camera_gpu_d->depth_map_(pixel_coords.y(),pixel_coords.x());
 
   if (evaluated_pixel<depth)
@@ -85,53 +78,58 @@ __global__ void renderPoint_gpu(Cp* cp, Camera_gpu* camera_gpu_d ){
     camera_gpu_d->image_rgb_(pixel_coords.y(),pixel_coords.x())= color;
     camera_gpu_d->depth_map_(pixel_coords.y(),pixel_coords.x())= depth;
   }
+
 }
 
-void Renderer::renderImage_naive(cpVector& cp_vector, Camera_cpu* camera){
+void Renderer::renderImages_naive(Environment* environment){
 
-    camera->clearImgs();
-    for (Cp cp : cp_vector)
+  for (Camera_cpu* camera_cpu : environment->camera_vector_cpu_){
+    camera_cpu->clearImgs();
+    for (Cp cp : environment->cp_vector_)
     {
-      Renderer::renderPoint(cp, camera);
+      Renderer::renderPoint(cp, camera_cpu);
     }
-
-}
-bool Renderer::renderImages_parallel_gpu(Environment* environment){
-
-  cudaError_t err ;
-  Cp* cp_d = environment->cp_d_;
-  int cp_size = environment->cp_vector_.size();
-
-  int numThreads = 32;
-  int numBlocks = cp_size / numThreads;
-
-  if (cp_size % numThreads != 0)
-    return false;
-
-  for (int i=0; i<environment->camera_vector_cpu_.size(); i++){
-    Camera_cpu* camera_cpu = environment->camera_vector_cpu_[i];
-    Camera_gpu* camera_gpu = environment->camera_vector_gpu_[i];
-
-
-    renderPoint_gpu<<<numBlocks,numThreads>>>( cp_d, camera_gpu );
-    // renderPoint_gpu<<<1,1>>>( cp_d, camera_gpu_d );
-    err = cudaGetLastError();
-    if (err != cudaSuccess)
-        printf("Error executing rendering kernel: %s\n", cudaGetErrorString(err));
-
-    // auto a = camera_cpu->image_rgb_gpu_;
-
-    camera_cpu->image_rgb_gpu_.download(camera_cpu->image_rgb_->image_);
-    camera_cpu->depth_map_gpu_.download(camera_cpu->depth_map_->image_);
-
-    // camera_cpu->image_rgb_gpu_.download(image_rgb_->image_);
-    // cudaMemcpy(valid_h, valid_d, sizeof(bool), cudaMemcpyDeviceToHost);
-    // std::cout << *valid_h << std::endl;
-
+    camera_cpu->image_rgb_gpu_.upload(camera_cpu->image_rgb_->image_);
+    camera_cpu->depth_map_gpu_.upload(camera_cpu->depth_map_->image_);
   }
 
 
-
-  return true;
-
 }
+
+// // TODO : BUG TO FIX
+// bool Renderer::renderImages_parallel_gpu(Environment* environment){
+//
+//   cudaError_t err ;
+//   Cp* cp_d = environment->cp_d_;
+//   int cp_size = environment->cp_vector_.size();
+//
+//   int numThreads = 1;
+//   int numBlocks = cp_size / numThreads;
+//
+//   if (cp_size % numThreads != 0)
+//     return false;
+//
+//   for (int i=0; i<environment->camera_vector_cpu_.size(); i++){
+//     Camera_cpu* camera_cpu = environment->camera_vector_cpu_[i];
+//     Camera_gpu* camera_gpu = environment->camera_vector_gpu_[i];
+//
+//
+//     renderPoint_gpu<<<numBlocks,numThreads>>>( cp_d, camera_gpu );
+//
+//     err = cudaGetLastError();
+//     if (err != cudaSuccess)
+//         printf("Error executing rendering kernel: %s\n", cudaGetErrorString(err));
+//
+//     cudaDeviceSynchronize();
+//
+//     camera_cpu->image_rgb_gpu_.download(camera_cpu->image_rgb_->image_);
+//     camera_cpu->depth_map_gpu_.download(camera_cpu->depth_map_->image_);
+//
+//     cudaDeviceSynchronize();
+//   }
+//
+//
+//
+//   return true;
+//
+// }
