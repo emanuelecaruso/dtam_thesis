@@ -20,6 +20,7 @@ int main (int argc, char * argv[]) {
   //############################################################################
 
   int resolution = 600;
+  float aspect = 1.5;
   int num_interpolations = 64;
 
   //############################################################################
@@ -29,7 +30,7 @@ int main (int argc, char * argv[]) {
   double t_start=getTime();  // time start for computing computation time
   double t_end=getTime();    // time end for computing computation time
 
-  Environment* environment = new Environment(resolution); // environment generator object (pointer)
+  Environment* environment = new Environment(resolution, aspect); // environment generator object (pointer)
   Renderer* renderer = new Renderer(); // renderer object (pointer)
   Dtam* dtam = new Dtam(environment, num_interpolations); // dense mapper and tracker
 

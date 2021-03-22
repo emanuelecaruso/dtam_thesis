@@ -19,8 +19,8 @@ class Environment{
     CameraVector_gpu camera_vector_gpu_; // vector containing pointers to camera objects on device (gpu)
 
 
-    Environment(int resolution = 640, float film = 0.024, float lens = 0.035,
-                          float aspect = 1, float max_depth =4.2)
+    Environment(int resolution = 640, float aspect = 1, float film = 0.024,
+                            float lens = 0.035, float max_depth =4.2)
         {
           resolution_=resolution; film_=film; lens_=lens;
           aspect_=aspect; max_depth_=max_depth;

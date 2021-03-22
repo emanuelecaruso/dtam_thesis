@@ -173,7 +173,7 @@ __global__ void ComputeCostVolumeParallelGpu_kernel(Camera_gpu* camera_r, Camera
     camera_m->uv2pixelCoords( uv_current, pixel_current);
 
 
-    if(pixel_current.x()<0 || pixel_current.y()<0 || pixel_current.y()>=(camera_m->resolution_) || pixel_current.x()>=(int)((float)camera_m->resolution_/(float)camera_m->aspect_) )
+    if(pixel_current.x()<0 || pixel_current.y()<0 || pixel_current.x()>=(camera_m->resolution_) || pixel_current.y()>=(int)((float)camera_m->resolution_/(float)camera_m->aspect_) )
       stop=true;
   }
 

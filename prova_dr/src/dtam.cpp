@@ -81,8 +81,8 @@ void Dtam::updateDepthMap(int index_m, bool check){
 
   for (int j = 0; j<rows*cols; j++){
 
-    int row = j/rows;
-    int col = j%rows;
+    int row = j/cols;
+    int col = j%cols;
 
     if (check){row= rows*0.97; col=cols*0.03;}
 
@@ -234,8 +234,8 @@ void Dtam::updateDepthMap_parallel_cpu(int index_m, bool check){
           {
             // inner loop
             {
-                int row = j/rows;
-                int col = j%rows;
+                int row = j/cols;
+                int col = j%cols;
 
                 if (check){row= rows*0.97; col=cols*0.03;}
 
