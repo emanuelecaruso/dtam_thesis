@@ -173,7 +173,7 @@ __global__ void ComputeCostVolumeParallelGpu_kernel(Camera_gpu* camera_r, Camera
     camera_m->uv2pixelCoords( uv_current, pixel_current);
 
 
-    if(pixel_current.x()<0 || pixel_current.y()<0 || pixel_current.x()>(camera_m->resolution_) || pixel_current.x()>((float)camera_m->resolution_/(float)camera_m->aspect_) )
+    if(pixel_current.x()<0 || pixel_current.y()<0 || pixel_current.y()>=(camera_m->resolution_) || pixel_current.x()>=(int)((float)camera_m->resolution_/(float)camera_m->aspect_) )
       stop=true;
   }
 
@@ -206,7 +206,7 @@ __global__ void ComputeCostVolumeParallelGpu_kernel(Camera_gpu* camera_r, Camera
   // TODO this may be inefficient
   if (i==0){
     int min_value=999999;
-    int min_index=num_interpolations;
+    int min_index=-1;
     for (int j=0; j<num_interpolations; j++){
 
       if (cost_array[j]<min_value){
@@ -214,8 +214,10 @@ __global__ void ComputeCostVolumeParallelGpu_kernel(Camera_gpu* camera_r, Camera
         min_index=j;
       }
     }
-    float ratio = (float)min_index/(float)num_interpolations;
-    camera_r->depth_map_(row,col)=(camera_r->lens_+(ratio*(camera_r->max_depth_-camera_r->lens_)))/(camera_r->max_depth_);
+    if (min_index==-1)
+      camera_r->depth_map_(row,col)=1;
+    else
+      camera_r->depth_map_(row,col)=depth_r_array[min_index]/camera_r->max_depth_;
   }
 
 }

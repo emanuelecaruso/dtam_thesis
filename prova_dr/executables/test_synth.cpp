@@ -120,8 +120,9 @@ int main (int argc, char * argv[]) {
   // show camera rgb images and depth maps
   for (Camera* camera : environment->camera_vector_){
     camera->image_rgb_->show(800/camera->resolution_);
-    camera->depth_map_->show(800/camera->resolution_);
+    // camera->depth_map_->show(800/camera->resolution_);
   }
+  environment->camera_vector_[0]->depth_map_->show(800/environment->camera_vector_[0]->resolution_);
   depth_map_gt->show(800/environment->camera_vector_[0]->resolution_);
   cv::waitKey(0);
   // --------------------------------------

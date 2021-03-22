@@ -46,10 +46,10 @@ int main (int argc, char * argv[]) {
   environment->generateCamera("camera_m2", -0.1,0.1,-object_depth-0.1, 0,0,0);
   environment->generateCamera("camera_m3", 0,0.1,-object_depth-0.1, 0,0,0);
   environment->generateCamera("camera_m4", 0.1,-0.1,-object_depth-0.1, 0,0,0);
-  // environment->generateCamera("camera_m5", -0.1,-0.1,-object_depth-0.1, 0,0,0);
-  // environment->generateCamera("camera_m6", 0,-0.1,-object_depth-0.1, 0,0,0);
-  // environment->generateCamera("camera_m7", -0.1,0,-object_depth-0.1, 0,0,0);
-  // environment->generateCamera("camera_m8", 0.1,0,-object_depth-0.1, 0,0,0);
+  environment->generateCamera("camera_m5", -0.1,-0.1,-object_depth-0.1, 0,0,0);
+  environment->generateCamera("camera_m6", 0,-0.1,-object_depth-0.1, 0,0,0);
+  environment->generateCamera("camera_m7", -0.1,0,-object_depth-0.1, 0,0,0);
+  environment->generateCamera("camera_m8", 0.1,0,-object_depth-0.1, 0,0,0);
 
   // --------------------------------------
   // generate environment
