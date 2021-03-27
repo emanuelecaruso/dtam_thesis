@@ -20,7 +20,7 @@ int main (int argc, char * argv[]) {
   //############################################################################
 
   int resolution = 600;
-  float aspect = 1.5;
+  float aspect = 1;
   int num_interpolations = 64;
 
   //############################################################################
@@ -44,13 +44,13 @@ int main (int argc, char * argv[]) {
 
   environment->generateCamera("camera_r", 0,0,-object_depth, 0,0,0);
   environment->generateCamera("camera_m1", 0.1,0.1,-object_depth-0.1, 0,0,0);
-  environment->generateCamera("camera_m2", -0.1,0.1,-object_depth-0.1, 0,0,0);
-  environment->generateCamera("camera_m3", 0,0.1,-object_depth-0.1, 0,0,0);
-  environment->generateCamera("camera_m4", 0.1,-0.1,-object_depth-0.1, 0,0,0);
-  environment->generateCamera("camera_m5", -0.1,-0.1,-object_depth-0.1, 0,0,0);
-  environment->generateCamera("camera_m6", 0,-0.1,-object_depth-0.1, 0,0,0);
-  environment->generateCamera("camera_m7", -0.1,0,-object_depth-0.1, 0,0,0);
-  environment->generateCamera("camera_m8", 0.1,0,-object_depth-0.1, 0,0,0);
+  // environment->generateCamera("camera_m2", -0.1,0.1,-object_depth-0.1, 0,0,0);
+  // environment->generateCamera("camera_m3", 0,0.1,-object_depth-0.1, 0,0,0);
+  // environment->generateCamera("camera_m4", 0.1,-0.1,-object_depth-0.1, 0,0,0);
+  // environment->generateCamera("camera_m5", -0.1,-0.1,-object_depth-0.1, 0,0,0);
+  // environment->generateCamera("camera_m6", 0,-0.1,-object_depth-0.1, 0,0,0);
+  // environment->generateCamera("camera_m7", -0.1,0,-object_depth-0.1, 0,0,0);
+  // environment->generateCamera("camera_m8", 0.1,0,-object_depth-0.1, 0,0,0);
 
   // --------------------------------------
   // generate environment
@@ -122,8 +122,8 @@ int main (int argc, char * argv[]) {
     camera->image_rgb_->show(800/camera->resolution_);
     // camera->depth_map_->show(800/camera->resolution_);
   }
-  environment->camera_vector_cpu_[0]->depth_map_->show(800/environment->camera_vector_cpu_[0]->resolution_);
-  depth_map_gt->show(800/environment->camera_vector_cpu_[0]->resolution_);
+  camera_r->depth_map_->show(800/camera_r->resolution_);
+  depth_map_gt->show(800/camera_r->resolution_);
   cv::waitKey(0);
   // --------------------------------------
   return 1;
