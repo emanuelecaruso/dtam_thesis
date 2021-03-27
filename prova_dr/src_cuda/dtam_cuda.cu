@@ -25,10 +25,10 @@ bool Dtam::setReferenceCamera(int index_r){
   int cols = camera_vector_cpu_[index_r_]->depth_map_->image_.cols;
   int rows = camera_vector_cpu_[index_r_]->depth_map_->image_.rows;
 
-  cost_matrix_.create(rows,cols*num_interpolations_,CV_32SC1);
-  cost_matrix_.setTo(cv::Scalar::all(999999));
-  n_valid_proj_matrix_.create(rows,cols*num_interpolations_,CV_8UC1);
-  n_valid_proj_matrix_.setTo(cv::Scalar::all(0));
+  cost_matrix_.create(rows,cols*num_interpolations_,CV_8UC2);
+  // uchar2 init_val;
+  // init_val
+  cost_matrix_.setTo(cv::Scalar(UCHAR_MAX,0));
 
   return true;
 
@@ -115,8 +115,8 @@ void Dtam::prepareCameraForDtam(int index_m){
 }
 
 
-__global__ void ComputeCostVolumeParallelGpu_kernel(Camera_gpu* camera_r, Camera_gpu* camera_m, int num_interpolations, cv::cuda::PtrStepSz<int> cost_matrix,
-            cv::cuda::PtrStepSz<uchar> n_valid_proj_matrix, cameraDataForDtam* camera_data_for_dtam_, float* depth_r_array){
+__global__ void ComputeCostVolumeParallelGpu_kernel(Camera_gpu* camera_r, Camera_gpu* camera_m, int num_interpolations,
+              cv::cuda::PtrStepSz<uchar2> cost_matrix, cameraDataForDtam* camera_data_for_dtam_, float* depth_r_array){
 
 
   int row = blockIdx.x * blockDim.x + threadIdx.x;
@@ -127,34 +127,23 @@ __global__ void ComputeCostVolumeParallelGpu_kernel(Camera_gpu* camera_r, Camera
   Eigen::Vector2f uv_r;
   bool stop = false;
 
-  __shared__ float depth1_r, depth2_r;
-  __shared__ Eigen::Vector2f uv1_fixed, uv2_fixed;
-  __shared__ float depth1_m_fixed, depth2_m_fixed;
-  __shared__ Eigen::Matrix3f r;
-  __shared__ Eigen::Vector3f t;
-  __shared__ float f, w, h;
-  __shared__ uchar3 clr_r;
-
-  if (i==0){
-    clr_r = camera_r->image_rgb_(row,col);
-    depth1_r=camera_r->lens_;
-    depth2_r=camera_r->max_depth_;
-    float3 val = camera_data_for_dtam_->query_proj_matrix(row,col);
-    if (val.z<0)
-      stop = true;
-    uv1_fixed = camera_data_for_dtam_->cam_r_projected_on_cam_m;
-    uv2_fixed.x()=val.x;
-    uv2_fixed.y()=val.y;
-    depth1_m_fixed = camera_data_for_dtam_->cam_r_depth_on_camera_m;
-    depth2_m_fixed = val.z;
-    r=camera_data_for_dtam_->T_r;
-    t=camera_data_for_dtam_->T_t;
-    f = camera_m->lens_;
-    w=camera_m->width_;
-    h=camera_m->width_/camera_m->aspect_;
-  }
-
-  __syncthreads();
+  uchar3 clr_r = camera_r->image_rgb_(row,col);
+  float depth1_r=camera_r->lens_;
+  float depth2_r=camera_r->max_depth_;
+  float3 val = camera_data_for_dtam_->query_proj_matrix(row,col);
+  if (val.z<0)
+    stop = true;
+  Eigen::Vector2f uv1_fixed = camera_data_for_dtam_->cam_r_projected_on_cam_m;
+  Eigen::Vector2f uv2_fixed;
+  uv2_fixed.x()=val.x;
+  uv2_fixed.y()=val.y;
+  float depth1_m_fixed = camera_data_for_dtam_->cam_r_depth_on_camera_m;
+  float depth2_m_fixed = val.z;
+  Eigen::Matrix3f r=camera_data_for_dtam_->T_r;
+  Eigen::Vector3f t=camera_data_for_dtam_->T_t;
+  float f = camera_m->lens_;
+  float w=camera_m->width_;
+  float h=camera_m->width_/camera_m->aspect_;
 
   Eigen::Vector2i pixel_current;
 
@@ -183,29 +172,29 @@ __global__ void ComputeCostVolumeParallelGpu_kernel(Camera_gpu* camera_r, Camera
 
     uchar3 clr_current = camera_m->image_rgb_(pixel_current.y(),pixel_current.x());
 
-    int cost_current=((clr_r.x-clr_current.x)*(clr_r.x-clr_current.x)+(clr_r.y-clr_current.y)*(clr_r.y-clr_current.y)+(clr_r.z-clr_current.z)*(clr_r.z-clr_current.z));
-    int n_valid_proj_current = n_valid_proj_matrix(row,col_);
+    // int cost_current=((clr_r.x-clr_current.x)*(clr_r.x-clr_current.x)+(clr_r.y-clr_current.y)*(clr_r.y-clr_current.y)+(clr_r.z-clr_current.z)*(clr_r.z-clr_current.z));
+    uchar cost_current=(abs(clr_r.x-clr_current.x)+abs(clr_r.y-clr_current.y)+abs(clr_r.z-clr_current.z))/3;
 
-    if (cost_matrix(row,col_)==999999){
-      cost_matrix(row,col_) = cost_current;
-    }
-    else{
-      cost_matrix(row,col_) = (cost_matrix(row,col_)*n_valid_proj_current+cost_current)/(n_valid_proj_current+1);
-    }
-    n_valid_proj_matrix(row,col_)=n_valid_proj_current+1;
+    uchar2 cost_matrix_val = cost_matrix(row,col_);
+
+    cost_matrix_val.x = (cost_matrix_val.x*cost_matrix_val.y+cost_current)/(cost_matrix_val.y+1);
+
+    cost_matrix_val.y++;
+
+    cost_matrix(row,col_) = cost_matrix_val;
 
   }
 
   extern __shared__ int cost_array[];
 
-  cost_array[i]=cost_matrix(row,col_);
+  cost_array[i]=cost_matrix(row,col_).x;
 
 
   __syncthreads();
 
   // TODO this may be inefficient
   if (i==0){
-    int min_value=999999;
+    int min_value=UCHAR_MAX;
     int min_index=-1;
     for (int j=0; j<num_interpolations; j++){
 
@@ -237,8 +226,7 @@ void Dtam::updateDepthMap_parallel_gpu(int index_m){
   dim3 threadsPerBlock( 1 , 1 , num_interpolations_);
   dim3 numBlocks( rows, cols , 1);
 
-
-  ComputeCostVolumeParallelGpu_kernel<<<numBlocks,threadsPerBlock,num_interpolations_*sizeof(int)>>>(camera_vector_gpu_[index_r_], camera_vector_gpu_[index_m], num_interpolations_, cost_matrix_ , n_valid_proj_matrix_, camera_data_for_dtam_, depth_r_array_);
+  ComputeCostVolumeParallelGpu_kernel<<<numBlocks,threadsPerBlock,num_interpolations_*sizeof(int)>>>(camera_vector_gpu_[index_r_], camera_vector_gpu_[index_m], num_interpolations_, cost_matrix_, camera_data_for_dtam_, depth_r_array_);
   err = cudaGetLastError();
   if (err != cudaSuccess)
       printf("Kernel computing cost volume Error: %s\n", cudaGetErrorString(err));
