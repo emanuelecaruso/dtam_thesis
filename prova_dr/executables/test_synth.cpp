@@ -41,16 +41,18 @@ int main (int argc, char * argv[]) {
   // --------------------------------------
   // generate cameras
   float object_depth=2;
+  float offset=-0.05;
+  float offset_depth=-0.05;
 
   environment->generateCamera("camera_r", 0,0,-object_depth, 0,0,0);
-  environment->generateCamera("camera_m1", 0.1,0.1,-object_depth-0.1, 0,0,0);
-  environment->generateCamera("camera_m2", -0.1,0.1,-object_depth-0.1, 0,0,0);
-  environment->generateCamera("camera_m3", 0,0.1,-object_depth-0.1, 0,0,0);
-  environment->generateCamera("camera_m4", 0.1,-0.1,-object_depth-0.1, 0,0,0);
-  environment->generateCamera("camera_m5", -0.1,-0.1,-object_depth-0.1, 0,0,0);
-  environment->generateCamera("camera_m6", 0,-0.1,-object_depth-0.1, 0,0,0);
-  environment->generateCamera("camera_m7", -0.1,0,-object_depth-0.1, 0,0,0);
-  environment->generateCamera("camera_m8", 0.1,0,-object_depth-0.1, 0,0,0);
+  environment->generateCamera("camera_m1", offset,offset,-object_depth-offset_depth, 0,0,0);
+  environment->generateCamera("camera_m2", -offset,offset,-object_depth-offset_depth, 0,0,0);
+  environment->generateCamera("camera_m3", 0,offset,-object_depth-offset_depth, 0,0,0);
+  environment->generateCamera("camera_m4", offset,-offset,-object_depth-offset_depth, 0,0,0);
+  environment->generateCamera("camera_m5", -offset,-offset,-object_depth-offset_depth, 0,0,0);
+  environment->generateCamera("camera_m6", 0,-offset,-object_depth-offset_depth, 0,0,0);
+  environment->generateCamera("camera_m7", -offset,0,-object_depth-offset_depth, 0,0,0);
+  environment->generateCamera("camera_m8", offset,0,-object_depth-offset_depth, 0,0,0);
   // --------------------------------------
   // generate environment
   cerr << "generating environment.." << endl;
@@ -105,9 +107,12 @@ int main (int argc, char * argv[]) {
     t_start=getTime();
 
     dtam->addCamera(environment->camera_vector_[it]);
+
     dtam->prepareCameraForDtam(it);
-    // dtam->updateDepthMap(it);
+
     // dtam->updateDepthMap(it, true);
+
+    // dtam->updateDepthMap(it);
     dtam->updateDepthMap_parallel_cpu(it);
 
 

@@ -38,6 +38,7 @@ class Dtam{
 
       for (int i=0; i<num_interpolations_; i++){
         float ratio_depth_r = (float)i/((float)num_interpolations_-1);
+        // float depth_r = 1.0/((1.0/depth1_r)+ratio_depth_r*((1.0/depth2_r)-(1.0/depth1_r)));
         float depth_r = depth1_r+ratio_depth_r*(depth2_r-depth1_r);
         depth_r_array_[i]=depth_r;
       }

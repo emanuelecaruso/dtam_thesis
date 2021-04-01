@@ -41,17 +41,19 @@ int main (int argc, char * argv[]) {
   // --------------------------------------
   // generate cameras
   float object_depth=2;
+  float offset=-0.05;
+  float offset_depth=-0.05;
 
   environment->generateCamera("camera_r", 0,0,-object_depth, 0,0,0);
-  environment->generateCamera("camera_m1", 0.1,0.1,-object_depth-0.1, 0,0,0);
-  environment->generateCamera("camera_m2", -0.1,0.1,-object_depth-0.1, 0,0,0);
-  environment->generateCamera("camera_m3", 0,0.1,-object_depth-0.1, 0,0,0);
-  environment->generateCamera("camera_m4", 0.1,-0.1,-object_depth-0.1, 0,0,0);
-  environment->generateCamera("camera_m5", -0.1,-0.1,-object_depth-0.1, 0,0,0);
-  environment->generateCamera("camera_m6", 0,-0.1,-object_depth-0.1, 0,0,0);
-  environment->generateCamera("camera_m7", -0.1,0,-object_depth-0.1, 0,0,0);
-  environment->generateCamera("camera_m8", 0.1,0,-object_depth-0.1, 0,0,0);
-
+  environment->generateCamera("camera_m1", offset,offset,-object_depth-offset_depth, 0,0,0);
+  environment->generateCamera("camera_m2", -offset,offset,-object_depth-offset_depth, 0,0,0);
+  environment->generateCamera("camera_m3", 0,offset,-object_depth-offset_depth, 0,0,0);
+  environment->generateCamera("camera_m4", offset,-offset,-object_depth-offset_depth, 0,0,0);
+  environment->generateCamera("camera_m5", -offset,-offset,-object_depth-offset_depth, 0,0,0);
+  environment->generateCamera("camera_m6", 0,-offset,-object_depth-offset_depth, 0,0,0);
+  environment->generateCamera("camera_m7", -offset,0,-object_depth-offset_depth, 0,0,0);
+  environment->generateCamera("camera_m8", offset,0,-object_depth-offset_depth, 0,0,0);
+  
   // --------------------------------------
   // generate environment
   cout << "generating environment.." << endl;
@@ -122,6 +124,7 @@ int main (int argc, char * argv[]) {
     camera->image_rgb_->show(800/camera->resolution_);
     // camera->depth_map_->show(800/camera->resolution_);
   }
+  camera_r->depth_map_gpu_.download(camera_r->depth_map_->image_);
   camera_r->depth_map_->show(800/camera_r->resolution_);
   depth_map_gt->show(800/camera_r->resolution_);
   cv::waitKey(0);

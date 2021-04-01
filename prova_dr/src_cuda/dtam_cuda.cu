@@ -194,8 +194,8 @@ __global__ void ComputeCostVolumeParallelGpu_kernel(Camera_gpu* camera_r, Camera
 
   // TODO this may be inefficient
   if (i==0){
-    int min_value=UCHAR_MAX;
-    int min_index=-1;
+    uchar min_value=UCHAR_MAX;
+    uchar min_index=num_interpolations-1;
     for (int j=0; j<num_interpolations; j++){
 
       if (cost_array[j]<min_value){
@@ -203,10 +203,7 @@ __global__ void ComputeCostVolumeParallelGpu_kernel(Camera_gpu* camera_r, Camera
         min_index=j;
       }
     }
-    if (min_index==-1)
-      camera_r->depth_map_(row,col)=1;
-    else
-      camera_r->depth_map_(row,col)=depth_r_array[min_index]/camera_r->max_depth_;
+    camera_r->depth_map_(row,col)=depth_r_array[min_index]/camera_r->max_depth_;
   }
 
 }
@@ -226,14 +223,12 @@ void Dtam::updateDepthMap_parallel_gpu(int index_m){
   dim3 threadsPerBlock( 1 , 1 , num_interpolations_);
   dim3 numBlocks( rows, cols , 1);
 
+
   ComputeCostVolumeParallelGpu_kernel<<<numBlocks,threadsPerBlock,num_interpolations_*sizeof(int)>>>(camera_vector_gpu_[index_r_], camera_vector_gpu_[index_m], num_interpolations_, cost_matrix_, camera_data_for_dtam_, depth_r_array_);
   err = cudaGetLastError();
   if (err != cudaSuccess)
       printf("Kernel computing cost volume Error: %s\n", cudaGetErrorString(err));
 
   cudaDeviceSynchronize();
-
-  camera_r_cpu->depth_map_gpu_.download(camera_r_cpu->depth_map_->image_);
-
 
 }
