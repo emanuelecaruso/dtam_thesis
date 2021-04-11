@@ -25,12 +25,72 @@ bool Dtam::setReferenceCamera(int index_r){
   int cols = camera_vector_cpu_[index_r_]->depth_map_->image_.cols;
   int rows = camera_vector_cpu_[index_r_]->depth_map_->image_.rows;
 
-  cost_matrix_.create(rows,cols*num_interpolations_,CV_8UC2);
+  cost_volume_.create(rows,cols*num_interpolations_,CV_8UC2);
   // uchar2 init_val;
   // init_val
-  cost_matrix_.setTo(cv::Scalar(UCHAR_MAX,0));
+  cost_volume_.setTo(cv::Scalar(UCHAR_MAX,0));
 
   return true;
+
+}
+
+__global__ void ComputeGradientImage_kernel(cv::cuda::PtrStepSz<float> image_in, cv::cuda::PtrStepSz<float> image_out){
+  int row = blockIdx.x * blockDim.x + threadIdx.x;
+  int col = blockIdx.y * blockDim.y + threadIdx.y;
+  int filter_idx = blockIdx.z * blockDim.z + threadIdx.z;
+
+  int rows = blockDim.x*gridDim.x;
+  int cols = blockDim.y*gridDim.y;
+
+  float value_in = image_in(row,col);
+  float value_out = 0;
+
+  __shared__ float grad_h[9]; //horizontal gradient
+  __shared__ float grad_v[9]; //vertical gradient
+
+  int sobel_row = filter_idx/3;
+  int sobel_col = filter_idx%3;
+
+  //hotizontal sobel filter
+  Eigen::Matrix3f sobel_h;
+  sobel_h <<  +1,  0, -1,
+              +2,  0, -2,
+              +1,  0, -1;
+
+  //vertical sobel filter
+  Eigen::Matrix3f sobel_v;
+  sobel_v <<  +1, +2, +1,
+               0,  0,  0,
+              -1, -2, -1;
+
+  int current_row = row+sobel_row-1;
+  int current_col = col+sobel_col-1;
+
+  if (current_row >0 && current_col>0 && current_row<rows && current_col<cols){
+    grad_h[filter_idx]=sobel_h(sobel_row,sobel_col)*image_in(current_row,current_col);
+    grad_v[filter_idx]=sobel_h(sobel_row,sobel_col)*image_in(current_row,current_col);
+  }
+  else{
+    grad_h[filter_idx]=0;
+    grad_v[filter_idx]=0;
+  }
+
+  __syncthreads();
+
+  if (filter_idx==0){
+    float value_h =0;
+    float value_v =0;
+    float value_out;
+    for (int i=0; i<9; i++){
+      value_h+=grad_h[i];
+      value_v+=grad_v[i];
+    }
+    value_h*=value_h;
+    value_v*=value_v;
+    value_out=sqrt(value_v+value_h);
+    image_out(row,col)=value_out;
+  }
+
 
 }
 
@@ -116,7 +176,7 @@ void Dtam::prepareCameraForDtam(int index_m){
 
 
 __global__ void ComputeCostVolumeParallelGpu_kernel(Camera_gpu* camera_r, Camera_gpu* camera_m, int num_interpolations,
-              cv::cuda::PtrStepSz<uchar2> cost_matrix, cameraDataForDtam* camera_data_for_dtam_, float* depth_r_array){
+              cv::cuda::PtrStepSz<uchar2> cost_volume, cameraDataForDtam* camera_data_for_dtam_, float* depth_r_array){
 
 
   int row = blockIdx.x * blockDim.x + threadIdx.x;
@@ -175,20 +235,19 @@ __global__ void ComputeCostVolumeParallelGpu_kernel(Camera_gpu* camera_r, Camera
     // int cost_current=((clr_r.x-clr_current.x)*(clr_r.x-clr_current.x)+(clr_r.y-clr_current.y)*(clr_r.y-clr_current.y)+(clr_r.z-clr_current.z)*(clr_r.z-clr_current.z));
     uchar cost_current=(abs(clr_r.x-clr_current.x)+abs(clr_r.y-clr_current.y)+abs(clr_r.z-clr_current.z))/3;
 
-    uchar2 cost_matrix_val = cost_matrix(row,col_);
+    uchar2 cost_volume_val = cost_volume(row,col_);
 
-    cost_matrix_val.x = (cost_matrix_val.x*cost_matrix_val.y+cost_current)/(cost_matrix_val.y+1);
+    cost_volume_val.x = (cost_volume_val.x*cost_volume_val.y+cost_current)/(cost_volume_val.y+1);
 
-    cost_matrix_val.y++;
+    cost_volume_val.y++;
 
-    cost_matrix(row,col_) = cost_matrix_val;
+    cost_volume(row,col_) = cost_volume_val;
 
   }
 
   extern __shared__ int cost_array[];
 
-  cost_array[i]=cost_matrix(row,col_).x;
-
+  cost_array[i]=cost_volume(row,col_).x;
 
   __syncthreads();
 
@@ -220,15 +279,23 @@ void Dtam::updateDepthMap_parallel_gpu(int index_m){
   int rows = camera_r_cpu->depth_map_->image_.rows;
 
   // Kernel invocation for computing cost volume
-  dim3 threadsPerBlock( 1 , 1 , num_interpolations_);
-  dim3 numBlocks( rows, cols , 1);
-
-
-  ComputeCostVolumeParallelGpu_kernel<<<numBlocks,threadsPerBlock,num_interpolations_*sizeof(int)>>>(camera_vector_gpu_[index_r_], camera_vector_gpu_[index_m], num_interpolations_, cost_matrix_, camera_data_for_dtam_, depth_r_array_);
+  dim3 threadsPerBlock_costvol( 1 , 1 , num_interpolations_);
+  dim3 numBlocks_costvol( rows, cols , 1);
+  ComputeCostVolumeParallelGpu_kernel<<<numBlocks_costvol,threadsPerBlock_costvol,num_interpolations_*sizeof(int)>>>(camera_vector_gpu_[index_r_], camera_vector_gpu_[index_m], num_interpolations_, cost_volume_, camera_data_for_dtam_, depth_r_array_);
   err = cudaGetLastError();
   if (err != cudaSuccess)
       printf("Kernel computing cost volume Error: %s\n", cudaGetErrorString(err));
 
   cudaDeviceSynchronize();
+
+  cv::cuda::GpuMat gradient_img;
+  gradient_img.create(rows,cols,CV_32FC1);
+
+  // dim3 threadsPerBlock_gradient( 1 , 1 , 9);
+  // dim3 numBlocks_gradient( rows, cols , 1);
+  // ComputeGradientImage_kernel<<<numBlocks_gradient,threadsPerBlock_gradient>>>(camera_r_cpu->depth_map_gpu_, gradient_img);
+  // err = cudaGetLastError();
+  // if (err != cudaSuccess)
+  //     printf("Kernel computing gradient Error: %s\n", cudaGetErrorString(err));
 
 }

@@ -27,6 +27,9 @@ class Environment{
         }
 
     void generateSinusoidalSurface(float picks_depth, int density);
+    void generateTexturedPlane(std::string path, float size, Eigen::Isometry3f pose, int density);
+    void generateTexturedCube(float size, Eigen::Isometry3f pose, int density);
+    
     void generateCamera(std::string name, float t1, float t2, float t3, float alpha1, float alpha2, float alpha3);
   private:
     Cp* getCpPtrOnGPU();

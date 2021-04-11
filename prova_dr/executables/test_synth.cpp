@@ -41,7 +41,7 @@ int main (int argc, char * argv[]) {
   // --------------------------------------
   // generate cameras
   float object_depth=2;
-  float offset=-0.05;
+  float offset=-0.1;
   float offset_depth=-0.05;
 
   environment->generateCamera("camera_r", 0,0,-object_depth, 0,0,0);
@@ -58,8 +58,20 @@ int main (int argc, char * argv[]) {
   cerr << "generating environment.." << endl;
   t_start=getTime();
 
-  int density=6000;
-  environment->generateSinusoidalSurface(object_depth, density);
+  int density=5000;
+  Eigen::Isometry3f pose_cube;
+  // pose.linear().setIdentity();
+  pose_cube.linear()=Rx(M_PI/6)*Ry(M_PI/4)*Rz(3.14/6);
+  pose_cube.translation()= Eigen::Vector3f(0,0,-1);
+  environment->generateTexturedCube(1, pose_cube, density);
+
+  Eigen::Isometry3f pose_background;
+  pose_background.linear().setIdentity();
+  pose_background.translation()= Eigen::Vector3f(0,0,-1.8);
+  environment->generateTexturedPlane("images/sunshine.jpg", 4, pose_background, density);
+
+  // environment->generateSinusoidalSurface(object_depth, density);
+  // environment->generateTexturedPlane("images/leon.jpg", 1, pose, density);
 
   t_end=getTime();
   cerr << "environment generation took: " << (t_end-t_start) << " ms" << endl;

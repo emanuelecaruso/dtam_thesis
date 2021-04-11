@@ -35,6 +35,67 @@ void Environment::generateSinusoidalSurface(float picks_depth, int density){
 
 }
 
+
+void Environment::generateTexturedPlane(std::string path, float size, Eigen::Isometry3f pose, int density){
+
+  Image<cv::Vec3b>* img = new Image<cv::Vec3b>(path);
+  img->loadJpg(path);
+
+  float x_, y_, ratio_x, ratio_y;
+  for (int x=0; x<density; x++){
+    ratio_x = (float)x/(float)density;
+    x_ = (-size/2)+ratio_x*(size);
+    for (int y=0; y<density; y++){
+      ratio_y = (float)y/(float)density;
+      y_ = (-size/2)+ratio_y*(size);
+
+      Cp cp;
+      Eigen::Vector3f point_on_plane = Eigen::Vector3f(x_,y_,0);
+      cp.point=pose*point_on_plane;
+      cv::Vec3b clr;
+      img->evalPixel(img->image_.rows*(1-ratio_y),img->image_.cols*ratio_x,clr);
+      cp.color[0]=clr[0];
+      cp.color[1]=clr[1];
+      cp.color[2]=clr[2];
+      cp_vector_.push_back(cp);
+    }
+  }
+}
+
+void Environment::generateTexturedCube(float size, Eigen::Isometry3f pose, int density){
+
+  Eigen::Isometry3f pose_left;
+  pose_left.linear()=Ry(M_PI/2);
+  pose_left.translation()= Eigen::Vector3f(-size/2,0,0);
+  Environment::generateTexturedPlane("images/leon.jpg", size, pose*pose_left, density);
+
+  Eigen::Isometry3f pose_right;
+  pose_right.linear()=Ry(M_PI/2);
+  pose_right.translation()= Eigen::Vector3f(size/2,0,0);
+  Environment::generateTexturedPlane("images/leon.jpg", size, pose*pose_right, density);
+
+  Eigen::Isometry3f pose_up;
+  pose_up.linear()=Rx(M_PI/2);
+  pose_up.translation()= Eigen::Vector3f(0,size/2,0);
+  Environment::generateTexturedPlane("images/folks.jpg", size, pose*pose_up, density);
+
+  Eigen::Isometry3f pose_down;
+  pose_down.linear()=Rx(M_PI/2);
+  pose_down.translation()= Eigen::Vector3f(0,-size/2,0);
+  Environment::generateTexturedPlane("images/folks.jpg", size, pose*pose_down, density);
+
+  Eigen::Isometry3f pose_back;
+  pose_back.linear().setIdentity();
+  pose_back.translation()= Eigen::Vector3f(0,0,-size/2);
+  Environment::generateTexturedPlane("images/forest.jpg", size, pose*pose_back, density);
+
+  Eigen::Isometry3f pose_front;
+  pose_front.linear().setIdentity();
+  pose_front.translation()= Eigen::Vector3f(0,0,size/2);
+  Environment::generateTexturedPlane("images/forest.jpg", size, pose*pose_front, density);
+
+}
+
 Cp* Environment::getCpPtrOnGPU(){
 
   cudaError_t err ;

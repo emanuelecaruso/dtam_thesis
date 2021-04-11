@@ -17,7 +17,9 @@ struct cameraDataForDtam{
 __global__ void prepareCameraForDtam_kernel(Camera_gpu* camera_r, Camera_gpu* camera_m, cv::cuda::PtrStepSz<float3> query_proj_matrix);
 
 __global__ void ComputeCostVolumeParallelGpu_kernel(Camera_gpu* camera_r, Camera_gpu* camera_m, int num_interpolations,
-          cv::cuda::PtrStepSz<uchar2> cost_matrix, cameraDataForDtam* camera_data_for_dtam_, float* depth_r_array);
+          cv::cuda::PtrStepSz<uchar2> cost_volume, cameraDataForDtam* camera_data_for_dtam_, float* depth_r_array);
+
+__global__ void ComputeGradientImage_kernel(cv::cuda::PtrStepSz<float> image_in, cv::cuda::PtrStepSz<float> image_out);
 
 
 class Dtam{
@@ -28,7 +30,7 @@ class Dtam{
     int index_r_;
     int num_interpolations_;
     float* depth_r_array_;
-    cv::cuda::GpuMat cost_matrix_;
+    cv::cuda::GpuMat cost_volume_;
     cv::cuda::GpuMat query_proj_matrix_;
     Eigen::Matrix3f T_r;
     Eigen::Vector3f T_t;
