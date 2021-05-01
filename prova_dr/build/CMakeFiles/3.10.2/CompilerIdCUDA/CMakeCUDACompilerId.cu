@@ -11,11 +11,9 @@
 # if defined(_MSC_VER)
 #  define SIMULATE_ID "MSVC"
 # endif
-# if defined(__CUDACC_VER_MAJOR__)
-#  define COMPILER_VERSION_MAJOR DEC(__CUDACC_VER_MAJOR__)
-#  define COMPILER_VERSION_MINOR DEC(__CUDACC_VER_MINOR__)
-#  define COMPILER_VERSION_PATCH DEC(__CUDACC_VER_BUILD__)
-# endif
+# define COMPILER_VERSION_MAJOR DEC(__CUDACC_VER_MAJOR__)
+# define COMPILER_VERSION_MINOR DEC(__CUDACC_VER_MINOR__)
+# define COMPILER_VERSION_PATCH DEC(__CUDACC_VER_BUILD__)
 # if defined(_MSC_VER)
    /* _MSC_VER = VVRR */
 #  define SIMULATE_VERSION_MAJOR DEC(_MSC_VER / 100)
@@ -286,9 +284,7 @@ char const* info_arch = "INFO" ":" "arch[" ARCHITECTURE_ID "]";
 
 
 const char* info_language_dialect_default = "INFO" ":" "dialect_default["
-#if __cplusplus > 201703L
-  "20"
-#elif __cplusplus >= 201703L
+#if __cplusplus > 201402L
   "17"
 #elif __cplusplus >= 201402L
   "14"

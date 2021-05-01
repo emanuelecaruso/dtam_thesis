@@ -209,19 +209,19 @@ void Dtam::prepareCameraForDtam(int index_m){
   prepareCameraForDtam_kernel<<<numBlocks,threadsPerBlock>>>( camera_vector_gpu_[index_r_], camera_vector_gpu_[index_m], camera_data_for_dtam_h->query_proj_matrix);
   err = cudaGetLastError();
   cudaDeviceSynchronize();
-if (err != cudaSuccess)
+  if (err != cudaSuccess)
       printf("Kernel preparing camera for dtam Error: %s\n", cudaGetErrorString(err));
 
   cudaMalloc(&camera_data_for_dtam_, sizeof(cameraDataForDtam));
   err = cudaGetLastError();
   cudaDeviceSynchronize();
-if (err != cudaSuccess)
+  if (err != cudaSuccess)
       printf("cudaMalloc (dtam constr) Error: %s\n", cudaGetErrorString(err));
 
   cudaMemcpy(camera_data_for_dtam_, camera_data_for_dtam_h, sizeof(cameraDataForDtam), cudaMemcpyHostToDevice);
   err = cudaGetLastError();
   cudaDeviceSynchronize();
-if (err != cudaSuccess)
+  if (err != cudaSuccess)
       printf("cudaMemcpy (dtam constr) %s%s",camera_m->name_," Error: %s\n", cudaGetErrorString(err));
 
   delete camera_data_for_dtam_h;
@@ -229,7 +229,7 @@ if (err != cudaSuccess)
 }
 
 
-__global__ void ComputeCostVolumeParallelGpu_kernel(Camera_gpu* camera_r, Camera_gpu* camera_m,
+__global__ void ComputeCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camera_m,
               cv::cuda::PtrStepSz<uchar2> cost_volume, cameraDataForDtam* camera_data_for_dtam_, float* depth_r_array){
 
 
@@ -299,11 +299,11 @@ __global__ void ComputeCostVolumeParallelGpu_kernel(Camera_gpu* camera_r, Camera
 
   }
 
-  __shared__ int cost_array[NUM_INTERPOLATIONS];
-  __shared__ int indx_array[NUM_INTERPOLATIONS];
+  __shared__ int cost_array[4][4][NUM_INTERPOLATIONS];
+  __shared__ int indx_array[4][4][NUM_INTERPOLATIONS];
 
-  cost_array[i]=cost_volume(row,col_).x;
-  indx_array[i]=i;
+  cost_array[threadIdx.x][threadIdx.y][i]=cost_volume(row,col_).x;
+  indx_array[threadIdx.x][threadIdx.y][i]=i;
   __syncthreads();
 
   // -----------------------------------
@@ -330,17 +330,17 @@ __global__ void ComputeCostVolumeParallelGpu_kernel(Camera_gpu* camera_r, Camera
 		// Reduce the threads performing work by half previous the previous
 		// iteration each cycle
 		if (i % (2 * s) == 0) {
-      int min_cost = min(cost_array[i + s], cost_array[i]);
-      if (cost_array[i] > min_cost ){
-        indx_array[i] = indx_array[i+s];
-        cost_array[i] = min_cost ;
+      int min_cost = min(cost_array[threadIdx.x][threadIdx.y][i + s], cost_array[threadIdx.x][threadIdx.y][i]);
+      if (cost_array[threadIdx.x][threadIdx.y][i] > min_cost ){
+        indx_array[threadIdx.x][threadIdx.y][i] = indx_array[threadIdx.x][threadIdx.y][i+s];
+        cost_array[threadIdx.x][threadIdx.y][i] = min_cost ;
       }
 		}
 		__syncthreads();
 	}
   if (i == 0) {
-    camera_r->depth_map_(row,col)=depth_r_array[indx_array[0]]/camera_r->max_depth_;
-    if (indx_array[0]==0)
+    camera_r->depth_map_(row,col)=depth_r_array[indx_array[threadIdx.x][threadIdx.y][0]]/camera_r->max_depth_;
+    if (indx_array[threadIdx.x][threadIdx.y][0]==0)
       camera_r->depth_map_(row,col)=UCHAR_MAX;
 	}
   // -----------------------------------
@@ -356,9 +356,9 @@ void Dtam::ComputeCostVolume(int index_m, cameraDataForDtam* camera_data_for_dta
   int cols = camera_r_cpu->depth_map_->image_.cols;
   int rows = camera_r_cpu->depth_map_->image_.rows;
 
-  dim3 threadsPerBlock( 1 , 1 , NUM_INTERPOLATIONS);
-  dim3 numBlocks( rows, cols , 1);
-  ComputeCostVolumeParallelGpu_kernel<<<numBlocks,threadsPerBlock>>>(camera_r_gpu, camera_vector_gpu_[index_m], cost_volume_, camera_data_for_dtam, depth_r_array);
+  dim3 threadsPerBlock( 4 , 4 , NUM_INTERPOLATIONS);
+  dim3 numBlocks( rows/4, cols/4 , 1);
+  ComputeCostVolume_kernel<<<numBlocks,threadsPerBlock>>>(camera_r_gpu, camera_vector_gpu_[index_m], cost_volume_, camera_data_for_dtam, depth_r_array);
   err = cudaGetLastError();
   cudaDeviceSynchronize();
   if (err != cudaSuccess)
@@ -469,7 +469,6 @@ __global__ void search_A_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepS
 	}
   // -----------------------------------
 }
-
 
 // https://github.com/CoffeeBeforeArch/cuda_programming/blob/master/sumReduction/diverged/sumReduction.cu
 __global__ void sumReduction_kernel(float *v, float *v_r, int size) {
@@ -699,7 +698,7 @@ void Dtam::updateDepthMap_parallel_gpu(int index_m){
   // Kernel invocation for computing cost volume
   Dtam::ComputeCostVolume(index_m, camera_data_for_dtam_, depth_r_array_);
 
-  Dtam::Regularize(cost_volume_, depth_r_array_);
+  // Dtam::Regularize(cost_volume_, depth_r_array_);
 
 
 }

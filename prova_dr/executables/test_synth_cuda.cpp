@@ -7,7 +7,6 @@
 #include "utils.h"
 #include "dtam_cuda.cuh"
 #include <stdio.h>
-#include <cuda_runtime.h>
 
 using namespace std;
 using namespace pr;

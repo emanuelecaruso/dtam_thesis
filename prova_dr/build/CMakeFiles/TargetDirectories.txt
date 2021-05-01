@@ -1,6 +1,6 @@
-/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles/rebuild_cache.dir
-/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/CMakeFiles/edit_cache.dir
-/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/rebuild_cache.dir
-/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/edit_cache.dir
-/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth.dir
-/home/emanuele/Scrivania/idea3Dreconstr/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir
+/home/manu/Scrivania/dtam_thesis/prova_dr/build/CMakeFiles/rebuild_cache.dir
+/home/manu/Scrivania/dtam_thesis/prova_dr/build/CMakeFiles/edit_cache.dir
+/home/manu/Scrivania/dtam_thesis/prova_dr/build/executables/CMakeFiles/rebuild_cache.dir
+/home/manu/Scrivania/dtam_thesis/prova_dr/build/executables/CMakeFiles/edit_cache.dir
+/home/manu/Scrivania/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_synth.dir
+/home/manu/Scrivania/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir
