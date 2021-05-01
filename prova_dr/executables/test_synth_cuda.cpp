@@ -18,9 +18,8 @@ int main (int argc, char * argv[]) {
   // choose parameters
   //############################################################################
 
-  int resolution = 600;
-  float aspect = 1;
-  // int num_interpolations = 64;
+  int resolution = 640;
+  float aspect = 1.333333333;
 
   //############################################################################
   // initialization

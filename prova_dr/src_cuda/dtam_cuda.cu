@@ -44,8 +44,8 @@ __global__ void ComputeGradientImage_fwd_kernel(cv::cuda::PtrStepSz<float> image
   int rows = blockDim.x*gridDim.x;
   int cols = blockDim.y*gridDim.y;
 
-  __shared__ float grad_h[9]; //horizontal gradient
-  __shared__ float grad_v[9]; //vertical gradient
+  __shared__ float grad_h[10][10][9]; //horizontal gradient
+  __shared__ float grad_v[10][10][9]; //vertical gradient
 
   //hotizontal sobel filter
   Eigen::Matrix3f sobel_h;
@@ -65,14 +65,14 @@ __global__ void ComputeGradientImage_fwd_kernel(cv::cuda::PtrStepSz<float> image
   int current_row = row+sobel_row-1;
   int current_col = col+sobel_col-1;
 
-  // if (current_row >0 && current_col>0 && current_row<rows-1 && current_col<cols-1){
-    grad_h[filter_idx]=sobel_h(sobel_row,sobel_col)*image_in(current_row,current_col);
-    grad_v[filter_idx]=sobel_v(sobel_row,sobel_col)*image_in(current_row,current_col);
-  // }
-  // else{
-  //   grad_h[filter_idx]=0;
-  //   grad_v[filter_idx]=0;
-  // }
+  if (current_row >0 && current_col>0 && current_row<rows-1 && current_col<cols-1){
+    grad_h[threadIdx.x][threadIdx.y][filter_idx]=sobel_h(sobel_row,sobel_col)*image_in(current_row,current_col);
+    grad_v[threadIdx.x][threadIdx.y][filter_idx]=sobel_v(sobel_row,sobel_col)*image_in(current_row,current_col);
+  }
+  else{
+    grad_h[threadIdx.x][threadIdx.y][filter_idx]=0;
+    grad_v[threadIdx.x][threadIdx.y][filter_idx]=0;
+  }
 
   __syncthreads();
 
@@ -80,8 +80,8 @@ __global__ void ComputeGradientImage_fwd_kernel(cv::cuda::PtrStepSz<float> image
     float value_h =0;
     float value_v =0;
     for (int i=0; i<9; i++){
-      value_h+=grad_h[i];
-      value_v+=grad_v[i];
+      value_h+=grad_h[threadIdx.x][threadIdx.y][i];
+      value_v+=grad_v[threadIdx.x][threadIdx.y][i];
     }
     value_h=abs(value_h/6.0);
     value_v=abs(value_v/6.0);
@@ -100,8 +100,8 @@ __global__ void ComputeGradientImage_bwd_kernel(cv::cuda::PtrStepSz<float> image
   int rows = blockDim.x*gridDim.x;
   int cols = blockDim.y*gridDim.y;
 
-  __shared__ float grad_h[9]; //horizontal gradient
-  __shared__ float grad_v[9]; //vertical gradient
+  __shared__ float grad_h[10][10][9]; //horizontal gradient
+  __shared__ float grad_v[10][10][9]; //vertical gradient
 
   //hotizontal sobel filter
   Eigen::Matrix3f sobel_h;
@@ -122,12 +122,12 @@ __global__ void ComputeGradientImage_bwd_kernel(cv::cuda::PtrStepSz<float> image
   int current_col = col+sobel_col-1;
 
   if (current_row >-1 && current_col>-1 && current_row<rows && current_col<cols){
-    grad_h[filter_idx]=-1*sobel_h(sobel_row,sobel_col)*image_in(current_row,current_col);
-    grad_v[filter_idx]=-1*sobel_v(sobel_row,sobel_col)*image_in(current_row,current_col+cols);
+    grad_h[threadIdx.x][threadIdx.y][filter_idx]=-1*sobel_h(sobel_row,sobel_col)*image_in(current_row,current_col);
+    grad_v[threadIdx.x][threadIdx.y][filter_idx]=-1*sobel_v(sobel_row,sobel_col)*image_in(current_row,current_col+cols);
   }
   else{
-    grad_h[filter_idx]=0;
-    grad_v[filter_idx]=0;
+    grad_h[threadIdx.x][threadIdx.y][filter_idx]=0;
+    grad_v[threadIdx.x][threadIdx.y][filter_idx]=0;
   }
 
   __syncthreads();
@@ -136,8 +136,8 @@ __global__ void ComputeGradientImage_bwd_kernel(cv::cuda::PtrStepSz<float> image
     float value_h =0;
     float value_v =0;
     for (int i=0; i<9; i++){
-      value_h+=grad_h[i];
-      value_v+=grad_v[i];
+      value_h+=grad_h[threadIdx.x][threadIdx.y][i];
+      value_v+=grad_v[threadIdx.x][threadIdx.y][i];
     }
     value_h=abs(value_h/6);
     value_v=abs(value_v/6);
@@ -375,12 +375,12 @@ void Dtam::ComputeGradientImage_fwd(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat
 
   image_out->create(rows,cols*2,CV_32FC1);
 
-  dim3 threadsPerBlock( 1 , 1 , 9);
-  dim3 numBlocks( rows, cols , 1);
+  dim3 threadsPerBlock( 10 , 10 , 9);
+  dim3 numBlocks( rows/10, cols/10 , 1);
   ComputeGradientImage_fwd_kernel<<<numBlocks,threadsPerBlock>>>(*image_in, *image_out);
   err = cudaGetLastError();
   cudaDeviceSynchronize();
-if (err != cudaSuccess)
+  if (err != cudaSuccess)
       printf("Kernel computing gradient Error: %s\n", cudaGetErrorString(err));
 
 }
@@ -394,8 +394,8 @@ void Dtam::ComputeGradientImage_bwd(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat
 
   image_out->create(rows,cols,CV_32FC1);
 
-  dim3 threadsPerBlock( 1 , 1 , 9);
-  dim3 numBlocks( rows, cols , 1);
+  dim3 threadsPerBlock( 10 , 10 , 9);
+  dim3 numBlocks( rows/10, cols/10 , 1);
   ComputeGradientImage_bwd_kernel<<<numBlocks,threadsPerBlock>>>(*image_in, *image_out);
   err = cudaGetLastError();
   cudaDeviceSynchronize();
@@ -440,13 +440,13 @@ __global__ void search_A_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepS
 
   int col_ = cols*i+col;
 
-  __shared__ int cost_array[NUM_INTERPOLATIONS];
-  __shared__ int indx_array[NUM_INTERPOLATIONS];
+  __shared__ int cost_array[4][4][NUM_INTERPOLATIONS];
+  __shared__ int indx_array[4][4][NUM_INTERPOLATIONS];
 
   float a_i = depth_r_array[i];
 
-  cost_array[i]=(1.0/(2*theta))*(d(row,col)-a_i)*(d(row,col)-a_i)+lambda*cost_volume(row,col_).x;
-  indx_array[i]=i;
+  cost_array[threadIdx.x][threadIdx.y][i]=(1.0/(2*theta))*(d(row,col)-a_i)*(d(row,col)-a_i)+lambda*cost_volume(row,col_).x;
+  indx_array[threadIdx.x][threadIdx.y][i]=i;
   __syncthreads();
 
   // -----------------------------------
@@ -456,16 +456,16 @@ __global__ void search_A_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepS
 		// Reduce the threads performing work by half previous the previous
 		// iteration each cycle
 		if (i % (2 * s) == 0) {
-      int min_cost = min(cost_array[i + s], cost_array[i]);
-      if (cost_array[i] > min_cost ){
-        indx_array[i] = indx_array[i+s];
-        cost_array[i] = min_cost ;
+      int min_cost = min(cost_array[threadIdx.x][threadIdx.y][i + s], cost_array[threadIdx.x][threadIdx.y][i]);
+      if (cost_array[threadIdx.x][threadIdx.y][i] > min_cost ){
+        indx_array[threadIdx.x][threadIdx.y][i] = indx_array[threadIdx.x][threadIdx.y][i+s];
+        cost_array[threadIdx.x][threadIdx.y][i] = min_cost ;
       }
 		}
 		__syncthreads();
 	}
   if (i == 0) {
-    a(row,col)=cost_array[indx_array[0]];
+    a(row,col)=cost_array[threadIdx.x][threadIdx.y][indx_array[threadIdx.x][threadIdx.y][0]];
 	}
   // -----------------------------------
 }
@@ -473,7 +473,7 @@ __global__ void search_A_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepS
 // https://github.com/CoffeeBeforeArch/cuda_programming/blob/master/sumReduction/diverged/sumReduction.cu
 __global__ void sumReduction_kernel(float *v, float *v_r, int size) {
 	// Allocate shared memory
-	__shared__ float partial_sum[64];
+	__shared__ float partial_sum[1024];
 
 	// Calculate thread ID
 	int tid = blockIdx.x * blockDim.x + threadIdx.x;
@@ -533,8 +533,8 @@ void Dtam::gradDesc_Q(cv::cuda::GpuMat* q, cv::cuda::GpuMat* gradient_d ){
   cudaMalloc(&norm_vector_i, sizeof(float)*N);
 
 
-  dim3 threadsPerBlock( 8 , 8 , 1);
-  dim3 numBlocks( rows/8, cols/8 , 1);
+  dim3 threadsPerBlock( 32 , 32 , 1);
+  dim3 numBlocks( rows/32, cols/32 , 1);
   gradDesc_Q_kernel<<<numBlocks,threadsPerBlock>>>( *q, *gradient_d, eps_, sigma_q_, vector_to_normalize, norm_vector_i);
   err = cudaGetLastError();
   cudaDeviceSynchronize();
@@ -542,7 +542,7 @@ void Dtam::gradDesc_Q(cv::cuda::GpuMat* q, cv::cuda::GpuMat* gradient_d ){
       printf("Kernel computing next q to normalize Error: %s\n", cudaGetErrorString(err));
 
   // TB Size
-	const int TB_SIZE = 64;
+	const int TB_SIZE = 1024;
 	// Grid Size (No padding)
 	int GRID_SIZE = N;
   int N_THREADS = N;
@@ -600,8 +600,8 @@ void Dtam::gradDesc_D(cv::cuda::GpuMat* d, cv::cuda::GpuMat* a, cv::cuda::GpuMat
   int rows = d->rows;
   int cols = d->cols;
 
-  dim3 threadsPerBlock( 8 , 8 , 1);
-  dim3 numBlocks( rows/8, cols/8 , 1);
+  dim3 threadsPerBlock( 32 , 32 , 1);
+  dim3 numBlocks( rows/32, cols/32 , 1);
   gradDesc_D_kernel<<<numBlocks,threadsPerBlock>>>( *d, *a, *gradient_q, sigma_d_, theta_);
 
   err = cudaGetLastError();
@@ -617,8 +617,8 @@ void Dtam::search_A(cv::cuda::GpuMat* d, cv::cuda::GpuMat* a ){
   int rows = d->rows;
   int cols = d->cols;
 
-  dim3 threadsPerBlock( 1 , 1 , NUM_INTERPOLATIONS);
-  dim3 numBlocks( rows, cols , 1);
+  dim3 threadsPerBlock( 4 , 4 , NUM_INTERPOLATIONS);
+  dim3 numBlocks( rows/4, cols/4 , 1);
   search_A_kernel<<<numBlocks,threadsPerBlock>>>( *d, *a, cost_volume_, lambda_ , theta_, depth_r_array_);
 
   err = cudaGetLastError();
@@ -698,7 +698,7 @@ void Dtam::updateDepthMap_parallel_gpu(int index_m){
   // Kernel invocation for computing cost volume
   Dtam::ComputeCostVolume(index_m, camera_data_for_dtam_, depth_r_array_);
 
-  // Dtam::Regularize(cost_volume_, depth_r_array_);
+  Dtam::Regularize(cost_volume_, depth_r_array_);
 
 
 }
