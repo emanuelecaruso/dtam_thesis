@@ -21,7 +21,7 @@ int main (int argc, char * argv[]) {
 
   int resolution = 600;
   float aspect = 1;
-  int num_interpolations = 64;
+  // int num_interpolations = 64;
 
   //############################################################################
   // initialization
@@ -32,7 +32,7 @@ int main (int argc, char * argv[]) {
 
   Environment* environment = new Environment(resolution, aspect); // environment generator object (pointer)
   Renderer* renderer = new Renderer(); // renderer object (pointer)
-  Dtam* dtam = new Dtam(environment, num_interpolations); // dense mapper and tracker
+  Dtam* dtam = new Dtam(environment); // dense mapper and tracker
 
   //############################################################################
   // generate cameras (in this case same orientation)
@@ -46,13 +46,13 @@ int main (int argc, char * argv[]) {
 
   environment->generateCamera("camera_r", 0,0,-object_depth, 0,0,0);
   environment->generateCamera("camera_m1", offset,offset,-object_depth-offset_depth, 0,0,0);
-  environment->generateCamera("camera_m2", -offset,offset,-object_depth-offset_depth, 0,0,0);
-  environment->generateCamera("camera_m3", 0,offset,-object_depth-offset_depth, 0,0,0);
-  environment->generateCamera("camera_m4", offset,-offset,-object_depth-offset_depth, 0,0,0);
-  environment->generateCamera("camera_m5", -offset,-offset,-object_depth-offset_depth, 0,0,0);
-  environment->generateCamera("camera_m6", 0,-offset,-object_depth-offset_depth, 0,0,0);
-  environment->generateCamera("camera_m7", -offset,0,-object_depth-offset_depth, 0,0,0);
-  environment->generateCamera("camera_m8", offset,0,-object_depth-offset_depth, 0,0,0);
+  // environment->generateCamera("camera_m2", -offset,offset,-object_depth-offset_depth, 0,0,0);
+  // environment->generateCamera("camera_m3", 0,offset,-object_depth-offset_depth, 0,0,0);
+  // environment->generateCamera("camera_m4", offset,-offset,-object_depth-offset_depth, 0,0,0);
+  // environment->generateCamera("camera_m5", -offset,-offset,-object_depth-offset_depth, 0,0,0);
+  // environment->generateCamera("camera_m6", 0,-offset,-object_depth-offset_depth, 0,0,0);
+  // environment->generateCamera("camera_m7", -offset,0,-object_depth-offset_depth, 0,0,0);
+  // environment->generateCamera("camera_m8", offset,0,-object_depth-offset_depth, 0,0,0);
 
   // --------------------------------------
   // generate environment
@@ -61,8 +61,8 @@ int main (int argc, char * argv[]) {
 
   int density=5000;
   Eigen::Isometry3f pose_cube;
-  // pose.linear().setIdentity();
-  pose_cube.linear()=Rx(M_PI/6)*Ry(M_PI/4)*Rz(3.14/6);
+  pose_cube.linear().setIdentity();
+  // pose_cube.linear()=Rx(M_PI/6)*Ry(M_PI/4)*Rz(3.14/6);
   pose_cube.translation()= Eigen::Vector3f(0,0,-1);
   environment->generateTexturedCube(1, pose_cube, density);
 
