@@ -307,23 +307,6 @@ __global__ void ComputeCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camer
   __syncthreads();
 
   // -----------------------------------
-  // // TODO this may be inefficient
-  // if (i==0){
-  //
-  //   uchar min_value=UCHAR_MAX;
-  //   uchar min_index=NUM_INTERPOLATIONS-1;
-  //   for (int j=0; j<NUM_INTERPOLATIONS; j++){
-  //
-  //     if (cost_array[j]<min_value){
-  //       min_value=cost_array[j];
-  //       min_index=j;
-  //     }
-  //   }
-  //   camera_r->depth_map_(row,col)=depth_r_array[min_index]/camera_r->max_depth_;
-  // }
-  // -----------------------------------
-
-  // -----------------------------------
   // REDUCTION
   // Iterate of log base 2 the block dimension
 	for (int s = 1; s < NUM_INTERPOLATIONS; s *= 2) {
@@ -341,7 +324,7 @@ __global__ void ComputeCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camer
   if (i == 0) {
     camera_r->depth_map_(row,col)=depth_r_array[indx_array[threadIdx.x][threadIdx.y][0]]/camera_r->max_depth_;
     if (indx_array[threadIdx.x][threadIdx.y][0]==0)
-      camera_r->depth_map_(row,col)=UCHAR_MAX;
+      camera_r->depth_map_(row,col)=1;
 	}
   // -----------------------------------
 
@@ -465,7 +448,9 @@ __global__ void search_A_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepS
 		__syncthreads();
 	}
   if (i == 0) {
-    a(row,col)=cost_array[threadIdx.x][threadIdx.y][indx_array[threadIdx.x][threadIdx.y][0]];
+    a(row,col)=depth_r_array[indx_array[threadIdx.x][threadIdx.y][0]]/depth_r_array[NUM_INTERPOLATIONS-1];
+    if (indx_array[threadIdx.x][threadIdx.y][0]==0)
+      a(row,col)=1;
 	}
   // -----------------------------------
 }
@@ -640,8 +625,8 @@ void Dtam::Regularize(cv::cuda::PtrStepSz<uchar2> cost_volume, float* depth_r_ar
 
   n_ = 0;
   theta_=0.2;
-  sigma_q_=0.001;
-  sigma_d_=0.001;
+  sigma_q_=0;
+  sigma_d_=0;
 
   while(theta_>theta_end_){
 
@@ -677,16 +662,20 @@ void Dtam::Regularize(cv::cuda::PtrStepSz<uchar2> cost_volume, float* depth_r_ar
 
   cv::cuda::GpuMat* gradient = new cv::cuda::GpuMat;
   Dtam::ComputeGradientImage_fwd( &(camera_vector_cpu_[index_r_]->depth_map_gpu_), gradient ); // compute gradient of d (n)
-
   cv::Mat_< float > test;
   (*gradient).download(test);
   cv::imshow("prova test", test);
 
+  cv::cuda::GpuMat* gradient_back = new cv::cuda::GpuMat;
+  Dtam::ComputeGradientImage_bwd( gradient ,gradient_back );
+  cv::Mat_< float > test_back;
+  (*gradient_back).download(test_back);
+  cv::imshow("prova test back", test_back);
 
-  // cv::cuda::GpuMat* gradient_back = Dtam::ComputeGradientImage_bwd( gradient );
-  // cv::Mat_< float > test_back;
-  // (*gradient_back).download(test_back);
-  // cv::imshow("prova test_back", test_back);
+  cv::Mat_< float > first_a;
+  (camera_vector_cpu_[index_r_]->depth_map_gpu_).download(first_a);
+  cv::imshow("prova first a", first_a);
+
   //**************************************************************************
 
   camera_vector_cpu_[index_r_]->depth_map_gpu_=a;
