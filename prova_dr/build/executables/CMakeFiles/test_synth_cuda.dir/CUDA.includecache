@@ -86,6 +86,10 @@ camera.h
 cuda_runtime.h
 -
 
+/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/cuda_utils.cuh
+cuda_runtime.h
+-
+
 /home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/dtam_cuda.cu
 dtam_cuda.cuh
 /home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/dtam_cuda.cuh
@@ -97,6 +101,8 @@ stdlib.h
 -
 defs.h
 /home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/defs.h
+cuda_utils.cuh
+/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/cuda_utils.cuh
 
 /home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/dtam_cuda.cuh
 camera_cpu.cuh

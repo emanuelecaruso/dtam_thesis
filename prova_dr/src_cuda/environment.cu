@@ -67,12 +67,12 @@ void Environment::generateTexturedCube(float size, Eigen::Isometry3f pose, int d
   Eigen::Isometry3f pose_left;
   pose_left.linear()=Ry(M_PI/2);
   pose_left.translation()= Eigen::Vector3f(-size/2,0,0);
-  Environment::generateTexturedPlane("images/leon.jpg", size, pose*pose_left, density);
+  Environment::generateTexturedPlane("images/forest.jpg", size, pose*pose_left, density);
 
   Eigen::Isometry3f pose_right;
   pose_right.linear()=Ry(M_PI/2);
   pose_right.translation()= Eigen::Vector3f(size/2,0,0);
-  Environment::generateTexturedPlane("images/leon.jpg", size, pose*pose_right, density);
+  Environment::generateTexturedPlane("images/forest.jpg", size, pose*pose_right, density);
 
   Eigen::Isometry3f pose_up;
   pose_up.linear()=Rx(M_PI/2);
@@ -87,12 +87,12 @@ void Environment::generateTexturedCube(float size, Eigen::Isometry3f pose, int d
   Eigen::Isometry3f pose_back;
   pose_back.linear().setIdentity();
   pose_back.translation()= Eigen::Vector3f(0,0,-size/2);
-  Environment::generateTexturedPlane("images/cols.jpg", size, pose*pose_back, density);
+  Environment::generateTexturedPlane("images/leon.jpg", size, pose*pose_back, density);
 
   Eigen::Isometry3f pose_front;
   pose_front.linear().setIdentity();
   pose_front.translation()= Eigen::Vector3f(0,0,size/2);
-  Environment::generateTexturedPlane("images/cols.jpg", size, pose*pose_front, density);
+  Environment::generateTexturedPlane("images/leon.jpg", size, pose*pose_front, density);
 
 }
 

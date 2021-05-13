@@ -788,6 +788,7 @@ executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o: ../src/im
 executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o: ../src/utils.h
 executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o: ../src_cuda/camera_cpu.cuh
 executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o: ../src_cuda/camera_gpu.cuh
+executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o: ../src_cuda/cuda_utils.cuh
 executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o: ../src_cuda/dtam_cuda.cu
 executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o: ../src_cuda/dtam_cuda.cuh
 executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o: ../src_cuda/environment.cuh

@@ -3,6 +3,7 @@
 #include "utils.h"
 #include <stdlib.h>
 #include "defs.h"
+#include "cuda_utils.cuh"
 
 
 void Dtam::loadCameras(CameraVector_cpu camera_vector_cpu, CameraVector_gpu camera_vector_gpu){
@@ -201,35 +202,26 @@ void Dtam::prepareCameraForDtam(int index_m){
   query_proj_matrix_.create(rows,cols,CV_32FC3);
   camera_data_for_dtam_h->query_proj_matrix=query_proj_matrix_;
 
-  cudaError_t err ;
+
 
   // Kernel invocation
   dim3 threadsPerBlock( 8 , 8 , 1);
   dim3 numBlocks( rows/8, cols/8 , 1);
   prepareCameraForDtam_kernel<<<numBlocks,threadsPerBlock>>>( camera_vector_gpu_[index_r_], camera_vector_gpu_[index_m], camera_data_for_dtam_h->query_proj_matrix);
-  err = cudaGetLastError();
-  cudaDeviceSynchronize();
-  if (err != cudaSuccess)
-      printf("Kernel preparing camera for dtam Error: %s\n", cudaGetErrorString(err));
+  printCudaError("Kernel preparing camera for dtam "+camera_m->name_);
 
   cudaMalloc(&camera_data_for_dtam_, sizeof(cameraDataForDtam));
-  err = cudaGetLastError();
-  cudaDeviceSynchronize();
-  if (err != cudaSuccess)
-      printf("cudaMalloc (dtam constr) Error: %s\n", cudaGetErrorString(err));
+  printCudaError("cudaMalloc (dtam constr) "+camera_m->name_);
 
   cudaMemcpy(camera_data_for_dtam_, camera_data_for_dtam_h, sizeof(cameraDataForDtam), cudaMemcpyHostToDevice);
-  err = cudaGetLastError();
-  cudaDeviceSynchronize();
-  if (err != cudaSuccess)
-      printf("cudaMemcpy (dtam constr) %s%s",camera_m->name_," Error: %s\n", cudaGetErrorString(err));
+  printCudaError("cudaMemcpy (dtam constr) "+camera_m->name_);
 
   delete camera_data_for_dtam_h;
 
 }
 
 
-__global__ void ComputeCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camera_m,
+__global__ void UpdateCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camera_m,
               cv::cuda::PtrStepSz<uchar2> cost_volume, cameraDataForDtam* camera_data_for_dtam_, float* depth_r_array){
 
 
@@ -299,14 +291,54 @@ __global__ void ComputeCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camer
 
   }
 
+  // __shared__ int cost_array[4][4][NUM_INTERPOLATIONS];
+  // __shared__ int indx_array[4][4][NUM_INTERPOLATIONS];
+  //
+  // cost_array[threadIdx.x][threadIdx.y][i]=cost_volume(row,col_).x;
+  // indx_array[threadIdx.x][threadIdx.y][i]=i;
+
+  // __syncthreads();
+  //
+  // // -----------------------------------
+  // // REDUCTION
+  // // Iterate of log base 2 the block dimension
+	// for (int s = 1; s < NUM_INTERPOLATIONS; s *= 2) {
+	// 	// Reduce the threads performing work by half previous the previous
+	// 	// iteration each cycle
+	// 	if (i % (2 * s) == 0) {
+  //     int min_cost = min(cost_array[threadIdx.x][threadIdx.y][i + s], cost_array[threadIdx.x][threadIdx.y][i]);
+  //     if (cost_array[threadIdx.x][threadIdx.y][i] > min_cost ){
+  //       indx_array[threadIdx.x][threadIdx.y][i] = indx_array[threadIdx.x][threadIdx.y][i+s];
+  //       cost_array[threadIdx.x][threadIdx.y][i] = min_cost ;
+  //     }
+	// 	}
+	// 	__syncthreads();
+	// }
+  // if (i == 0) {
+  //   camera_r->depth_map_(row,col)=depth_r_array[indx_array[threadIdx.x][threadIdx.y][0]]/camera_r->max_depth_;
+  //   if (indx_array[threadIdx.x][threadIdx.y][0]==0)
+  //     camera_r->depth_map_(row,col)=1;
+	// }
+  // // -----------------------------------
+
+}
+
+__global__ void ComputeCostVolumeMin_kernel( Camera_gpu* camera_r, cv::cuda::PtrStepSz<uchar2> cost_volume, float* depth_r_array){
+
+  int row = blockIdx.x * blockDim.x + threadIdx.x;
+  int col = blockIdx.y * blockDim.y + threadIdx.y;
+  int i = blockIdx.z * blockDim.z + threadIdx.z;
+
+  int cols = blockDim.y*gridDim.y;
+  int col_ = cols*i+col;
+
+
   __shared__ int cost_array[4][4][NUM_INTERPOLATIONS];
   __shared__ int indx_array[4][4][NUM_INTERPOLATIONS];
 
   cost_array[threadIdx.x][threadIdx.y][i]=cost_volume(row,col_).x;
   indx_array[threadIdx.x][threadIdx.y][i]=i;
-  __syncthreads();
 
-  // -----------------------------------
   // REDUCTION
   // Iterate of log base 2 the block dimension
 	for (int s = 1; s < NUM_INTERPOLATIONS; s *= 2) {
@@ -322,17 +354,15 @@ __global__ void ComputeCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camer
 		__syncthreads();
 	}
   if (i == 0) {
-    camera_r->depth_map_(row,col)=depth_r_array[indx_array[threadIdx.x][threadIdx.y][0]]/camera_r->max_depth_;
+    camera_r->depth_map_(row,col)=depth_r_array[indx_array[threadIdx.x][threadIdx.y][0]]/depth_r_array[NUM_INTERPOLATIONS-1];
     if (indx_array[threadIdx.x][threadIdx.y][0]==0)
       camera_r->depth_map_(row,col)=1;
 	}
-  // -----------------------------------
 
 }
 
-void Dtam::ComputeCostVolume(int index_m, cameraDataForDtam* camera_data_for_dtam, float* depth_r_array){
 
-  cudaError_t err ;
+void Dtam::UpdateCostVolume(int index_m, cameraDataForDtam* camera_data_for_dtam ){
 
   Camera_cpu* camera_r_cpu = camera_vector_cpu_[index_r_];
   Camera_gpu* camera_r_gpu = camera_vector_gpu_[index_r_];
@@ -341,17 +371,25 @@ void Dtam::ComputeCostVolume(int index_m, cameraDataForDtam* camera_data_for_dta
 
   dim3 threadsPerBlock( 4 , 4 , NUM_INTERPOLATIONS);
   dim3 numBlocks( rows/4, cols/4 , 1);
-  ComputeCostVolume_kernel<<<numBlocks,threadsPerBlock>>>(camera_r_gpu, camera_vector_gpu_[index_m], cost_volume_, camera_data_for_dtam, depth_r_array);
-  err = cudaGetLastError();
-  cudaDeviceSynchronize();
-  if (err != cudaSuccess)
-      printf("Kernel computing cost volume Error: %s\n", cudaGetErrorString(err));
+  UpdateCostVolume_kernel<<<numBlocks,threadsPerBlock>>>(camera_r_gpu, camera_vector_gpu_[index_m], cost_volume_, camera_data_for_dtam, depth_r_array_);
+  printCudaError("Kernel updating cost volume");
+}
 
+void Dtam::ComputeCostVolumeMin(){
+  Camera_cpu* camera_r_cpu = camera_vector_cpu_[index_r_];
+  Camera_gpu* camera_r_gpu = camera_vector_gpu_[index_r_];
+  int cols = camera_r_cpu->depth_map_->image_.cols;
+  int rows = camera_r_cpu->depth_map_->image_.rows;
+
+  dim3 threadsPerBlock( 4 , 4 , NUM_INTERPOLATIONS);
+  dim3 numBlocks( rows/4, cols/4 , 1);
+  ComputeCostVolumeMin_kernel<<<numBlocks,threadsPerBlock>>>( camera_r_gpu, cost_volume_, depth_r_array_);
+  printCudaError("Kernel computing cost volume min");
 }
 
 void Dtam::ComputeGradientImage_fwd(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* image_out){
 
-  cudaError_t err ;
+
 
   int cols = image_in->cols;
   int rows = image_in->rows;
@@ -361,16 +399,13 @@ void Dtam::ComputeGradientImage_fwd(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat
   dim3 threadsPerBlock( 10 , 10 , 9);
   dim3 numBlocks( rows/10, cols/10 , 1);
   ComputeGradientImage_fwd_kernel<<<numBlocks,threadsPerBlock>>>(*image_in, *image_out);
-  err = cudaGetLastError();
-  cudaDeviceSynchronize();
-  if (err != cudaSuccess)
-      printf("Kernel computing gradient Error: %s\n", cudaGetErrorString(err));
+  printCudaError("Kernel computing gradient");
 
 }
 
 void Dtam::ComputeGradientImage_bwd(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* image_out){
 
-  cudaError_t err ;
+
 
   int cols = image_in->cols/2;
   int rows = image_in->rows;
@@ -380,14 +415,11 @@ void Dtam::ComputeGradientImage_bwd(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat
   dim3 threadsPerBlock( 10 , 10 , 9);
   dim3 numBlocks( rows/10, cols/10 , 1);
   ComputeGradientImage_bwd_kernel<<<numBlocks,threadsPerBlock>>>(*image_in, *image_out);
-  err = cudaGetLastError();
-  cudaDeviceSynchronize();
-  if (err != cudaSuccess)
-      printf("Kernel computing gradient Error: %s\n", cudaGetErrorString(err));
+  printCudaError("Kernel computing gradient");
 
 }
 
-__global__ void gradDesc_Q_kernel(cv::cuda::PtrStepSz<float> q, cv::cuda::PtrStepSz<float> gradient_d, float eps, float sigma_q, float* vector_to_normalize, float* norm_vector){
+__global__ void gradDesc_Q_toNormalize_kernel(cv::cuda::PtrStepSz<float> q, cv::cuda::PtrStepSz<float> gradient_d, float eps, float sigma_q, float* vector_to_normalize){
   int row = blockIdx.x * blockDim.x + threadIdx.x;
   int col = blockIdx.y * blockDim.y + threadIdx.y;
 
@@ -396,9 +428,7 @@ __global__ void gradDesc_Q_kernel(cv::cuda::PtrStepSz<float> q, cv::cuda::PtrSte
 
   int index = row+col*rows;
   vector_to_normalize[index]=(q(row,col)+sigma_q*gradient_d(row,col))/(1+sigma_q*eps);
-
-  // norm_vector[index]=1;
-  norm_vector[index]=vector_to_normalize[index]*vector_to_normalize[index];
+  // vector_to_normalize[index]=1;
 
 }
 
@@ -423,10 +453,10 @@ __global__ void search_A_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepS
 
   int col_ = cols*i+col;
 
-  __shared__ int cost_array[4][4][NUM_INTERPOLATIONS];
+  __shared__ float cost_array[4][4][NUM_INTERPOLATIONS];
   __shared__ int indx_array[4][4][NUM_INTERPOLATIONS];
 
-  float a_i = depth_r_array[i];
+  float a_i = depth_r_array[i]/depth_r_array[NUM_INTERPOLATIONS-1];
 
   cost_array[threadIdx.x][threadIdx.y][i]=(1.0/(2*theta))*(d(row,col)-a_i)*(d(row,col)-a_i)+lambda*cost_volume(row,col_).x;
   indx_array[threadIdx.x][threadIdx.y][i]=i;
@@ -439,7 +469,7 @@ __global__ void search_A_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepS
 		// Reduce the threads performing work by half previous the previous
 		// iteration each cycle
 		if (i % (2 * s) == 0) {
-      int min_cost = min(cost_array[threadIdx.x][threadIdx.y][i + s], cost_array[threadIdx.x][threadIdx.y][i]);
+      float min_cost = fminf(cost_array[threadIdx.x][threadIdx.y][i + s], cost_array[threadIdx.x][threadIdx.y][i]);
       if (cost_array[threadIdx.x][threadIdx.y][i] > min_cost ){
         indx_array[threadIdx.x][threadIdx.y][i] = indx_array[threadIdx.x][threadIdx.y][i+s];
         cost_array[threadIdx.x][threadIdx.y][i] = min_cost ;
@@ -447,6 +477,7 @@ __global__ void search_A_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepS
 		}
 		__syncthreads();
 	}
+
   if (i == 0) {
     a(row,col)=depth_r_array[indx_array[threadIdx.x][threadIdx.y][0]]/depth_r_array[NUM_INTERPOLATIONS-1];
     if (indx_array[threadIdx.x][threadIdx.y][0]==0)
@@ -458,7 +489,7 @@ __global__ void search_A_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepS
 // https://github.com/CoffeeBeforeArch/cuda_programming/blob/master/sumReduction/diverged/sumReduction.cu
 __global__ void sumReduction_kernel(float *v, float *v_r, int size) {
 	// Allocate shared memory
-	__shared__ float partial_sum[1024];
+	__shared__ float partial_sum[MAX_THREADS];
 
 	// Calculate thread ID
 	int tid = blockIdx.x * blockDim.x + threadIdx.x;
@@ -488,7 +519,7 @@ __global__ void sumReduction_kernel(float *v, float *v_r, int size) {
 	}
 }
 
-__global__ void normalize_kernel(float *norm, cv::cuda::PtrStepSz<float> q, float* vector_to_normalize){
+__global__ void normalize_Q_kernel(float norm, cv::cuda::PtrStepSz<float> q, float* vector_to_normalize){
   int row = blockIdx.x * blockDim.x + threadIdx.x;
   int col = blockIdx.y * blockDim.y + threadIdx.y;
 
@@ -497,42 +528,49 @@ __global__ void normalize_kernel(float *norm, cv::cuda::PtrStepSz<float> q, floa
 
   int index = row+col*rows;
 
-  *norm = sqrt(*norm);
-
-  float denominator = fmaxf(1,*norm);
+  float denominator = fmaxf(1,norm);
 
   q(row,col)=vector_to_normalize[index]/denominator;
 
 }
 
+__global__ void squareVectorElements_kernel(float *vector){
+  int index = blockIdx.x * blockDim.x + threadIdx.x;
 
-void Dtam::gradDesc_Q(cv::cuda::GpuMat* q, cv::cuda::GpuMat* gradient_d ){
-  cudaError_t err ;
+  vector[index]=vector[index]*vector[index];
 
-  int rows = q->rows;
-  int cols = q->cols;
-  int N = rows*cols;
-  float* vector_to_normalize;
-  cudaMalloc(&vector_to_normalize, sizeof(float)*N);
+}
+
+__global__ void sqrt_kernel(float* v){
+  v[0]=sqrt(v[0]);
+}
+
+__global__ void copyArray_kernel(float* original, float* copy){
+  int index = blockIdx.x * blockDim.x + threadIdx.x;
+  copy[index]=original[index];
+}
+
+void Dtam::getVectorNorm(float* vector_to_normalize, float* norm, int N){
+
+
+  int GRID_SIZE = N;
+  int N_THREADS = N;
+
   float* norm_vector_i;
   cudaMalloc(&norm_vector_i, sizeof(float)*N);
+  printCudaError("cudaMalloc in norm compution 1");
 
+  copyArray_kernel<<<N/MAX_THREADS,MAX_THREADS>>>(vector_to_normalize, norm_vector_i);
+  printCudaError("Copying array for norm computation");
 
-  dim3 threadsPerBlock( 32 , 32 , 1);
-  dim3 numBlocks( rows/32, cols/32 , 1);
-  gradDesc_Q_kernel<<<numBlocks,threadsPerBlock>>>( *q, *gradient_d, eps_, sigma_q_, vector_to_normalize, norm_vector_i);
-  err = cudaGetLastError();
-  cudaDeviceSynchronize();
-  if (err != cudaSuccess)
-      printf("Kernel computing next q to normalize Error: %s\n", cudaGetErrorString(err));
+  squareVectorElements_kernel<<<N/MAX_THREADS,MAX_THREADS>>>(norm_vector_i);
+  printCudaError("Squaring terms for computing norm");
 
-  // TB Size
-	const int TB_SIZE = 1024;
-	// Grid Size (No padding)
-	int GRID_SIZE = N;
-  int N_THREADS = N;
-  // int N_THREADS;
-	// Call kernels
+  float* norm_vector_o;
+  cudaMalloc(&norm_vector_o, sizeof(float)*GRID_SIZE);
+  printCudaError("cudaMalloc in norm compution 2");
+
+  const int TB_SIZE = MAX_THREADS;
   bool init = false;
 
   while (GRID_SIZE>=TB_SIZE){
@@ -543,15 +581,8 @@ void Dtam::gradDesc_Q(cv::cuda::GpuMat* q, cv::cuda::GpuMat* gradient_d ){
       GRID_SIZE++;
     // N_THREADS = N_THREADS;
 
-
-    float* norm_vector_o;
-    cudaMalloc(&norm_vector_o, sizeof(float)*GRID_SIZE);
-  	sumReduction_kernel<<<GRID_SIZE, TB_SIZE>>>(norm_vector_i, norm_vector_o, N_THREADS);
-    err = cudaGetLastError();
-    cudaDeviceSynchronize();
-    if (err != cudaSuccess)
-        printf("Kernel computing sum reduction Error: %s\n", cudaGetErrorString(err));
-
+    sumReduction_kernel<<<GRID_SIZE, TB_SIZE>>>(norm_vector_i, norm_vector_o, N_THREADS);
+    printCudaError("Kernel computing sum reduction for computing norm ");
 
     N_THREADS = GRID_SIZE;
 
@@ -562,25 +593,52 @@ void Dtam::gradDesc_Q(cv::cuda::GpuMat* q, cv::cuda::GpuMat* gradient_d ){
 
   }
 
-  float* norm_vector_o;
   cudaMalloc(&norm_vector_o, sizeof(float));
   sumReduction_kernel<<<1, TB_SIZE>>>(norm_vector_i, norm_vector_o, N_THREADS);
+  printCudaError("Kernel computing sum reduction for computing norm (final)");
+
   cudaDeviceSynchronize();
+
+  sqrt_kernel<<<1, 1>>>(norm_vector_o);
+  printCudaError("sqrt for norm computation");
+
+  cudaMemcpy(norm, norm_vector_o , sizeof(float), cudaMemcpyDeviceToHost);
+  printCudaError("Copying result device to host");
+
   cudaFree(norm_vector_i);
-
-  normalize_kernel<<<numBlocks,threadsPerBlock>>> (norm_vector_o, *q, vector_to_normalize);
-  cudaDeviceSynchronize();
-  if (err != cudaSuccess)
-      printf("Kernel computing sum reduction Error: %s\n", cudaGetErrorString(err));
-
-  // normalize_kernel<<<1,1>>> (norm_vector_o, *q, vector_to_normalize);
-
   cudaFree(norm_vector_o);
+
+
+
+}
+
+void Dtam::gradDesc_Q(cv::cuda::GpuMat* q, cv::cuda::GpuMat* gradient_d ){
+
+
+  int rows = q->rows;
+  int cols = q->cols;
+  int N = rows*cols;
+  float* vector_to_normalize;
+  cudaMalloc(&vector_to_normalize, sizeof(float)*N);
+
+
+  dim3 threadsPerBlock( 32 , 32 , 1);
+  dim3 numBlocks( rows/32, cols/32 , 1);
+  gradDesc_Q_toNormalize_kernel<<<numBlocks,threadsPerBlock>>>( *q, *gradient_d, eps_, sigma_q_, vector_to_normalize );
+  printCudaError("Kernel computing next q to normalize");
+
+  float* norm = new float;
+  Dtam::getVectorNorm(vector_to_normalize, norm, N);
+  std::cout << *norm << std::endl;
+
+  normalize_Q_kernel<<<numBlocks,threadsPerBlock>>> (*norm, *q, vector_to_normalize);
+  printCudaError("Kernel computing sum reduction");
+
 
 }
 
 void Dtam::gradDesc_D(cv::cuda::GpuMat* d, cv::cuda::GpuMat* a, cv::cuda::GpuMat* gradient_q ){
-  cudaError_t err ;
+
 
   int rows = d->rows;
   int cols = d->cols;
@@ -588,16 +646,12 @@ void Dtam::gradDesc_D(cv::cuda::GpuMat* d, cv::cuda::GpuMat* a, cv::cuda::GpuMat
   dim3 threadsPerBlock( 32 , 32 , 1);
   dim3 numBlocks( rows/32, cols/32 , 1);
   gradDesc_D_kernel<<<numBlocks,threadsPerBlock>>>( *d, *a, *gradient_q, sigma_d_, theta_);
-
-  err = cudaGetLastError();
-  cudaDeviceSynchronize();
-  if (err != cudaSuccess)
-      printf("Kernel computing next d Error: %s\n", cudaGetErrorString(err));
+  printCudaError("Kernel computing next d");
 
 }
 
 void Dtam::search_A(cv::cuda::GpuMat* d, cv::cuda::GpuMat* a ){
-  cudaError_t err ;
+
 
   int rows = d->rows;
   int cols = d->cols;
@@ -605,11 +659,7 @@ void Dtam::search_A(cv::cuda::GpuMat* d, cv::cuda::GpuMat* a ){
   dim3 threadsPerBlock( 4 , 4 , NUM_INTERPOLATIONS);
   dim3 numBlocks( rows/4, cols/4 , 1);
   search_A_kernel<<<numBlocks,threadsPerBlock>>>( *d, *a, cost_volume_, lambda_ , theta_, depth_r_array_);
-
-  err = cudaGetLastError();
-  cudaDeviceSynchronize();
-  if (err != cudaSuccess)
-      printf("Kernel computing search on a Error: %s\n", cudaGetErrorString(err));
+  printCudaError("Kernel computing search on a");
 
 }
 
@@ -625,8 +675,8 @@ void Dtam::Regularize(cv::cuda::PtrStepSz<uchar2> cost_volume, float* depth_r_ar
 
   n_ = 0;
   theta_=0.2;
-  sigma_q_=0;
-  sigma_d_=0;
+  sigma_q_=0.1;
+  sigma_d_=0.1;
 
   while(theta_>theta_end_){
 
@@ -638,7 +688,7 @@ void Dtam::Regularize(cv::cuda::PtrStepSz<uchar2> cost_volume, float* depth_r_ar
 
     Dtam::gradDesc_D( &d, &a, gradient_q );  // compute d (n+1)
 
-    Dtam::search_A( &d, &a );  // compute d (n+1)
+    Dtam::search_A( &d, &a );  // compute a (n+1)
 
     // upgrade steps
     sigma_d_=sigma_d_/theta_;
@@ -653,30 +703,53 @@ void Dtam::Regularize(cv::cuda::PtrStepSz<uchar2> cost_volume, float* depth_r_ar
   }
   std::cout << "number of iterations n: " << n_ << std::endl;
 
-  delete gradient_d;
-  delete gradient_q;
+
 
 
   //**************************************************************************
   // DEBUGGGGGGGGGGG
 
-  cv::cuda::GpuMat* gradient = new cv::cuda::GpuMat;
-  Dtam::ComputeGradientImage_fwd( &(camera_vector_cpu_[index_r_]->depth_map_gpu_), gradient ); // compute gradient of d (n)
-  cv::Mat_< float > test;
-  (*gradient).download(test);
-  cv::imshow("prova test", test);
+  // //------GRADIENTS------
+  // cv::cuda::GpuMat* gradient = new cv::cuda::GpuMat;
+  // Dtam::ComputeGradientImage_fwd( &(camera_vector_cpu_[index_r_]->depth_map_gpu_), gradient ); // compute gradient of d (n)
+  // cv::Mat_< float > test;
+  // (*gradient).download(test);
+  // cv::imshow("gradient test", test);
+  //
+  // cv::cuda::GpuMat* gradient_back = new cv::cuda::GpuMat;
+  // Dtam::ComputeGradientImage_bwd( gradient ,gradient_back );
+  // cv::Mat_< float > test_back;
+  // (*gradient_back).download(test_back);
+  // cv::imshow("gradient test back", test_back);
+  //
+  // //-----------------------
 
-  cv::cuda::GpuMat* gradient_back = new cv::cuda::GpuMat;
-  Dtam::ComputeGradientImage_bwd( gradient ,gradient_back );
-  cv::Mat_< float > test_back;
-  (*gradient_back).download(test_back);
-  cv::imshow("prova test back", test_back);
-
+  // //------q,d,a------
+  //
   cv::Mat_< float > first_a;
   (camera_vector_cpu_[index_r_]->depth_map_gpu_).download(first_a);
-  cv::imshow("prova first a", first_a);
+  cv::imshow("first a", first_a);
+
+  cv::Mat_< float > first_gradient_d;
+  (*gradient_d).download(first_gradient_d);
+  cv::imshow("first gradient_d", first_gradient_d);
+
+  cv::Mat_< float > first_q;
+  q.download(first_q);
+  cv::imshow("first q", first_q);
+
+  cv::Mat_< float > first_gradient_q;
+  (*gradient_q).download(first_gradient_q);
+  cv::imshow("first gradient_q", first_gradient_q);
+
+  cv::Mat_< float > first_d;
+  d.download(first_d);
+  cv::imshow("first d", first_d);
 
   //**************************************************************************
+
+  delete gradient_d;
+  delete gradient_q;
 
   camera_vector_cpu_[index_r_]->depth_map_gpu_=a;
 
@@ -684,8 +757,9 @@ void Dtam::Regularize(cv::cuda::PtrStepSz<uchar2> cost_volume, float* depth_r_ar
 
 void Dtam::updateDepthMap_parallel_gpu(int index_m){
 
-  // Kernel invocation for computing cost volume
-  Dtam::ComputeCostVolume(index_m, camera_data_for_dtam_, depth_r_array_);
+  Dtam::UpdateCostVolume(index_m, camera_data_for_dtam_);
+
+  Dtam::ComputeCostVolumeMin();
 
   Dtam::Regularize(cost_volume_, depth_r_array_);
 

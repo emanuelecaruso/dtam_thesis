@@ -131,7 +131,7 @@ int main (int argc, char * argv[]) {
   // --------------------------------------
   // show camera rgb images and depth maps
   for (Camera_cpu* camera : environment->camera_vector_cpu_){
-    camera->image_rgb_->show(800/camera->resolution_);
+    camera->showRGB();
     // camera->depth_map_->show(800/camera->resolution_);
   }
   camera_r->depth_map_gpu_.download(camera_r->depth_map_->image_);

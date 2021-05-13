@@ -76,6 +76,9 @@ bool Camera::projectPoint(Eigen::Vector3f& p, Eigen::Vector2f& uv, float& p_cam_
 
 }
 
+void Camera::showRGB(){
+  image_rgb_->show(800/resolution_);
+}
 
 // void Camera::showWorldFrame(Eigen::Vector3f origin, float delta, int length){
 //   Camera::clearImgs();

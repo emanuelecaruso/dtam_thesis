@@ -789,6 +789,7 @@ executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o
  ../src/utils.h
  /home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/camera_cpu.cuh
  /home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/camera_gpu.cuh
+ /home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/cuda_utils.cuh
  /home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/dtam_cuda.cu
  /home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/dtam_cuda.cuh
  /home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/environment.cuh

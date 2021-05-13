@@ -59,6 +59,9 @@ class Camera{
     void pointAtDepth(Eigen::Vector2f& uv, float depth, Eigen::Vector3f& p);
     bool projectPoint(Eigen::Vector3f& p, Eigen::Vector2f& uv, float& p_cam_z );
 
+    void showRGB();
+    void showDepthMap();
+
     inline Camera* clone(){
       return new Camera(*this);
     }

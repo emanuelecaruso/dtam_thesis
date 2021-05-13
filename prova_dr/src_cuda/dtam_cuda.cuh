@@ -6,6 +6,7 @@
 #include "environment.cuh"
 
 #define NUM_INTERPOLATIONS 64
+#define MAX_THREADS 1024
 
 struct cameraDataForDtam{
   Eigen::Matrix3f T_r;
@@ -18,22 +19,30 @@ struct cameraDataForDtam{
 
 __global__ void prepareCameraForDtam_kernel(Camera_gpu* camera_r, Camera_gpu* camera_m, cv::cuda::PtrStepSz<float3> query_proj_matrix);
 
-__global__ void ComputeCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camera_m, cv::cuda::PtrStepSz<uchar2> cost_volume,
+__global__ void UpdateCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camera_m, cv::cuda::PtrStepSz<uchar2> cost_volume,
                                                       cameraDataForDtam* camera_data_for_dtam_, float* depth_r_array);
+
+__global__ void ComputeCostVolumeMin_kernel( cv::cuda::PtrStepSz<uchar2> cost_volume, float* depth_r_array);
 
 __global__ void ComputeGradientImage_fwd_kernel(cv::cuda::PtrStepSz<float> image_in, cv::cuda::PtrStepSz<float> image_out);
 
 __global__ void ComputeGradientImage_bwd_kernel(cv::cuda::PtrStepSz<float> image_in, cv::cuda::PtrStepSz<float> image_out);
 
-__global__ void gradDesc_Q_kernel(cv::cuda::PtrStepSz<float> q, cv::cuda::PtrStepSz<float> gradient_d, float eps, float sigma_q, float* vector_to_normalize, float* norm_vector);
+__global__ void gradDesc_Q_toNormalize_kernel(cv::cuda::PtrStepSz<float> q, cv::cuda::PtrStepSz<float> gradient_d, float eps, float sigma_q, float* vector_to_normalize );
 
 __global__ void gradDesc_D_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepSz<float> a, cv::cuda::PtrStepSz<float> gradient_q, float sigma_d, float theta);
 
 __global__ void search_A_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepSz<float> a, cv::cuda::PtrStepSz<uchar2> cost_volume , float lambda, float theta, float* depth_r_array);
 
-__global__ void sumReduction_kernel(float *v, float *v_r, int size);
+__global__ void sumReduction_kernel(float* v, float* v_r, int size);
 
-__global__ void normalize_kernel(float *norm, cv::cuda::PtrStepSz<float> q, float* vector_to_normalize);
+__global__ void copyArray_kernel(float* original, float* copy);
+
+__global__ void sqrt_kernel(float* v);
+
+__global__ void normalize_Q_kernel(float *norm, cv::cuda::PtrStepSz<float> q, float* vector_to_normalize);
+
+__global__ void squareVectorElements_kernel(float *vector);
 
 
 class Dtam{
@@ -109,13 +118,16 @@ class Dtam{
     float sigma_q_;
     float sigma_d_;
 
-    void ComputeCostVolume(int index_m, cameraDataForDtam* camera_data_for_dtam_, float* depth_r_array);
+    void UpdateCostVolume(int index_m, cameraDataForDtam* camera_data_for_dtam_ );
+    void ComputeCostVolumeMin();
     void Regularize( cv::cuda::PtrStepSz<uchar2> cost_volume, float* depth_r_array);
     void ComputeGradientImage_fwd(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* image_out);
     void ComputeGradientImage_bwd(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* image_out);
     void gradDesc_Q(cv::cuda::GpuMat* q, cv::cuda::GpuMat* gradient_d );
     void gradDesc_D(cv::cuda::GpuMat* d, cv::cuda::GpuMat* a, cv::cuda::GpuMat* gradient_q );
     void search_A(cv::cuda::GpuMat* d, cv::cuda::GpuMat* a );
+    void getVectorNorm(float* vector_to_normalize, float* norm, int N);
+
 
 
 };
