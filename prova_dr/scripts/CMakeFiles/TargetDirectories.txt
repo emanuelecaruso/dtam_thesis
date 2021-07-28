@@ -1,0 +1,6 @@
+/home/manu/Scrivania/dtam_thesis/prova_dr/scripts/CMakeFiles/rebuild_cache.dir
+/home/manu/Scrivania/dtam_thesis/prova_dr/scripts/CMakeFiles/edit_cache.dir
+/home/manu/Scrivania/dtam_thesis/prova_dr/scripts/executables/CMakeFiles/rebuild_cache.dir
+/home/manu/Scrivania/dtam_thesis/prova_dr/scripts/executables/CMakeFiles/edit_cache.dir
+/home/manu/Scrivania/dtam_thesis/prova_dr/scripts/executables/CMakeFiles/test_synth_cuda.dir
+/home/manu/Scrivania/dtam_thesis/prova_dr/scripts/executables/CMakeFiles/test_synth.dir

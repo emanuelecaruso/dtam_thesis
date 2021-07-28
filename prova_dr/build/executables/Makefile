@@ -111,21 +111,6 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
-executables/CMakeFiles/test_synth.dir/rule:
-	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f CMakeFiles/Makefile2 executables/CMakeFiles/test_synth.dir/rule
-.PHONY : executables/CMakeFiles/test_synth.dir/rule
-
-# Convenience name for target.
-test_synth: executables/CMakeFiles/test_synth.dir/rule
-
-.PHONY : test_synth
-
-# fast build rule for target.
-test_synth/fast:
-	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/build
-.PHONY : test_synth/fast
-
-# Convenience name for target.
 executables/CMakeFiles/test_synth_cuda.dir/rule:
 	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f CMakeFiles/Makefile2 executables/CMakeFiles/test_synth_cuda.dir/rule
 .PHONY : executables/CMakeFiles/test_synth_cuda.dir/rule
@@ -140,14 +125,29 @@ test_synth_cuda/fast:
 	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/build
 .PHONY : test_synth_cuda/fast
 
+# Convenience name for target.
+executables/CMakeFiles/test_synth.dir/rule:
+	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f CMakeFiles/Makefile2 executables/CMakeFiles/test_synth.dir/rule
+.PHONY : executables/CMakeFiles/test_synth.dir/rule
+
+# Convenience name for target.
+test_synth: executables/CMakeFiles/test_synth.dir/rule
+
+.PHONY : test_synth
+
+# fast build rule for target.
+test_synth/fast:
+	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/build
+.PHONY : test_synth/fast
+
 __/src/camera.o: __/src/camera.cpp.o
 
 .PHONY : __/src/camera.o
 
 # target to build an object file
 __/src/camera.cpp.o:
-	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/camera.cpp.o
 	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/camera.cpp.o
+	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/camera.cpp.o
 .PHONY : __/src/camera.cpp.o
 
 __/src/camera.i: __/src/camera.cpp.i
@@ -156,8 +156,8 @@ __/src/camera.i: __/src/camera.cpp.i
 
 # target to preprocess a source file
 __/src/camera.cpp.i:
-	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/camera.cpp.i
 	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/camera.cpp.i
+	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/camera.cpp.i
 .PHONY : __/src/camera.cpp.i
 
 __/src/camera.s: __/src/camera.cpp.s
@@ -166,8 +166,8 @@ __/src/camera.s: __/src/camera.cpp.s
 
 # target to generate assembly for a file
 __/src/camera.cpp.s:
-	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/camera.cpp.s
 	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/camera.cpp.s
+	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/camera.cpp.s
 .PHONY : __/src/camera.cpp.s
 
 __/src/dataset.o: __/src/dataset.cpp.o
@@ -176,8 +176,8 @@ __/src/dataset.o: __/src/dataset.cpp.o
 
 # target to build an object file
 __/src/dataset.cpp.o:
-	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/dataset.cpp.o
 	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/dataset.cpp.o
+	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/dataset.cpp.o
 .PHONY : __/src/dataset.cpp.o
 
 __/src/dataset.i: __/src/dataset.cpp.i
@@ -186,8 +186,8 @@ __/src/dataset.i: __/src/dataset.cpp.i
 
 # target to preprocess a source file
 __/src/dataset.cpp.i:
-	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/dataset.cpp.i
 	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/dataset.cpp.i
+	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/dataset.cpp.i
 .PHONY : __/src/dataset.cpp.i
 
 __/src/dataset.s: __/src/dataset.cpp.s
@@ -196,8 +196,8 @@ __/src/dataset.s: __/src/dataset.cpp.s
 
 # target to generate assembly for a file
 __/src/dataset.cpp.s:
-	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/dataset.cpp.s
 	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/dataset.cpp.s
+	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/dataset.cpp.s
 .PHONY : __/src/dataset.cpp.s
 
 __/src/dtam.o: __/src/dtam.cpp.o
@@ -260,8 +260,8 @@ __/src/image.o: __/src/image.cpp.o
 
 # target to build an object file
 __/src/image.cpp.o:
-	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/image.cpp.o
 	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/image.cpp.o
+	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/image.cpp.o
 .PHONY : __/src/image.cpp.o
 
 __/src/image.i: __/src/image.cpp.i
@@ -270,8 +270,8 @@ __/src/image.i: __/src/image.cpp.i
 
 # target to preprocess a source file
 __/src/image.cpp.i:
-	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/image.cpp.i
 	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/image.cpp.i
+	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/image.cpp.i
 .PHONY : __/src/image.cpp.i
 
 __/src/image.s: __/src/image.cpp.s
@@ -280,8 +280,8 @@ __/src/image.s: __/src/image.cpp.s
 
 # target to generate assembly for a file
 __/src/image.cpp.s:
-	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/image.cpp.s
 	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/image.cpp.s
+	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/image.cpp.s
 .PHONY : __/src/image.cpp.s
 
 __/src/renderer.o: __/src/renderer.cpp.o
@@ -317,8 +317,8 @@ __/src/utils.o: __/src/utils.cpp.o
 
 # target to build an object file
 __/src/utils.cpp.o:
-	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/utils.cpp.o
 	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/utils.cpp.o
+	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/utils.cpp.o
 .PHONY : __/src/utils.cpp.o
 
 __/src/utils.i: __/src/utils.cpp.i
@@ -327,8 +327,8 @@ __/src/utils.i: __/src/utils.cpp.i
 
 # target to preprocess a source file
 __/src/utils.cpp.i:
-	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/utils.cpp.i
 	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/utils.cpp.i
+	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/utils.cpp.i
 .PHONY : __/src/utils.cpp.i
 
 __/src/utils.s: __/src/utils.cpp.s
@@ -337,8 +337,8 @@ __/src/utils.s: __/src/utils.cpp.s
 
 # target to generate assembly for a file
 __/src/utils.cpp.s:
-	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/utils.cpp.s
 	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/utils.cpp.s
+	cd /home/manu/Scrivania/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/__/src/utils.cpp.s
 .PHONY : __/src/utils.cpp.s
 
 __/src_cuda/camera_cpu.o: __/src_cuda/camera_cpu.cu.o
@@ -538,8 +538,8 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... test_synth"
 	@echo "... test_synth_cuda"
+	@echo "... test_synth"
 	@echo "... __/src/camera.o"
 	@echo "... __/src/camera.i"
 	@echo "... __/src/camera.s"

@@ -84,8 +84,6 @@ __global__ void ComputeGradientImage_fwd_kernel(cv::cuda::PtrStepSz<float> image
       value_h+=grad_h[threadIdx.x][threadIdx.y][i];
       value_v+=grad_v[threadIdx.x][threadIdx.y][i];
     }
-    value_h=abs(value_h/6.0);
-    value_v=abs(value_v/6.0);
     image_out(row,col)=value_h;
     image_out(row,col+cols)=value_v;
   }
@@ -140,8 +138,6 @@ __global__ void ComputeGradientImage_bwd_kernel(cv::cuda::PtrStepSz<float> image
       value_h+=grad_h[threadIdx.x][threadIdx.y][i];
       value_v+=grad_v[threadIdx.x][threadIdx.y][i];
     }
-    value_h=abs(value_h/6);
-    value_v=abs(value_v/6);
     image_out(row,col)=value_h+value_v;
   }
 
@@ -439,7 +435,9 @@ __global__ void gradDesc_D_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrSte
   int rows = blockDim.x*gridDim.x;
   int cols = blockDim.y*gridDim.y;
 
-  d[row,col]=(d(row,col)+sigma_d*(gradient_q(row,col)+(1.0/theta)*a(row,col)))/(1+(sigma_d/theta));
+  d(row,col)=(d(row,col)+sigma_d*(gradient_q(row,col)+(1.0/theta)*a(row,col)))/(1+(sigma_d/theta));
+  // d(row,col)=(sigma_d*(gradient_q(row,col)+(1.0/theta)*a(row,col)))/(1+(sigma_d/theta));
+  // d(row,col)=1;
 
 }
 
@@ -458,7 +456,7 @@ __global__ void search_A_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepS
 
   float a_i = depth_r_array[i]/depth_r_array[NUM_INTERPOLATIONS-1];
 
-  cost_array[threadIdx.x][threadIdx.y][i]=(1.0/(2*theta))*(d(row,col)-a_i)*(d(row,col)-a_i)+lambda*cost_volume(row,col_).x;
+  cost_array[threadIdx.x][threadIdx.y][i]=(1.0/(2*theta))*(d(row,col)-a_i)*(d(row,col)-a_i)/*+lambda*cost_volume(row,col_).x*/;
   indx_array[threadIdx.x][threadIdx.y][i]=i;
   __syncthreads();
 
@@ -530,7 +528,8 @@ __global__ void normalize_Q_kernel(float norm, cv::cuda::PtrStepSz<float> q, flo
 
   float denominator = fmaxf(1,norm);
 
-  q(row,col)=vector_to_normalize[index]/denominator;
+  // q(row,col)=vector_to_normalize[index]/denominator;
+  q(row,col)=vector_to_normalize[index];
 
 }
 
@@ -674,9 +673,9 @@ void Dtam::Regularize(cv::cuda::PtrStepSz<uchar2> cost_volume, float* depth_r_ar
   cv::cuda::GpuMat* gradient_q = new cv::cuda::GpuMat;
 
   n_ = 0;
-  theta_=0.2;
-  sigma_q_=0.1;
-  sigma_d_=0.1;
+  theta_=1;
+  sigma_q_=0.2;
+  sigma_d_=0.2;
 
   while(theta_>theta_end_){
 
@@ -726,25 +725,28 @@ void Dtam::Regularize(cv::cuda::PtrStepSz<uchar2> cost_volume, float* depth_r_ar
 
   // //------q,d,a------
   //
-  cv::Mat_< float > first_a;
-  (camera_vector_cpu_[index_r_]->depth_map_gpu_).download(first_a);
-  cv::imshow("first a", first_a);
 
-  cv::Mat_< float > first_gradient_d;
-  (*gradient_d).download(first_gradient_d);
-  cv::imshow("first gradient_d", first_gradient_d);
 
-  cv::Mat_< float > first_q;
-  q.download(first_q);
-  cv::imshow("first q", first_q);
+  cv::Mat_< float > a_0;
+  (camera_vector_cpu_[index_r_]->depth_map_gpu_).download(a_0);
+  cv::imshow("a 0", a_0);
 
-  cv::Mat_< float > first_gradient_q;
-  (*gradient_q).download(first_gradient_q);
-  cv::imshow("first gradient_q", first_gradient_q);
+  cv::Mat_< float > d_gradient;
+  (*gradient_d).download(d_gradient);
+  cv::imshow("gradient_d", d_gradient);
 
-  cv::Mat_< float > first_d;
-  d.download(first_d);
-  cv::imshow("first d", first_d);
+  cv::Mat_< float > q_1;
+  q.download(q_1);
+  cv::imshow("q_1", q_1);
+
+  cv::Mat_< float > q_gradient;
+  (*gradient_q).download(q_gradient);
+  cv::imshow("gradient_q", q_gradient);
+
+  cv::Mat_< float > d_1;
+  d.download(d_1);
+  cv::imshow("d 1", d_1);
+
 
   //**************************************************************************
 
