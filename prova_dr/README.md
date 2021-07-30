@@ -12,8 +12,12 @@ Eigen3 stable version 3.3.9:
 
     http://eigen.tuxfamily.org, download stable version 3.3.9 and install it with cmake
 
+CUDA toolkit version 9.1
+
+    sudo apt install nvidia-cuda-toolkit=9.1.85-3ubuntu1
+
 OpenCV version 4.2:
-   
+
     installation guide here: https://gist.github.com/raulqf/f42c718a658cddc16f9df07ecc627be7
 
     troubleshooting:
@@ -21,14 +25,12 @@ OpenCV version 4.2:
 							remove  -D CUDA_ARCH_BIN=7.5 \
 								-D WITH_CUDNN=ON \
 							        -D OPENCV_DNN_CUDA=ON \
-	
+
 	be sure that the path to opencv_contrib-4.5.2/modules is correct
 
 	gcc versions higher than 6 may cause problems
-	
-CUDA toolkit version 9.1
 
-    sudo apt install nvidia-cuda-toolkit=9.1.85-3ubuntu1
+  be sure that CUDA toolkit is already installed (previous step)
 
 ### Compilation
 From the system console, execute the build sequence (out of source build):
