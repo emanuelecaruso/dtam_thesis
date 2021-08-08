@@ -1,0 +1,7 @@
+-- depth->invdepth sampling
+-- dataset 				XXXX
+-- stream depthmap
+-- improve algorithm
+-- initialization
+-- tracking
+-- regerence camera update system

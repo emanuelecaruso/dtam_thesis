@@ -76,8 +76,30 @@ bool Camera::projectPoint(Eigen::Vector3f& p, Eigen::Vector2f& uv, float& p_cam_
 
 }
 
-void Camera::showRGB(){
-  image_rgb_->show(800/resolution_);
+void Camera::saveRGB(std::string path){
+  cv::imwrite(path+ "/rgb_" +name_+".png", image_rgb_->image_);
+}
+
+void Camera::saveDepthMap(std::string path){
+  cv::Mat ucharImg;
+  depth_map_->image_.convertTo(ucharImg, CV_32FC1, 255.0);
+  cv::imwrite(path+ "/depth_" +name_+".png", ucharImg);
+
+}
+
+void Camera::loadRGB(std::string path){
+
+  image_rgb_->image_=cv::imread(path);
+
+}
+
+void Camera::loadDepthMap(std::string path){
+  cv::Mat_<cv::Vec3b> rgbImg;
+  cv::Mat channel[3];
+  rgbImg = cv::imread(path);
+  split(rgbImg, channel);
+  depth_map_->image_=channel[0];
+  depth_map_->image_.convertTo(depth_map_->image_, CV_32FC1, 1.0/255.0);
 }
 
 // void Camera::showWorldFrame(Eigen::Vector3f origin, float delta, int length){

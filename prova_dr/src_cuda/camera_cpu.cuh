@@ -23,6 +23,7 @@ class Camera_cpu : public Camera{
     void gpuFree();
     Camera_gpu* getCamera_gpu();
     void computeDataForDtam(int index_r);
+    void cloneCameraImages(Camera* camera);
 
     // inline Camera_cpu* clone(){
     //   return new Camera_cpu(*this);

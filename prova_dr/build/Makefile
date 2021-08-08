@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/manu/Scrivania/dtam_thesis/prova_dr
+CMAKE_SOURCE_DIR = /home/manu/Desktop/dtam_thesis/prova_dr
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/manu/Scrivania/dtam_thesis/prova_dr/build
+CMAKE_BINARY_DIR = /home/manu/Desktop/dtam_thesis/prova_dr/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/manu/Scrivania/dtam_thesis/prova_dr/build/CMakeFiles /home/manu/Scrivania/dtam_thesis/prova_dr/build/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/manu/Desktop/dtam_thesis/prova_dr/build/CMakeFiles /home/manu/Desktop/dtam_thesis/prova_dr/build/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/manu/Scrivania/dtam_thesis/prova_dr/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/manu/Desktop/dtam_thesis/prova_dr/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -111,6 +111,32 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named dataset_maker
+
+# Build rule for target.
+dataset_maker: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 dataset_maker
+.PHONY : dataset_maker
+
+# fast build rule for target.
+dataset_maker/fast:
+	$(MAKE) -f executables/CMakeFiles/dataset_maker.dir/build.make executables/CMakeFiles/dataset_maker.dir/build
+.PHONY : dataset_maker/fast
+
+#=============================================================================
+# Target rules for targets named test_synth_cuda0
+
+# Build rule for target.
+test_synth_cuda0: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test_synth_cuda0
+.PHONY : test_synth_cuda0
+
+# fast build rule for target.
+test_synth_cuda0/fast:
+	$(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/build
+.PHONY : test_synth_cuda0/fast
+
+#=============================================================================
 # Target rules for targets named test_synth_cuda
 
 # Build rule for target.
@@ -123,19 +149,6 @@ test_synth_cuda/fast:
 	$(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/build
 .PHONY : test_synth_cuda/fast
 
-#=============================================================================
-# Target rules for targets named test_synth
-
-# Build rule for target.
-test_synth: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 test_synth
-.PHONY : test_synth
-
-# fast build rule for target.
-test_synth/fast:
-	$(MAKE) -f executables/CMakeFiles/test_synth.dir/build.make executables/CMakeFiles/test_synth.dir/build
-.PHONY : test_synth/fast
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -144,8 +157,9 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
+	@echo "... dataset_maker"
+	@echo "... test_synth_cuda0"
 	@echo "... test_synth_cuda"
-	@echo "... test_synth"
 .PHONY : help
 
 

@@ -81,7 +81,7 @@ __global__ void renderPoint_gpu(Cp* cp, Camera_gpu* camera_gpu_d ){
 
 }
 
-void Renderer::renderImages_naive(Environment* environment){
+void Renderer::renderImages_naive(Environment_gpu* environment){
 
   for (Camera_cpu* camera_cpu : environment->camera_vector_cpu_){
     camera_cpu->clearImgs();
@@ -97,7 +97,7 @@ void Renderer::renderImages_naive(Environment* environment){
 }
 
 // // TODO : BUG TO FIX
-// bool Renderer::renderImages_parallel_gpu(Environment* environment){
+// bool Renderer::renderImages_parallel_gpu(Environment_gpu* environment){
 //
 //   cudaError_t err ;
 //   Cp* cp_d = environment->cp_d_;

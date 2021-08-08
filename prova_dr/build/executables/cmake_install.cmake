@@ -1,4 +1,4 @@
-# Install script for directory: /home/manu/Scrivania/dtam_thesis/prova_dr/executables
+# Install script for directory: /home/manu/Desktop/dtam_thesis/prova_dr/executables
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

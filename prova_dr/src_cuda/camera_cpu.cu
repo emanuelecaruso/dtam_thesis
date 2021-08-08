@@ -40,3 +40,9 @@ Camera_gpu* Camera_cpu::getCamera_gpu(){
 
   return camera_gpu_d;
 }
+
+void Camera_cpu::cloneCameraImages(Camera* camera){
+  depth_map_ = camera->depth_map_;
+  image_rgb_ = camera->image_rgb_;
+
+}

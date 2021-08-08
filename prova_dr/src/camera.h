@@ -31,8 +31,8 @@ class Camera{
        max_depth_ = max_depth;
        frame_camera_wrt_world_ = frame_camera_wrt_world;
        frame_world_wrt_camera_ = frame_world_wrt_camera;
-       depth_map_ = new Image< float >("Depth map "+name_);
-       image_rgb_ = new Image< cv::Vec3b >("rgb image "+name_);
+       depth_map_ = new Image< float >("depth_"+name_);
+       image_rgb_ = new Image< cv::Vec3b >("rgb_"+name_);
 
        // initialize images with white color
        depth_map_->initImage(resolution_/aspect_,resolution_);
@@ -59,8 +59,11 @@ class Camera{
     void pointAtDepth(Eigen::Vector2f& uv, float depth, Eigen::Vector3f& p);
     bool projectPoint(Eigen::Vector3f& p, Eigen::Vector2f& uv, float& p_cam_z );
 
-    void showRGB();
-    void showDepthMap();
+    void saveRGB(std::string path);
+    void saveDepthMap(std::string path);
+
+    void loadRGB(std::string path);
+    void loadDepthMap(std::string path);
 
     inline Camera* clone(){
       return new Camera(*this);

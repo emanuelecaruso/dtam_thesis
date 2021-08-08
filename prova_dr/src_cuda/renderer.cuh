@@ -15,6 +15,6 @@ class Renderer{
   public:
 
     bool renderPoint(Cp& cp, Camera_cpu* camera);
-    void renderImages_naive(Environment* environment);
-    bool renderImages_parallel_gpu(Environment* environment);
+    void renderImages_naive(Environment_gpu* environment);
+    bool renderImages_parallel_gpu(Environment_gpu* environment);
 };

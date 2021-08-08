@@ -32,6 +32,10 @@ sys/types.h
 dirent.h
 -
 
+../src/environment.h
+camera.h
+../src/camera.h
+
 ../src/image.h
 defs.h
 ../src/defs.h
@@ -46,9 +50,9 @@ thread
 vector
 -
 
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/camera_cpu.cu
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_cpu.cu
 camera_cpu.cuh
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/camera_cpu.cuh
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_cpu.cuh
 thread
 -
 vector
@@ -56,19 +60,19 @@ vector
 mutex
 -
 
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/camera_cpu.cuh
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_cpu.cuh
 defs.h
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/defs.h
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/defs.h
 image.h
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/image.h
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/image.h
 camera.h
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/camera.h
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera.h
 camera_gpu.cuh
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/camera_gpu.cuh
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_gpu.cuh
 
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/camera_gpu.cu
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_gpu.cu
 camera_gpu.cuh
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/camera_gpu.cuh
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_gpu.cuh
 thread
 -
 vector
@@ -76,81 +80,61 @@ vector
 mutex
 -
 
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/camera_gpu.cuh
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_gpu.cuh
 defs.h
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/defs.h
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/defs.h
 image.h
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/image.h
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/image.h
 camera.h
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/camera.h
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera.h
 cuda_runtime.h
 -
 
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/cuda_utils.cuh
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/cuda_utils.cuh
 cuda_runtime.h
 -
 
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/dtam_cuda.cu
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/dtam_cuda.cu
 dtam_cuda.cuh
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/dtam_cuda.cuh
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/dtam_cuda.cuh
 math.h
 -
 utils.h
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/utils.h
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/utils.h
 stdlib.h
 -
 defs.h
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/defs.h
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/defs.h
 cuda_utils.cuh
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/cuda_utils.cuh
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/cuda_utils.cuh
 
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/dtam_cuda.cuh
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/dtam_cuda.cuh
 camera_cpu.cuh
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/camera_cpu.cuh
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_cpu.cuh
 camera_gpu.cuh
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/camera_gpu.cuh
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_gpu.cuh
 image.h
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/image.h
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/image.h
 cuda_runtime.h
 -
 environment.cuh
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/environment.cuh
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/environment.cuh
 
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/environment.cu
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/environment.cu
 environment.cuh
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/environment.cuh
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/environment.cuh
 utils.h
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/utils.h
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/utils.h
 
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/environment.cuh
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/environment.cuh
 defs.h
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/defs.h
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/defs.h
+environment.h
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/environment.h
 camera_cpu.cuh
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/camera_cpu.cuh
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_cpu.cuh
 camera_gpu.cuh
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/camera_gpu.cuh
-
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/renderer.cu
-renderer.cuh
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/renderer.cuh
-thread
--
-vector
--
-mutex
--
-
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/renderer.cuh
-defs.h
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/defs.h
-image.h
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/image.h
-environment.cuh
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/environment.cuh
-camera_cpu.cuh
-/home/manu/Scrivania/dtam_thesis/prova_dr/src_cuda/camera_cpu.cuh
-cuda_runtime.h
--
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_gpu.cuh
 
 /usr/local/include/eigen3/Eigen/Cholesky
 Core

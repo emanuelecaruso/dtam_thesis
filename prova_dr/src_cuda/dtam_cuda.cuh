@@ -24,9 +24,9 @@ __global__ void UpdateCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camera
 
 __global__ void ComputeCostVolumeMin_kernel( cv::cuda::PtrStepSz<uchar2> cost_volume, float* depth_r_array);
 
-__global__ void ComputeGradientImage_fwd_kernel(cv::cuda::PtrStepSz<float> image_in, cv::cuda::PtrStepSz<float> image_out);
+__global__ void ComputeGradientImageSobel_kernel(cv::cuda::PtrStepSz<float> image_in, cv::cuda::PtrStepSz<float> image_out);
 
-__global__ void ComputeGradientImage_bwd_kernel(cv::cuda::PtrStepSz<float> image_in, cv::cuda::PtrStepSz<float> image_out);
+__global__ void ComputeDivergenceImage_kernel(cv::cuda::PtrStepSz<float> image_in, cv::cuda::PtrStepSz<float> image_out);
 
 __global__ void gradDesc_Q_toNormalize_kernel(cv::cuda::PtrStepSz<float> q, cv::cuda::PtrStepSz<float> gradient_d, float eps, float sigma_q, float* vector_to_normalize );
 
@@ -59,7 +59,7 @@ class Dtam{
     cameraDataForDtam* camera_data_for_dtam_;
 
 
-    Dtam(Environment* environment){
+    Dtam(Environment_gpu* environment){
 
 
       int rows = environment->resolution_/environment->aspect_;
@@ -69,11 +69,12 @@ class Dtam{
       float* depth_r_array_h = new float[NUM_INTERPOLATIONS];
 
 
-      theta_end_=0.0001;
+      theta_end_=0.001;
       eps_=0.0001;
-      beta1_=0.01;
-      beta2_=0.01;
-      lambda_=1.0/(1.0+0.5*depth1_r);
+      beta1_=0.1;
+      // beta2_=0.05;
+      // lambda_=1.0/(1.0+0.5*depth1_r);
+      lambda_=0.00001;
 
 
       for (int i=0; i<NUM_INTERPOLATIONS; i++){
@@ -121,8 +122,10 @@ class Dtam{
     void UpdateCostVolume(int index_m, cameraDataForDtam* camera_data_for_dtam_ );
     void ComputeCostVolumeMin();
     void Regularize( cv::cuda::PtrStepSz<uchar2> cost_volume, float* depth_r_array);
-    void ComputeGradientImage_fwd(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* image_out);
-    void ComputeGradientImage_bwd(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* image_out);
+    void ComputeGradientImage(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* image_out);
+    void ComputeGradientSobelImage(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* image_out);
+    void ComputeDivergenceImage(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* image_out);
+    void ComputeDivergenceSobelImage(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* image_out);
     void gradDesc_Q(cv::cuda::GpuMat* q, cv::cuda::GpuMat* gradient_d );
     void gradDesc_D(cv::cuda::GpuMat* d, cv::cuda::GpuMat* a, cv::cuda::GpuMat* gradient_q );
     void search_A(cv::cuda::GpuMat* d, cv::cuda::GpuMat* a );

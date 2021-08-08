@@ -1,5 +1,10 @@
 #include "environment.h"
+#include "json.hpp"
 #include "utils.h"
+#include <fstream>
+#include <sys/types.h>
+#include <sys/stat.h>
+using json = nlohmann::json;
 
 void Environment::generateSinusoidalSurface(float picks_depth, int density){
 
@@ -65,12 +70,12 @@ void Environment::generateTexturedCube(float size, Eigen::Isometry3f pose, int d
   Eigen::Isometry3f pose_left;
   pose_left.linear()=Ry(M_PI/2);
   pose_left.translation()= Eigen::Vector3f(-size/2,0,0);
-  Environment::generateTexturedPlane("images/leon.jpg", size, pose*pose_left, density);
+  Environment::generateTexturedPlane("images/forest.jpg", size, pose*pose_left, density);
 
   Eigen::Isometry3f pose_right;
   pose_right.linear()=Ry(M_PI/2);
   pose_right.translation()= Eigen::Vector3f(size/2,0,0);
-  Environment::generateTexturedPlane("images/leon.jpg", size, pose*pose_right, density);
+  Environment::generateTexturedPlane("images/forest.jpg", size, pose*pose_right, density);
 
   Eigen::Isometry3f pose_up;
   pose_up.linear()=Rx(M_PI/2);
@@ -85,12 +90,12 @@ void Environment::generateTexturedCube(float size, Eigen::Isometry3f pose, int d
   Eigen::Isometry3f pose_back;
   pose_back.linear().setIdentity();
   pose_back.translation()= Eigen::Vector3f(0,0,-size/2);
-  Environment::generateTexturedPlane("images/forest.jpg", size, pose*pose_back, density);
+  Environment::generateTexturedPlane("images/leon.jpg", size, pose*pose_back, density);
 
   Eigen::Isometry3f pose_front;
   pose_front.linear().setIdentity();
   pose_front.translation()= Eigen::Vector3f(0,0,size/2);
-  Environment::generateTexturedPlane("images/forest.jpg", size, pose*pose_front, density);
+  Environment::generateTexturedPlane("images/leon.jpg", size, pose*pose_front, density);
 
 }
 
@@ -103,5 +108,158 @@ void Environment::generateCamera(std::string name, float t1, float t2, float t3,
   *frame_camera_wrt_world_r = frame_world_wrt_camera_r->inverse();
   Camera* camera = new Camera(name,lens_,aspect_,film_,resolution_,max_depth_,frame_camera_wrt_world_r,frame_world_wrt_camera_r);
   camera_vector_.push_back(camera);
+
+}
+
+bool Environment::saveEnvironment(std::string path_name, std::string dataset_name){
+
+  const char* path_name_ = path_name.c_str(); // dataset name
+  struct stat info;
+  if( stat( path_name_, &info ) != 0 )
+  {
+    printf( "creating dataset \n" );
+    std::string st = "mkdir "+path_name;
+    const char *str = st.c_str();
+    system(str);
+  }
+  else if( info.st_mode & S_IFDIR )
+  {
+    printf( "overwritting dataset \n" );
+    std::string st = "rm -r " + path_name;
+    const char *str = st.c_str();
+    // std::string
+    system(str);
+    st = "mkdir "+path_name;
+    str = st.c_str();
+    system(str);
+  }
+  else
+  {
+    printf( "%s is not a directory\n", path_name );
+    return 0;
+  }
+
+  std::string st = "touch "+path_name+"/"+dataset_name+".json";
+  const char *str = st.c_str();
+  system(str);
+
+  json j;
+  j["cameras"];
+
+  for ( Camera* camera : camera_vector_ ){
+    camera->saveRGB(path_name);
+    camera->saveDepthMap(path_name);
+    j["cameras"][camera->name_] = {
+      {"aspect", camera->aspect_},
+      {"lens", camera->lens_},
+      {"resolution", camera->resolution_},
+      {"width", camera->width_},
+      {"max_depth", camera->max_depth_}
+    };
+    Eigen::Matrix3f R = camera->frame_camera_wrt_world_->linear();
+    Eigen::Vector3f t = camera->frame_camera_wrt_world_->translation();
+
+    j["cameras"][camera->name_]["frame"] = {
+      R(0,0), R(0,1), R(0,2),
+      R(1,0), R(1,1), R(1,2),
+      R(2,0), R(2,1), R(2,2),
+      t(0), t(1), t(2)
+     };
+     // write prettified JSON to another file
+     std::ofstream o(path_name+"/"+dataset_name+".json");
+     o << std::setw(4) << j << std::endl;
+
+   }
+
+   return 1;
+}
+
+
+bool Environment::loadEnvironment(std::string path_name, std::string dataset_name){
+
+  const char* path_name_ = path_name.c_str(); // dataset name
+
+  std::string complete_path = path_name+"/"+dataset_name+".json";
+  // const char* path_name_ = complete_path.c_str(); // dataset name
+  struct stat info;
+  if( stat( path_name_, &info ) != 0 )
+  {
+    printf( "%s, dataset NOT found \n", path_name_ );
+    return 0;
+  }
+  else if( info.st_mode & S_IFDIR )
+  {
+    printf( "dataset found \n" );
+  }
+  else
+  {
+    printf( "%s is not a directory\n", path_name );
+    return 0;
+  }
+
+  camera_vector_.clear();
+  cp_vector_.clear();
+
+
+
+  // read a JSON file
+  std::ifstream i(complete_path);
+  json j;
+  i >> j;
+
+  auto cameras = j.at("cameras");
+  for (json::iterator it = cameras.begin(); it != cameras.end(); ++it) {
+
+    std::string name=it.key();
+
+    float lens;
+    float aspect;
+    float width;
+    int resolution;
+    int max_depth;
+    nlohmann::basic_json<>::value_type f;
+    try{
+      lens = it.value().at("lens");
+      aspect = it.value().at("aspect");
+      width = it.value().at("width");
+      resolution = it.value().at("resolution");
+      f= it.value().at("frame");
+    } catch (std::exception& e) {
+      std::string error = ": missing values in json file";
+      std::cout << error << std::endl;
+      return false;
+    };
+    try{
+      max_depth = it.value().at("max_depth");
+    } catch(std::exception& e) {};
+
+    resolution_=resolution;
+    film_=width;
+    lens_=lens;
+    aspect_=aspect;
+
+    Eigen::Matrix3f R;
+    R <<
+      f[0], f[1], f[2],
+      f[3], f[4], f[5],
+      f[6], f[7], f[8];
+
+    Eigen::Vector3f t(f[9],f[10],f[11]);
+    Eigen::Isometry3f* frame_camera_wrt_world = new Eigen::Isometry3f;
+    frame_camera_wrt_world->linear()=R;
+    frame_camera_wrt_world->translation()=t;
+    Eigen::Isometry3f* frame_world_wrt_camera = new Eigen::Isometry3f;
+    *frame_world_wrt_camera=frame_camera_wrt_world->inverse();
+
+    Camera* camera = new Camera(name,lens_,aspect_,film_,resolution_,max_depth_,frame_camera_wrt_world,frame_world_wrt_camera);
+
+    camera->loadRGB(path_name+"/rgb_"+name+".png");
+    camera->loadDepthMap(path_name+"/depth_"+name+".png");
+
+    camera_vector_.push_back(camera);
+
+
+  }
+
 
 }

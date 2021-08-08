@@ -12,8 +12,20 @@ link_libraries(${OpenCV_LIBS})
 #)
 #target_link_libraries(main opencv_highgui)
 
-#synthetic simulator test
-add_executable(test_synth test_synth.cpp
+##synthetic simulator test
+#add_executable(test_synth test_synth.cpp
+#../src/dataset.cpp
+#../src/camera.cpp
+#../src/image.cpp
+#../src/renderer.cpp
+#../src/environment.cpp
+#../src/dtam.cpp
+#../src/utils.cpp
+#)
+#target_link_libraries(test_synth opencv_highgui)
+
+#app for creating datasets
+add_executable(dataset_maker dataset_maker.cpp
 ../src/dataset.cpp
 ../src/camera.cpp
 ../src/image.cpp
@@ -22,7 +34,7 @@ add_executable(test_synth test_synth.cpp
 ../src/dtam.cpp
 ../src/utils.cpp
 )
-target_link_libraries(test_synth opencv_highgui)
+target_link_libraries(dataset_maker opencv_highgui)
 
 if (USE_CUDA)
   #synthetic simulator test with cuda
@@ -31,13 +43,32 @@ if (USE_CUDA)
   ../src_cuda/camera_cpu.cu
   ../src/image.cpp
   ../src/camera.cpp
-  ../src_cuda/renderer.cu
+  ../src/renderer.cpp
   ../src_cuda/environment.cu
+  ../src/environment.cpp
   ../src_cuda/dtam_cuda.cu
   ../src/utils.cpp
   ../src_cuda/camera_gpu.cu
   ../src_cuda/cuda_utils.cuh
   )
   target_link_libraries(test_synth_cuda opencv_highgui)
+
+  #synthetic simulator test with cuda
+  add_executable(test_synth_cuda0 test_synth_cuda0.cpp
+  ../src/dataset.cpp
+  ../src_cuda/camera_cpu.cu
+  ../src/image.cpp
+  ../src/camera.cpp
+  ../src_cuda/renderer.cu
+  ../src_cuda/environment.cu
+  ../src/environment.cpp
+  ../src_cuda/dtam_cuda.cu
+  ../src/utils.cpp
+  ../src_cuda/camera_gpu.cu
+  ../src_cuda/cuda_utils.cuh
+  )
+  target_link_libraries(test_synth_cuda0 opencv_highgui)
+
   target_compile_options(test_synth_cuda PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:-dc>)
+  target_compile_options(test_synth_cuda0 PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:-dc>)
 endif()

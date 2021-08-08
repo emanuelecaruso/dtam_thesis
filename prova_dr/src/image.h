@@ -26,10 +26,11 @@ class Image{
       std::cout << "Could not read the image: " << path << std::endl;
     }
 
-    inline void show(int image_scale=1){
+    inline void show(int image_scale=1, std::string name_ext=""){
       cv::Mat_< T > resized_image;
       cv::resize(image_, resized_image, cv::Size(), image_scale, image_scale, cv::INTER_NEAREST );
-      cv::imshow(name_, resized_image);
+      cv::imshow(name_+name_ext, resized_image);
+
     }
 
 
