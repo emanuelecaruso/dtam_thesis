@@ -1,7 +1,13 @@
--- depth->invdepth sampling
+-- IMPROVE ALGORITHM
 -- dataset 				XXXX
--- stream depthmap
--- improve algorithm
+-- stream depthmap			XXXX
+-- norm of image
+-- depth->invdepth sampling
+-- add rotation for dataset maker
+-- plot costs for pixel
+-- pathtrace->dataset
+
 -- initialization
 -- tracking
--- regerence camera update system
+-- reference camera update system
+

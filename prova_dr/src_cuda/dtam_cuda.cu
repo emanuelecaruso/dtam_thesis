@@ -541,8 +541,8 @@ __global__ void gradDesc_D_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrSte
   int rows = blockDim.x*gridDim.x;
   int cols = blockDim.y*gridDim.y;
 
-  d(row,col)=(d(row,col)+sigma_d*(gradient_q(row,col)+(1.0/theta)*a(row,col)))/(1+(sigma_d/theta));
-  // d(row,col)=(sigma_d*(gradient_q(row,col)+(1.0/theta)*a(row,col)))/(1+(sigma_d/theta));
+  d(row,col)=(d(row,col)+sigma_d*(gradient_q(row,col)+(1.0/theta)*d(row,col)))/(1+(sigma_d/theta));
+  // d(row,col)=(d(row,col)+sigma_d*(gradient_q(row,col)))/(1+(sigma_d/theta));
   // d(row,col)=1;
 
 }
@@ -771,8 +771,12 @@ void Dtam::search_A(cv::cuda::GpuMat* d, cv::cuda::GpuMat* a ){
 
 void Dtam::Regularize(cv::cuda::PtrStepSz<uchar2> cost_volume, float* depth_r_array){
 
+
   cv::cuda::GpuMat d = camera_vector_cpu_[index_r_]->depth_map_gpu_.clone();
+  // cv::cuda::GpuMat a0 = camera_vector_cpu_[index_r_]->depth_map_gpu_.clone();
   cv::cuda::GpuMat a = camera_vector_cpu_[index_r_]->depth_map_gpu_.clone();
+
+
   cv::cuda::GpuMat q;
   q.create(d.rows,d.cols*2,CV_32FC1);
 
@@ -781,33 +785,86 @@ void Dtam::Regularize(cv::cuda::PtrStepSz<uchar2> cost_volume, float* depth_r_ar
 
   n_ = 0;
   theta_=10000;
-  sigma_q_=0.01;
-  sigma_d_=80;
+  sigma_q_=0.000347;
+  // sigma_q_=0.003536;
+  // sigma_q_=0.5;
+  sigma_d_=100;
 
+  int resolution=camera_vector_cpu_[index_r_]->resolution_;
+
+  // cv::Mat_< float > a_0;
+  // (a0).download(a_0);
+  // cv::Mat_< float > resized_image_a_0;
+  // cv::resize(a_0, resized_image_a_0, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
+  // a_0.convertTo(a_0, CV_32FC1, 255.0);
+  // cv::imwrite("/home/manu/Desktop/dtam_thesis/matlab_scripts/data.png", a_0);
+  //
+  // cv::Mat_< float > d_0;
+  // (d).download(d_0);
+  // cv::Mat_< float > resized_image_d_0;
+  // cv::resize(d_0, resized_image_d_0, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
+  // cv::imshow("d_0", resized_image_d_0);
 
   while(theta_>theta_end_){
 
-    Dtam::ComputeGradientImage( &d, gradient_d ); // compute gradient of d (n)
-    // Dtam::ComputeGradientSobelImage( &d, gradient_d ); // compute gradient of d (n)
+    // Dtam::ComputeGradientImage( &d, gradient_d ); // compute gradient of d (n)
+    Dtam::ComputeGradientSobelImage( &d, gradient_d ); // compute gradient of d (n)
 
     Dtam::gradDesc_Q( &q, gradient_d);  // compute q (n+1)
 
-    Dtam::ComputeDivergenceImage( &q, gradient_q ); // compute gradient of q (n+1)
-    // Dtam::ComputeDivergenceSobelImage( &q, gradient_q ); // compute gradient of q (n+1)
+    // Dtam::ComputeDivergenceImage( &q, gradient_q ); // compute gradient of q (n+1)
+    Dtam::ComputeDivergenceSobelImage( &q, gradient_q ); // compute gradient of q (n+1)
 
     Dtam::gradDesc_D( &d, &a, gradient_q );  // compute d (n+1)
 
-    Dtam::search_A( &d, &a );  // compute a (n+1)
+
+
+    // Dtam::search_A( &d, &a );  // compute a (n+1)
 
     // // // upgrade steps
     // sigma_d_=sigma_d_*theta_;
     // sigma_q_=sigma_q_/theta_;
 
     // upgrade theta
+    // std::cout << "theta: " << theta_ <<std::endl;
     // float beta = (theta_>0.001) ? beta1_ : beta2_;
     theta_ = theta_*(1-beta1_*n_);
 
-    // if(n_==0)
+
+
+    cv::Mat_< float > d_1;
+    d.download(d_1);
+    cv::Mat_< float > resized_image_d_1;
+    cv::resize(d_1, resized_image_d_1, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
+    cv::imshow("d 1", resized_image_d_1);
+    //
+    // cv::Mat_< float > a_1;
+    // a.download(a_1);
+    // cv::Mat_< float > resized_image_a;
+    // cv::resize(a_1, resized_image_a, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
+    // cv::imshow("a 1", resized_image_a);
+
+    // cv::Mat_< float > d_gradient;
+    // (*gradient_d).download(d_gradient);
+    // cv::Mat_< float > resized_image_d_gradient;
+    // cv::resize(d_gradient, resized_image_d_gradient, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
+    // cv::imshow("gradient_d", resized_image_d_gradient);
+    //
+    // cv::Mat_< float > q_1;
+    // q.download(q_1);
+    // cv::Mat_< float > resized_image_q_1;
+    // cv::resize(q_1, resized_image_q_1, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
+    // cv::imshow("q_1", resized_image_q_1);
+    //
+    // cv::Mat_< float > q_gradient;
+    // (*gradient_q).download(q_gradient);
+    // cv::Mat_< float > resized_image_q_gradient;
+    // cv::resize(q_gradient, resized_image_q_gradient, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
+    // cv::imshow("gradient_q", resized_image_q_gradient);
+
+    cv::waitKey(0);
+
+    // if(n_==100)
     //   break;
 
     n_++;  // upgrade n
@@ -821,61 +878,36 @@ void Dtam::Regularize(cv::cuda::PtrStepSz<uchar2> cost_volume, float* depth_r_ar
   //**************************************************************************
   // DEBUGGGGGGGGGGG
 
-  // //------GRADIENTS------
-  // cv::cuda::GpuMat* gradient = new cv::cuda::GpuMat;
-  // Dtam::ComputeGradientImage( &(camera_vector_cpu_[index_r_]->depth_map_gpu_), gradient ); // compute gradient of d (n)
-  // cv::Mat_< float > test;
-  // (*gradient).download(test);
-  // cv::imshow("gradient test", test);
-  //
-  // cv::cuda::GpuMat* gradient_back = new cv::cuda::GpuMat;
-  // Dtam::ComputeDivergenceImage( gradient ,gradient_back );
-  // cv::Mat_< float > test_back;
-  // (*gradient_back).download(test_back);
-  // cv::imshow("gradient test back", test_back);
-  //
-  // //-----------------------
-
   // //------q,d,a------
-  //
 
-
-  int resolution=camera_vector_cpu_[index_r_]->resolution_;
-
-  cv::Mat_< float > a_0;
-  (camera_vector_cpu_[index_r_]->depth_map_gpu_).download(a_0);
-  cv::Mat_< float > resized_image_a_0;
-  cv::resize(a_0, resized_image_a_0, cv::Size(), 1000/resolution, 1000/resolution, cv::INTER_NEAREST );
-  cv::imshow("a_0", resized_image_a_0);
-  //
   // cv::Mat_< float > a_1;
   // a.download(a_1);
   // cv::Mat_< float > resized_image_a;
-  // cv::resize(a_1, resized_image_a, cv::Size(), 1000/resolution, 1000/resolution, cv::INTER_NEAREST );
+  // cv::resize(a_1, resized_image_a, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
   // cv::imshow("a 1", resized_image_a);
   //
   // cv::Mat_< float > d_gradient;
   // (*gradient_d).download(d_gradient);
   // cv::Mat_< float > resized_image_d_gradient;
-  // cv::resize(d_gradient, resized_image_d_gradient, cv::Size(), 1000/resolution, 1000/resolution, cv::INTER_NEAREST );
+  // cv::resize(d_gradient, resized_image_d_gradient, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
   // cv::imshow("gradient_d", resized_image_d_gradient);
   //
   // cv::Mat_< float > q_1;
   // q.download(q_1);
   // cv::Mat_< float > resized_image_q_1;
-  // cv::resize(q_1, resized_image_q_1, cv::Size(), 1000/resolution, 1000/resolution, cv::INTER_NEAREST );
+  // cv::resize(q_1, resized_image_q_1, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
   // cv::imshow("q_1", resized_image_q_1);
   //
   // cv::Mat_< float > q_gradient;
   // (*gradient_q).download(q_gradient);
   // cv::Mat_< float > resized_image_q_gradient;
-  // cv::resize(q_gradient, resized_image_q_gradient, cv::Size(), 1000/resolution, 1000/resolution, cv::INTER_NEAREST );
+  // cv::resize(q_gradient, resized_image_q_gradient, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
   // cv::imshow("gradient_q", resized_image_q_gradient);
-  //
+
   // cv::Mat_< float > d_1;
   // d.download(d_1);
   // cv::Mat_< float > resized_image_d_1;
-  // cv::resize(d_1, resized_image_d_1, cv::Size(), 1000/resolution, 1000/resolution, cv::INTER_NEAREST );
+  // cv::resize(d_1, resized_image_d_1, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
   // cv::imshow("d 1", resized_image_d_1);
 
 
@@ -886,17 +918,37 @@ void Dtam::Regularize(cv::cuda::PtrStepSz<uchar2> cost_volume, float* depth_r_ar
   delete gradient_d;
   delete gradient_q;
 
-  camera_vector_cpu_[index_r_]->depth_map_gpu_=a;
+  // camera_vector_cpu_[index_r_]->depth_map_gpu_= a;
 
 }
 
 void Dtam::updateDepthMap_parallel_gpu(int index_m){
 
+  double t_start=getTime();  // time start for computing computation time
+  double t_end=getTime();    // time end for computing computation time
+
+  t_start=getTime();
+
   Dtam::UpdateCostVolume(index_m, camera_data_for_dtam_);
+
+  t_end=getTime();
+  std::cerr << "discrete cost volume computation took: " << (t_end-t_start) << " ms " << std::endl;
+
+  t_start=getTime();
 
   Dtam::ComputeCostVolumeMin();
 
+  t_end=getTime();
+  std::cerr << "ComputeCostVolumeMin took: " << (t_end-t_start) << " ms " << std::endl;
+
+  t_start=getTime();
+
   Dtam::Regularize(cost_volume_, depth_r_array_);
+
+  t_end=getTime();
+
+  std::cerr << "Regularize took: " << (t_end-t_start) << " ms " << std::endl;
+
 
 
 }

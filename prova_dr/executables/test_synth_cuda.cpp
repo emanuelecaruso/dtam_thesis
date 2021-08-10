@@ -19,8 +19,8 @@ int main (int argc, char * argv[]) {
   // choose parameters
   //############################################################################
 
-  int resolution = 640;
-  float aspect = 1.333333333;
+  // int resolution = 64;
+  // float aspect = 1.333333333;
   // float aspect = 1;
 
   //############################################################################
@@ -30,14 +30,16 @@ int main (int argc, char * argv[]) {
   double t_start=getTime();  // time start for computing computation time
   double t_end=getTime();    // time end for computing computation time
 
-  Environment_gpu* environment = new Environment_gpu(resolution, aspect); // environment generator object (pointer)
+  Environment_gpu* environment = new Environment_gpu(); // environment generator object (pointer)
   Dtam* dtam = new Dtam(environment); // dense mapper and tracker
 
+  // std::string dataset_name = "rotatedcube_9cams_64res"; // dataset name
+
   // std::string dataset_name = "rotatedcube_2cams"; // dataset name
-  // std::string dataset_name = "rotatedcube_9cams"; // dataset name
+  std::string dataset_name = "rotatedcube_9cams"; // dataset name
   // std::string dataset_name = "rotatedcube_17cams"; // dataset name
   // std::string dataset_name = "rotatedcube_25cams"; // dataset name
-  std::string dataset_name = "sin_9cams"; // dataset name
+  // std::string dataset_name = "sin_9cams"; // dataset name
 
   std::string path_name = "./dataset/"+dataset_name; // dataset name
 
@@ -69,15 +71,15 @@ int main (int argc, char * argv[]) {
     }
 
     // --------------------------------------
-    cerr << "computing discrete cost volume " << it << "/" << num_cameras-1 << endl;
-    t_start=getTime();
+    // cerr << "computing discrete cost volume " << it << "/" << num_cameras-1 << endl;
+    // t_start=getTime();
 
     dtam->addCamera(environment->camera_vector_cpu_[it],environment->camera_vector_gpu_[it]);
     dtam->prepareCameraForDtam(it);
     dtam->updateDepthMap_parallel_gpu(it);
 
-    t_end=getTime();
-    cerr << "discrete cost volume computation took: " << (t_end-t_start) << " ms " << it << "/" << num_cameras-1 << endl;
+    // t_end=getTime();
+    // cerr << "discrete cost volume computation took: " << (t_end-t_start) << " ms " << it << "/" << num_cameras-1 << endl;
     // --------------------------------------
 
 
@@ -92,7 +94,7 @@ int main (int argc, char * argv[]) {
   camera_r->depth_map_gpu_.download(camera_r->depth_map_->image_);
   camera_r->depth_map_->show(800/camera_r->resolution_);
   depth_map_gt->show(800/camera_r->resolution_);
-  cv::waitKey(0);
+  // cv::waitKey(0);
   // // --------------------------------------
   return 1;
 }

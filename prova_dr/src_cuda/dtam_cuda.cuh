@@ -69,12 +69,14 @@ class Dtam{
       float* depth_r_array_h = new float[NUM_INTERPOLATIONS];
 
 
-      theta_end_=0.001;
+      theta_end_=5;
       eps_=0.0001;
-      beta1_=0.1;
+      beta1_=0.005;
+      // beta1_=0.0001;
       // beta2_=0.05;
       // lambda_=1.0/(1.0+0.5*depth1_r);
-      lambda_=0.00001;
+      // lambda_=0.00001;
+      lambda_=0;
 
 
       for (int i=0; i<NUM_INTERPOLATIONS; i++){
