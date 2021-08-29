@@ -4,10 +4,8 @@ clc
 clear
 
 %image
-image=imread("./data.png");
+image=imread("./data2.png");
 I = im2double(image);
-
-% imshow(I);
 
 
 d=I;
@@ -15,6 +13,7 @@ a=I;
 q=zeros(size(d,1),2*size(d,2));
 
 sigma_q = 0.000347;
+% sigma_q = 0.0001;
 sigma_d = 100;
 eps=0.0001;
 theta=10000;
@@ -27,10 +26,20 @@ lambda=0;
 
 n=0;
 tic
-% while theta>theta_end
+grad=[];
     
-    [Gx, Gy] = imgradientxy(d);
+disp("norm d 0: ")
+disp(norm(d))
+
+mode='sobel';
+while theta>theta_end
+    
+    
+    [Gx, Gy] = imgradientxy(d,mode);
     grad= [Gx Gy];
+    
+%     sigma_q=1/(norm(grad)*100);
+%     sigma_d=100;
     
     %q next
     q_next=(q+sigma_q*grad)/(1+sigma_q*eps);
@@ -43,13 +52,13 @@ tic
     
     Qx= q_next(:, 1:(size(q_next,2)/2));
     Qy= q_next(:, (size(q_next,2)/2)+1:size(q_next,2));
-    [Dx, ~] = imgradientxy(Qx);
-    [~, Dy] = imgradientxy(Qy);
+    [Dx, ~] = imgradientxy(Qx,mode);
+    [~, Dy] = imgradientxy(Qy,mode);
     div=Dx+Dy;
     
     %d next
 %     d_next=(d+sigma_d*(-At*q_next+(1/theta)*a))/(1+(sigma_d/theta))
-    d_next=(d+sigma_d*(div)+(1/theta)*d)/(1+(sigma_d/theta));
+    d_next=(d+sigma_d*((div)+(1/theta)*d))/(1+(sigma_d/theta));
 %     d_next=(d+sigma_d*(div))/(1+(sigma_d/theta));
     norm(d_next);
 %     if n==5
@@ -61,9 +70,28 @@ tic
     q=q_next;
     d=d_next;
     n=n+1;
-% %     
+
+    
+    disp("norm d: ")
+    disp(norm(d))
+    disp("norm q: ")
+    disp(norm(q))
+    disp("sobel d norm: ")
+    disp(norm(grad))
+    disp("theta: ")
+    disp(theta)
+%     disp("(sigma_d/theta): ")
+%     disp((sigma_d/theta))
+
     imshow(d);
+%     imshow(grad);
     drawnow;
-% end
+    while (true)
+        w = waitforbuttonpress;
+        if w
+            break;
+        end
+    end
+end
 timeElapsed = toc
 n

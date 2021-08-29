@@ -44,6 +44,8 @@ __global__ void normalize_Q_kernel(float *norm, cv::cuda::PtrStepSz<float> q, fl
 
 __global__ void squareVectorElements_kernel(float *vector);
 
+__global__ void Image2Vector_kernel(cv::cuda::PtrStepSz<float> image, float* vector);
+
 
 class Dtam{
 
@@ -132,6 +134,10 @@ class Dtam{
     void gradDesc_D(cv::cuda::GpuMat* d, cv::cuda::GpuMat* a, cv::cuda::GpuMat* gradient_q );
     void search_A(cv::cuda::GpuMat* d, cv::cuda::GpuMat* a );
     void getVectorNorm(float* vector_to_normalize, float* norm, int N);
+    void getImageNorm(cv::cuda::GpuMat* image, float* norm);
+  private:
+    void Image2Vector(cv::cuda::GpuMat* image, float* vector);
+
 
 
 

@@ -35,8 +35,8 @@ int main (int argc, char * argv[]) {
 
   // std::string dataset_name = "rotatedcube_9cams_64res"; // dataset name
 
-  // std::string dataset_name = "rotatedcube_2cams"; // dataset name
-  std::string dataset_name = "rotatedcube_9cams"; // dataset name
+  std::string dataset_name = "rotatedcube_2cams"; // dataset name
+  // std::string dataset_name = "rotatedcube_9cams"; // dataset name
   // std::string dataset_name = "rotatedcube_17cams"; // dataset name
   // std::string dataset_name = "rotatedcube_25cams"; // dataset name
   // std::string dataset_name = "sin_9cams"; // dataset name
