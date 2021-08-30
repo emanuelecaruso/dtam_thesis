@@ -114,10 +114,10 @@ __global__ void ComputeGradientImage_kernel(cv::cuda::PtrStepSz<float> image_in,
     grad_v[threadIdx.x][threadIdx.y][filter_idx]=0.5*gradient_offs*image_in(current_row,col);
 
   }
-  // else{
-  //   grad_h[threadIdx.x][threadIdx.y][filter_idx]=0;
-  //   grad_v[threadIdx.x][threadIdx.y][filter_idx]=0;
-  // }
+  else{
+    grad_h[threadIdx.x][threadIdx.y][filter_idx]=0;
+    grad_v[threadIdx.x][threadIdx.y][filter_idx]=0;
+  }
 
   __syncthreads();
 
@@ -168,10 +168,10 @@ __global__ void ComputeDivergenceSobelImage_kernel(cv::cuda::PtrStepSz<float> im
     grad_h[threadIdx.x][threadIdx.y][filter_idx]=sobel_h(sobel_row,sobel_col)*image_in(current_row,current_col);
     grad_v[threadIdx.x][threadIdx.y][filter_idx]=sobel_v(sobel_row,sobel_col)*image_in(current_row,current_col+cols);
   }
-  // else{
-  //   grad_h[threadIdx.x][threadIdx.y][filter_idx]=0;
-  //   grad_v[threadIdx.x][threadIdx.y][filter_idx]=0;
-  // }
+  else{
+    grad_h[threadIdx.x][threadIdx.y][filter_idx]=0;
+    grad_v[threadIdx.x][threadIdx.y][filter_idx]=0;
+  }
 
   __syncthreads();
 
@@ -558,9 +558,8 @@ __global__ void gradDesc_D_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrSte
   int rows = blockDim.x*gridDim.x;
   int cols = blockDim.y*gridDim.y;
 
-  // d(row,col)=(d(row,col)+sigma_d*(gradient_q(row,col)+(1.0/theta)*a(row,col)))/(1+(sigma_d/theta));
+  d(row,col)=(d(row,col)+sigma_d*(gradient_q(row,col)+(1.0/theta)*a(row,col)))/(1+(sigma_d/theta));
   // d(row,col)=(d(row,col)+sigma_d*(gradient_q(row,col)+(1.0/theta)*d(row,col)))/(1+(sigma_d/theta));
-  d(row,col)=(d(row,col)+sigma_d*(gradient_q(row,col)+(1.0/theta)*d(row,col)))/(1+(sigma_d/theta));
   // d(row,col)=(d(row,col)+sigma_d*(gradient_q(row,col)))/(1+(sigma_d/theta));
   // d(row,col)=1;
 
@@ -639,6 +638,39 @@ __global__ void sumReduction_kernel(float *v, float *v_r, int size) {
 	// Result is inexed by this block
 	if (threadIdx.x == 0) {
 		v_r[blockIdx.x] = partial_sum[0];
+	}
+}
+
+
+__global__ void maxReduction_kernel(float *v, float *v_r, int size) {
+	// Allocate shared memory
+	__shared__ float partial_max[MAX_THREADS];
+
+	// Calculate thread ID
+	int tid = blockIdx.x * blockDim.x + threadIdx.x;
+
+	// Load elements into shared memory
+  if (tid<size)
+  	partial_max[threadIdx.x] = v[tid];
+  else
+    partial_max[threadIdx.x] = 0;
+
+	__syncthreads();
+
+	// Iterate of log base 2 the block dimension
+	for (int s = 1; s < blockDim.x; s *= 2) {
+		// Reduce the threads performing work by half previous the previous
+		// iteration each cycle
+		if (threadIdx.x % (2 * s) == 0) {
+			partial_max[threadIdx.x] = fmaxf(abs(partial_max[threadIdx.x + s]),abs(partial_max[threadIdx.x]));
+		}
+		__syncthreads();
+	}
+
+	// Let the thread 0 for this block write it's result to main memory
+	// Result is inexed by this block
+	if (threadIdx.x == 0) {
+		v_r[blockIdx.x] = partial_max[0];
 	}
 }
 
@@ -736,6 +768,64 @@ void Dtam::getVectorNorm(float* vector_to_normalize, float* norm, int N){
 
 }
 
+void Dtam::getVectorMax(float* vector, float* max, int N){
+
+
+  int GRID_SIZE = N;
+  int N_THREADS = N;
+
+  float* max_vector_i;
+  cudaMalloc(&max_vector_i, sizeof(float)*N);
+  printCudaError("cudaMalloc in max computation 1");
+
+  copyArray_kernel<<<N/MAX_THREADS,MAX_THREADS>>>(vector, max_vector_i);
+  printCudaError("Copying array for max computation");
+
+  squareVectorElements_kernel<<<N/MAX_THREADS,MAX_THREADS>>>(max_vector_i);
+  printCudaError("Squaring terms for computing max");
+
+  float* max_vector_o;
+  cudaMalloc(&max_vector_o, sizeof(float)*GRID_SIZE);
+  printCudaError("cudaMalloc in max computation 2");
+
+  const int TB_SIZE = MAX_THREADS;
+  bool init = false;
+
+  while (GRID_SIZE>=TB_SIZE){
+
+    int REST = GRID_SIZE % TB_SIZE;
+    GRID_SIZE = GRID_SIZE / TB_SIZE;
+    if (REST > 0)
+      GRID_SIZE++;
+    // N_THREADS = N_THREADS;
+
+    maxReduction_kernel<<<GRID_SIZE, TB_SIZE>>>(max_vector_i, max_vector_o, N_THREADS);
+    printCudaError("Kernel computing sum reduction for computing max ");
+
+    N_THREADS = GRID_SIZE;
+
+    if (init)
+      cudaFree(max_vector_i);
+    max_vector_i=max_vector_o;
+    init = true;
+
+  }
+
+  cudaMalloc(&max_vector_o, sizeof(float));
+  maxReduction_kernel<<<1, TB_SIZE>>>(max_vector_i, max_vector_o, N_THREADS);
+  printCudaError("Kernel computing sum reduction for computing max (final)");
+
+
+  cudaMemcpy(max, max_vector_o , sizeof(float), cudaMemcpyDeviceToHost);
+  printCudaError("Copying result device to host");
+
+  cudaFree(max_vector_i);
+  cudaFree(max_vector_o);
+
+
+
+}
+
 
 void Dtam::Image2Vector(cv::cuda::GpuMat* image, float* vector){
 
@@ -778,12 +868,19 @@ void Dtam::gradDesc_Q(cv::cuda::GpuMat* q, cv::cuda::GpuMat* gradient_d ){
   gradDesc_Q_toNormalize_kernel<<<numBlocks,threadsPerBlock>>>( *q, *gradient_d, eps_, sigma_q_, vector_to_normalize );
   printCudaError("Kernel computing next q to normalize");
 
-  float* norm = new float;
-  Dtam::getVectorNorm(vector_to_normalize, norm, N);
+  // float* norm = new float;
+  // Dtam::getVectorNorm(vector_to_normalize, norm, N);
   // std::cout << "norm is: " << *norm << std::endl;
+  // normalize_Q_kernel<<<numBlocks,threadsPerBlock>>> (*norm, *q, vector_to_normalize);
+  // printCudaError("Kernel computing sum reduction");
 
-  normalize_Q_kernel<<<numBlocks,threadsPerBlock>>> (*norm, *q, vector_to_normalize);
+  float* max = new float;
+  Dtam::getVectorMax(vector_to_normalize, max, N);
+  // std::cout << "max is: " << *max << std::endl;
+  normalize_Q_kernel<<<numBlocks,threadsPerBlock>>> (*max, *q, vector_to_normalize);
   printCudaError("Kernel computing sum reduction");
+
+
 
 
 
@@ -829,11 +926,14 @@ void Dtam::Regularize(cv::cuda::PtrStepSz<uchar2> cost_volume, float* depth_r_ar
   cv::cuda::GpuMat* gradient_q = new cv::cuda::GpuMat;
 
   n_ = 0;
-  theta_=10000;
-  sigma_q_=0.000347;
-  // sigma_q_=0.003536;
-  // sigma_q_=0.5;
-  sigma_d_=100;
+  theta_=0.2;
+
+  // sigma_q_=0.1;
+  // sigma_d_=0.1;
+
+  float sigma_q0=0.1;
+  float sigma_d0=0.1;
+  float r=0.9;
 
   int resolution=camera_vector_cpu_[index_r_]->resolution_;
 
@@ -871,7 +971,7 @@ void Dtam::Regularize(cv::cuda::PtrStepSz<uchar2> cost_volume, float* depth_r_ar
 
 
 
-    // Dtam::search_A( &d, &a );  // compute a (n+1)
+    Dtam::search_A( &d, &a );  // compute a (n+1)
 
     // // // upgrade steps
     // sigma_d_=sigma_d_*theta_;
@@ -882,33 +982,39 @@ void Dtam::Regularize(cv::cuda::PtrStepSz<uchar2> cost_volume, float* depth_r_ar
     // float beta = (theta_>0.001) ? beta1_ : beta2_;
     theta_ = theta_*(1-beta1_*n_);
 
+    n_++;  // upgrade n
 
-    float* norm_d = new float;
-    Dtam::getImageNorm(&d, norm_d);
-    std::cout << "\nd norm is: " << *norm_d << std::endl;
+    float r_pow_n=pow(r,n_);
+    sigma_q_=sigma_q0/r_pow_n;
+    sigma_d_=sigma_d0*r_pow_n;
 
-    float* norm_q = new float;
-    Dtam::getImageNorm(&q, norm_q);
-    std::cout << "q norm is: " << *norm_q << std::endl;
 
-    float* norm_sobel_d = new float;
-    Dtam::getImageNorm(gradient_d, norm_sobel_d);
-    std::cout << "sobel d norm is: " << *norm_sobel_d << std::endl;
+    // float* norm_d = new float;
+    // Dtam::getImageNorm(&d, norm_d);
+    // std::cout << "\nd norm is: " << *norm_d << std::endl;
+    //
+    // float* norm_q = new float;
+    // Dtam::getImageNorm(&q, norm_q);
+    // std::cout << "q norm is: " << *norm_q << std::endl;
+    //
+    // float* norm_sobel_d = new float;
+    // Dtam::getImageNorm(gradient_d, norm_sobel_d);
+    // std::cout << "sobel d norm is: " << *norm_sobel_d << std::endl;
+    //
+    // std::cout << "theta is: " << theta_ << std::endl;
 
-    std::cout << "theta is: " << theta_ << std::endl;
-
-    cv::Mat_< float > d_1;
-    d.download(d_1);
-    cv::Mat_< float > resized_image_d_1;
-    cv::resize(d_1, resized_image_d_1, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
-    cv::imshow("d 1", resized_image_d_1);
+    // cv::Mat_< float > d_1;
+    // d.download(d_1);
+    // cv::Mat_< float > resized_image_d_1;
+    // cv::resize(d_1, resized_image_d_1, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
+    // cv::imshow("d 1", resized_image_d_1);
     //
     // cv::Mat_< float > a_1;
     // a.download(a_1);
     // cv::Mat_< float > resized_image_a;
     // cv::resize(a_1, resized_image_a, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
     // cv::imshow("a 1", resized_image_a);
-
+    //
     // cv::Mat_< float > d_gradient;
     // (*gradient_d).download(d_gradient);
     // cv::Mat_< float > resized_image_d_gradient;
@@ -927,14 +1033,23 @@ void Dtam::Regularize(cv::cuda::PtrStepSz<uchar2> cost_volume, float* depth_r_ar
     // cv::resize(q_gradient, resized_image_q_gradient, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
     // cv::imshow("gradient_q", resized_image_q_gradient);
 
-    cv::waitKey(0);
+    // cv::waitKey(0);
 
     // if(n_==100)
     //   break;
 
-    n_++;  // upgrade n
 
   }
+  sigma_q_=sigma_q0;
+  sigma_d_=sigma_d0;
+
+  cv::Mat_< float > opt;
+  a.download(opt);
+  cv::Mat_< float > resized_image_a;
+  cv::resize(opt, resized_image_a, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
+  cv::imshow("opt", resized_image_a);
+  cv::waitKey(1);
+
   // std::cout << "number of iterations n: " << n_ << std::endl;
 
 

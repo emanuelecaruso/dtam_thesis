@@ -36,6 +36,8 @@ __global__ void search_A_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepS
 
 __global__ void sumReduction_kernel(float* v, float* v_r, int size);
 
+__global__ void maxReduction_kernel(float* v, float* v_r, int size);
+
 __global__ void copyArray_kernel(float* original, float* copy);
 
 __global__ void sqrt_kernel(float* v);
@@ -71,14 +73,14 @@ class Dtam{
       float* depth_r_array_h = new float[NUM_INTERPOLATIONS];
 
 
-      theta_end_=5;
+      theta_end_=0.001;
       eps_=0.0001;
-      beta1_=0.005;
+      beta1_=0.03;
       // beta1_=0.0001;
       // beta2_=0.05;
       // lambda_=1.0/(1.0+0.5*depth1_r);
-      // lambda_=0.00001;
-      lambda_=0;
+      lambda_=0.005;
+      // lambda_=0;
 
 
       for (int i=0; i<NUM_INTERPOLATIONS; i++){
@@ -134,6 +136,7 @@ class Dtam{
     void gradDesc_D(cv::cuda::GpuMat* d, cv::cuda::GpuMat* a, cv::cuda::GpuMat* gradient_q );
     void search_A(cv::cuda::GpuMat* d, cv::cuda::GpuMat* a );
     void getVectorNorm(float* vector_to_normalize, float* norm, int N);
+    void getVectorMax(float* vector_to_normalize, float* max, int N);
     void getImageNorm(cv::cuda::GpuMat* image, float* norm);
   private:
     void Image2Vector(cv::cuda::GpuMat* image, float* vector);
