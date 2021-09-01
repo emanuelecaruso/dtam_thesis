@@ -4,6 +4,8 @@
 #include "image.h"
 #include <cuda_runtime.h>
 #include "environment.cuh"
+// #include "matplotlibcpp.h"
+
 
 #define NUM_INTERPOLATIONS 64
 #define MAX_THREADS 1024
@@ -75,11 +77,11 @@ class Dtam{
 
       theta_end_=0.001;
       eps_=0.0001;
-      beta1_=0.03;
+      beta1_=0.01;
       // beta1_=0.0001;
       // beta2_=0.05;
       // lambda_=1.0/(1.0+0.5*depth1_r);
-      lambda_=0.005;
+      lambda_=0.002;
       // lambda_=0;
 
 
@@ -127,6 +129,7 @@ class Dtam{
 
     void UpdateCostVolume(int index_m, cameraDataForDtam* camera_data_for_dtam_ );
     void ComputeCostVolumeMin();
+    void StudyCostVolumeMin(int row, int col);
     void Regularize( cv::cuda::PtrStepSz<uchar2> cost_volume, float* depth_r_array);
     void ComputeGradientImage(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* image_out);
     void ComputeGradientSobelImage(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* image_out);

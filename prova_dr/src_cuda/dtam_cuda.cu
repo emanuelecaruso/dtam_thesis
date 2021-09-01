@@ -5,7 +5,6 @@
 #include "defs.h"
 #include "cuda_utils.cuh"
 
-
 void Dtam::loadCameras(CameraVector_cpu camera_vector_cpu, CameraVector_gpu camera_vector_gpu){
   camera_vector_cpu_= camera_vector_cpu;
   camera_vector_gpu_ = camera_vector_gpu;
@@ -45,8 +44,8 @@ __global__ void ComputeGradientSobelImage_kernel(cv::cuda::PtrStepSz<float> imag
   int rows = blockDim.x*gridDim.x;
   int cols = blockDim.y*gridDim.y;
 
-  __shared__ float grad_h[10][10][9]; //horizontal gradient
-  __shared__ float grad_v[10][10][9]; //vertical gradient
+  __shared__ float grad_h[8][8][9]; //horizontal gradient
+  __shared__ float grad_v[8][8][9]; //vertical gradient
 
   //hotizontal sobel filter
   Eigen::Matrix3f sobel_h;
@@ -143,8 +142,8 @@ __global__ void ComputeDivergenceSobelImage_kernel(cv::cuda::PtrStepSz<float> im
   int rows = blockDim.x*gridDim.x;
   int cols = blockDim.y*gridDim.y;
 
-  __shared__ float grad_h[10][10][9]; //horizontal gradient
-  __shared__ float grad_v[10][10][9]; //vertical gradient
+  __shared__ float grad_h[8][8][9]; //horizontal gradient
+  __shared__ float grad_v[8][8][9]; //vertical gradient
 
   //hotizontal sobel filter
   Eigen::Matrix3f sobel_h;
@@ -481,6 +480,139 @@ void Dtam::ComputeCostVolumeMin(){
   printCudaError("Kernel computing cost volume min");
 }
 
+void Dtam::StudyCostVolumeMin(int row, int col){
+
+  // Eigen::Vector2i pixel_coords_r(col,row);
+  // cv::Vec3b clr_r;
+  // camera_r->image_rgb_->evalPixel(pixel_coords_r,clr_r);
+  //
+  // // query point
+  // Eigen::Vector3f query_p;
+  // Eigen::Vector2f uv_r;
+  // camera_r->pixelCoords2uv(pixel_coords_r, uv_r);
+  // camera_r->pointAtDepth(uv_r, depth2_r, query_p);
+  // Eigen::Vector2f query_p_projected_on_cam_m;
+  // float query_depth_on_camera_m;
+  // bool query_in_front = camera_m->projectPoint(query_p, query_p_projected_on_cam_m, query_depth_on_camera_m);
+  //
+  // // if both camera r and query point are on back of camera m return false or
+  // // if camera r is in front of camera m whereas query point is on the back
+  // if ((!query_in_front && !cam_r_in_front) || (!query_in_front && cam_r_in_front))
+  //   continue;
+  //
+  // int cost_min = 999999;
+  // int index_min = -1;
+  // Eigen::Vector2i pixel_min;
+  //
+  //
+  // // initializations
+  // Eigen::Vector2f uv1_fixed, uv2_fixed;
+  // float depth1_m_fixed, depth2_m_fixed;
+  //
+  // uv1_fixed=cam_r_projected_on_cam_m;
+  // uv2_fixed=query_p_projected_on_cam_m;
+  // depth1_m_fixed=cam_r_depth_on_camera_m;
+  // depth2_m_fixed=query_depth_on_camera_m;
+  //
+  // Eigen::Vector2i pixel_current;
+  //
+  //
+  // for (int i=0; i<num_interpolations_; i++){
+  //
+  //   float depth_r = depth_r_array_[i];
+  //   float depth_m = depth_r*r(2,2)-t(2)-((depth_r*r(2,0)*(2*uv_r.x()-w))/(2*f))-((depth_r*r(2,1)*(-2*uv_r.y()+h))/(2*f));
+  //   float ratio_invdepth_m = ((1.0/depth_m)-(1.0/depth1_m_fixed))/((1.0/depth2_m_fixed)-(1.0/depth1_m_fixed));
+  //
+  //   Eigen::Vector2f uv_current;
+  //   uv_current.x()=uv1_fixed.x()+ratio_invdepth_m*(uv2_fixed.x()-uv1_fixed.x()) ;
+  //   uv_current.y()=uv1_fixed.y()+ratio_invdepth_m*(uv2_fixed.y()-uv1_fixed.y()) ;
+  //
+  //
+  //   camera_m->uv2pixelCoords( uv_current, pixel_current);
+  //   cv::Vec3b clr_current;
+  //   bool flag = camera_m->image_rgb_->evalPixel(pixel_current,clr_current);
+  //
+  //   int cost_i;
+  //   int col_ = col+cols*i;
+  //   int num_valid_projections;
+  //
+  //   if (!flag){
+  //     cost_matrix_->evalPixel(row,col_,cost_i);
+  //   }
+  //   else{
+  //
+  //     cost_matrix_->evalPixel(row,col_,cost_i);
+  //     n_valid_proj_matrix_->evalPixel(row,col_,num_valid_projections);
+  //
+  //     int cost_current = mseBetween2Colors(clr_r, clr_current);
+  //     if (cost_i==999999)
+  //       cost_i=cost_current;
+  //     else{
+  //       cost_i=(cost_i*num_valid_projections+cost_current)/(num_valid_projections+1);
+  //       // cost_i=cost_current;
+  //     }
+  //     if (check){
+  //       // std::cout  << "i " << i<< ", cost_i " << cost_i << std::endl;
+  //       float ratio = (float)i/(float)num_interpolations_;
+  //       cv::Vec3b magenta = cv::Vec3b(ratio*255,0,ratio*255);
+  //       cv::Vec3b red = cv::Vec3b(0,0,255);
+  //       cv::Vec3b blue = cv::Vec3b(255,0,0);
+  //       if (i==0)
+  //         camera_m->image_rgb_->setPixel(pixel_current,red);
+  //       else if(i==num_interpolations_-1)
+  //         camera_m->image_rgb_->setPixel(pixel_current,blue);
+  //       else
+  //         camera_m->image_rgb_->setPixel(pixel_current,magenta);
+  //       camera_r->image_rgb_->setPixel(pixel_coords_r,red);
+  //     }
+  //   }
+  //
+  //   if (cost_i<999999){
+  //
+  //     cost_matrix_->setPixel(row,col_,cost_i);
+  //     n_valid_proj_matrix_->setPixel(row,col_,(num_valid_projections+1));
+  //
+  //     if (cost_i<cost_min){
+  //       index_min = i;
+  //       cost_min=cost_i;
+  //       pixel_min=pixel_current;
+  //     }
+  //   }
+  //
+  // }
+  //
+  //
+  // if (index_min>=0){
+  //   float depth_value = depth_r_array_[index_min]/camera_r->max_depth_;
+  //   camera_r->depth_map_->setPixel(pixel_coords_r,depth_value);
+  // }
+  // else
+  //   camera_r->depth_map_->setPixel(pixel_coords_r,1);
+  //
+  // if (check){
+  //   cv::Vec3b green = cv::Vec3b(0,255,0);
+  //   camera_m->image_rgb_->setPixel(pixel_min,green);
+  //
+  //   break;
+  // }
+
+
+
+
+  // RGBABitmapImageReference *imageReference;
+  // RGBABitmapImageReference *imageReference = CreateRGBABitmapImageReference();
+
+	// std::vector<double> xs{-2, -1, 0, 1, 2};
+	// std::vector<double> ys{2, -1, -2, -1, 2};
+  //
+	// DrawScatterPlot(imageReference, 600, 400, &xs, &ys);
+
+	// std::vector<double> *pngdata = ConvertToPNG(imageReference->image);
+	// WriteToFile(pngdata, "example1.png");
+	// DeleteImage(imageReference->image);
+
+}
+
 void Dtam::ComputeGradientSobelImage(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* image_out){
 
   int cols = image_in->cols;
@@ -488,8 +620,8 @@ void Dtam::ComputeGradientSobelImage(cv::cuda::GpuMat* image_in, cv::cuda::GpuMa
 
   image_out->create(rows,cols*2,CV_32FC1);
 
-  dim3 threadsPerBlock( 10 , 10 , 9);
-  dim3 numBlocks( rows/10, cols/10 , 1);
+  dim3 threadsPerBlock( 8 , 8 , 9);
+  dim3 numBlocks( rows/8, cols/8 , 1);
   ComputeGradientSobelImage_kernel<<<numBlocks,threadsPerBlock>>>(*image_in, *image_out);
   printCudaError("Kernel computing gradient");
 
@@ -502,7 +634,6 @@ void Dtam::ComputeGradientImage(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* im
 
   image_out->create(rows,cols*2,CV_32FC1);
 
-  // dim3 threadsPerBlock( 10 , 10 , 9); SOBEL
   dim3 threadsPerBlock( 32 , 16 , 2);
   dim3 numBlocks( rows/32, cols/16 , 1);
   ComputeGradientImage_kernel<<<numBlocks,threadsPerBlock>>>(*image_in, *image_out);
@@ -517,8 +648,8 @@ void Dtam::ComputeDivergenceSobelImage(cv::cuda::GpuMat* image_in, cv::cuda::Gpu
 
   image_out->create(rows,cols,CV_32FC1);
 
-  dim3 threadsPerBlock( 10 , 10 , 9);
-  dim3 numBlocks( rows/10, cols/10 , 1);
+  dim3 threadsPerBlock( 8 , 8 , 9);
+  dim3 numBlocks( rows/8, cols/8 , 1);
   ComputeDivergenceSobelImage_kernel<<<numBlocks,threadsPerBlock>>>(*image_in, *image_out);
   printCudaError("Kernel computing gradient");
 
@@ -1043,12 +1174,12 @@ void Dtam::Regularize(cv::cuda::PtrStepSz<uchar2> cost_volume, float* depth_r_ar
   sigma_q_=sigma_q0;
   sigma_d_=sigma_d0;
 
-  cv::Mat_< float > opt;
-  a.download(opt);
-  cv::Mat_< float > resized_image_a;
-  cv::resize(opt, resized_image_a, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
-  cv::imshow("opt", resized_image_a);
-  cv::waitKey(1);
+  // cv::Mat_< float > opt;
+  // a.download(opt);
+  // cv::Mat_< float > resized_image_a;
+  // cv::resize(opt, resized_image_a, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
+  // cv::imshow("opt", resized_image_a);
+  // cv::waitKey(1);
 
   // std::cout << "number of iterations n: " << n_ << std::endl;
 
@@ -1108,26 +1239,19 @@ void Dtam::updateDepthMap_parallel_gpu(int index_m){
   double t_end=getTime();    // time end for computing computation time
 
   t_start=getTime();
-
   Dtam::UpdateCostVolume(index_m, camera_data_for_dtam_);
-
   t_end=getTime();
   std::cerr << "discrete cost volume computation took: " << (t_end-t_start) << " ms " << std::endl;
 
   t_start=getTime();
-
   Dtam::ComputeCostVolumeMin();
-
   t_end=getTime();
   std::cerr << "ComputeCostVolumeMin took: " << (t_end-t_start) << " ms " << std::endl;
 
-  t_start=getTime();
-
-  Dtam::Regularize(cost_volume_, depth_r_array_);
-
-  t_end=getTime();
-
-  std::cerr << "Regularize took: " << (t_end-t_start) << " ms " << std::endl;
+  // t_start=getTime();
+  // Dtam::Regularize(cost_volume_, depth_r_array_);
+  // t_end=getTime();
+  // std::cerr << "Regularize took: " << (t_end-t_start) << " ms " << std::endl;
 
 
 

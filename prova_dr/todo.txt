@@ -2,11 +2,17 @@
 -- dataset 				XXXX
 -- stream depthmap			XXXX
 -- norm of image			XXXX
--- improve sobel filter & padding
--- depth->invdepth sampling
--- add rotation for dataset maker
+
+
 -- plot costs for pixel in graph
+-- depth->invdepth sampling
+
 -- pathtrace->dataset
+
+-- improve sobel filter & padding
+-- add rotation for dataset maker
+
+
 
 -- initialization
 -- tracking

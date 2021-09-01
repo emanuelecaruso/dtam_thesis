@@ -16,6 +16,7 @@ set(CMAKE_CUDA_COMPILER_ID "NVIDIA")
 set(CMAKE_CUDA_TARGET_INCLUDE_PATH
   "/usr/local/include/eigen3"
   "/usr/local/include/opencv4"
+  "/usr/include/python3.6m"
   "../src"
   "../src_cuda"
   "../libs"
@@ -35,6 +36,7 @@ set(CMAKE_CXX_COMPILER_ID "GNU")
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "/usr/local/include/eigen3"
   "/usr/local/include/opencv4"
+  "/usr/include/python3.6m"
   "../src"
   "../src_cuda"
   "../libs"
