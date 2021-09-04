@@ -124,19 +124,6 @@ dataset_maker/fast:
 .PHONY : dataset_maker/fast
 
 #=============================================================================
-# Target rules for targets named test_synth_cuda0
-
-# Build rule for target.
-test_synth_cuda0: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 test_synth_cuda0
-.PHONY : test_synth_cuda0
-
-# fast build rule for target.
-test_synth_cuda0/fast:
-	$(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/build
-.PHONY : test_synth_cuda0/fast
-
-#=============================================================================
 # Target rules for targets named test_synth_cuda
 
 # Build rule for target.
@@ -158,7 +145,6 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... dataset_maker"
-	@echo "... test_synth_cuda0"
 	@echo "... test_synth_cuda"
 .PHONY : help
 

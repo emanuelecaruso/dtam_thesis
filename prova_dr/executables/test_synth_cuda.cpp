@@ -82,6 +82,11 @@ int main (int argc, char * argv[]) {
     // cerr << "discrete cost volume computation took: " << (t_end-t_start) << " ms " << it << "/" << num_cameras-1 << endl;
     // --------------------------------------
 
+    // show final depthmap
+    camera_r->depth_map_gpu_.download(camera_r->depth_map_->image_);
+    camera_r->depth_map_->show(800/camera_r->resolution_);
+    depth_map_gt->show(800/camera_r->resolution_);
+    cv::waitKey(0);
 
   }
   // --------------------------------------
@@ -90,12 +95,8 @@ int main (int argc, char * argv[]) {
     // camera->image_rgb_->show(800/camera->resolution_);
     // camera->depth_map_->show(800/camera->resolution_);
   // }
-  // show final depthmap
-  // camera_r->depth_map_gpu_.download(camera_r->depth_map_->image_);
-  // camera_r->depth_map_->show(800/camera_r->resolution_);
-  // depth_map_gt->show(800/camera_r->resolution_);
 
-  // cv::waitKey(0);
+
   // // --------------------------------------
   return 1;
 }

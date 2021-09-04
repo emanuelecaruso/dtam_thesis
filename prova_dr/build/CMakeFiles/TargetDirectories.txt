@@ -3,5 +3,4 @@
 /home/manu/Desktop/dtam_thesis/prova_dr/build/executables/CMakeFiles/rebuild_cache.dir
 /home/manu/Desktop/dtam_thesis/prova_dr/build/executables/CMakeFiles/edit_cache.dir
 /home/manu/Desktop/dtam_thesis/prova_dr/build/executables/CMakeFiles/dataset_maker.dir
-/home/manu/Desktop/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_synth_cuda0.dir
 /home/manu/Desktop/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir

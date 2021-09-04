@@ -126,21 +126,6 @@ dataset_maker/fast:
 .PHONY : dataset_maker/fast
 
 # Convenience name for target.
-executables/CMakeFiles/test_synth_cuda0.dir/rule:
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f CMakeFiles/Makefile2 executables/CMakeFiles/test_synth_cuda0.dir/rule
-.PHONY : executables/CMakeFiles/test_synth_cuda0.dir/rule
-
-# Convenience name for target.
-test_synth_cuda0: executables/CMakeFiles/test_synth_cuda0.dir/rule
-
-.PHONY : test_synth_cuda0
-
-# fast build rule for target.
-test_synth_cuda0/fast:
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/build
-.PHONY : test_synth_cuda0/fast
-
-# Convenience name for target.
 executables/CMakeFiles/test_synth_cuda.dir/rule:
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f CMakeFiles/Makefile2 executables/CMakeFiles/test_synth_cuda.dir/rule
 .PHONY : executables/CMakeFiles/test_synth_cuda.dir/rule
@@ -162,7 +147,6 @@ __/src/camera.o: __/src/camera.cpp.o
 # target to build an object file
 __/src/camera.cpp.o:
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/dataset_maker.dir/build.make executables/CMakeFiles/dataset_maker.dir/__/src/camera.cpp.o
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src/camera.cpp.o
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/camera.cpp.o
 .PHONY : __/src/camera.cpp.o
 
@@ -173,7 +157,6 @@ __/src/camera.i: __/src/camera.cpp.i
 # target to preprocess a source file
 __/src/camera.cpp.i:
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/dataset_maker.dir/build.make executables/CMakeFiles/dataset_maker.dir/__/src/camera.cpp.i
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src/camera.cpp.i
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/camera.cpp.i
 .PHONY : __/src/camera.cpp.i
 
@@ -184,7 +167,6 @@ __/src/camera.s: __/src/camera.cpp.s
 # target to generate assembly for a file
 __/src/camera.cpp.s:
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/dataset_maker.dir/build.make executables/CMakeFiles/dataset_maker.dir/__/src/camera.cpp.s
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src/camera.cpp.s
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/camera.cpp.s
 .PHONY : __/src/camera.cpp.s
 
@@ -195,7 +177,6 @@ __/src/dataset.o: __/src/dataset.cpp.o
 # target to build an object file
 __/src/dataset.cpp.o:
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/dataset_maker.dir/build.make executables/CMakeFiles/dataset_maker.dir/__/src/dataset.cpp.o
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src/dataset.cpp.o
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/dataset.cpp.o
 .PHONY : __/src/dataset.cpp.o
 
@@ -206,7 +187,6 @@ __/src/dataset.i: __/src/dataset.cpp.i
 # target to preprocess a source file
 __/src/dataset.cpp.i:
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/dataset_maker.dir/build.make executables/CMakeFiles/dataset_maker.dir/__/src/dataset.cpp.i
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src/dataset.cpp.i
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/dataset.cpp.i
 .PHONY : __/src/dataset.cpp.i
 
@@ -217,7 +197,6 @@ __/src/dataset.s: __/src/dataset.cpp.s
 # target to generate assembly for a file
 __/src/dataset.cpp.s:
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/dataset_maker.dir/build.make executables/CMakeFiles/dataset_maker.dir/__/src/dataset.cpp.s
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src/dataset.cpp.s
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/dataset.cpp.s
 .PHONY : __/src/dataset.cpp.s
 
@@ -255,7 +234,6 @@ __/src/environment.o: __/src/environment.cpp.o
 # target to build an object file
 __/src/environment.cpp.o:
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/dataset_maker.dir/build.make executables/CMakeFiles/dataset_maker.dir/__/src/environment.cpp.o
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src/environment.cpp.o
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/environment.cpp.o
 .PHONY : __/src/environment.cpp.o
 
@@ -266,7 +244,6 @@ __/src/environment.i: __/src/environment.cpp.i
 # target to preprocess a source file
 __/src/environment.cpp.i:
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/dataset_maker.dir/build.make executables/CMakeFiles/dataset_maker.dir/__/src/environment.cpp.i
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src/environment.cpp.i
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/environment.cpp.i
 .PHONY : __/src/environment.cpp.i
 
@@ -277,7 +254,6 @@ __/src/environment.s: __/src/environment.cpp.s
 # target to generate assembly for a file
 __/src/environment.cpp.s:
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/dataset_maker.dir/build.make executables/CMakeFiles/dataset_maker.dir/__/src/environment.cpp.s
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src/environment.cpp.s
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/environment.cpp.s
 .PHONY : __/src/environment.cpp.s
 
@@ -288,7 +264,6 @@ __/src/image.o: __/src/image.cpp.o
 # target to build an object file
 __/src/image.cpp.o:
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/dataset_maker.dir/build.make executables/CMakeFiles/dataset_maker.dir/__/src/image.cpp.o
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src/image.cpp.o
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/image.cpp.o
 .PHONY : __/src/image.cpp.o
 
@@ -299,7 +274,6 @@ __/src/image.i: __/src/image.cpp.i
 # target to preprocess a source file
 __/src/image.cpp.i:
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/dataset_maker.dir/build.make executables/CMakeFiles/dataset_maker.dir/__/src/image.cpp.i
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src/image.cpp.i
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/image.cpp.i
 .PHONY : __/src/image.cpp.i
 
@@ -310,7 +284,6 @@ __/src/image.s: __/src/image.cpp.s
 # target to generate assembly for a file
 __/src/image.cpp.s:
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/dataset_maker.dir/build.make executables/CMakeFiles/dataset_maker.dir/__/src/image.cpp.s
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src/image.cpp.s
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/image.cpp.s
 .PHONY : __/src/image.cpp.s
 
@@ -351,7 +324,6 @@ __/src/utils.o: __/src/utils.cpp.o
 # target to build an object file
 __/src/utils.cpp.o:
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/dataset_maker.dir/build.make executables/CMakeFiles/dataset_maker.dir/__/src/utils.cpp.o
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src/utils.cpp.o
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/utils.cpp.o
 .PHONY : __/src/utils.cpp.o
 
@@ -362,7 +334,6 @@ __/src/utils.i: __/src/utils.cpp.i
 # target to preprocess a source file
 __/src/utils.cpp.i:
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/dataset_maker.dir/build.make executables/CMakeFiles/dataset_maker.dir/__/src/utils.cpp.i
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src/utils.cpp.i
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/utils.cpp.i
 .PHONY : __/src/utils.cpp.i
 
@@ -373,7 +344,6 @@ __/src/utils.s: __/src/utils.cpp.s
 # target to generate assembly for a file
 __/src/utils.cpp.s:
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/dataset_maker.dir/build.make executables/CMakeFiles/dataset_maker.dir/__/src/utils.cpp.s
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src/utils.cpp.s
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/utils.cpp.s
 .PHONY : __/src/utils.cpp.s
 
@@ -383,7 +353,6 @@ __/src_cuda/camera_cpu.o: __/src_cuda/camera_cpu.cu.o
 
 # target to build an object file
 __/src_cuda/camera_cpu.cu.o:
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src_cuda/camera_cpu.cu.o
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_cpu.cu.o
 .PHONY : __/src_cuda/camera_cpu.cu.o
 
@@ -393,7 +362,6 @@ __/src_cuda/camera_cpu.i: __/src_cuda/camera_cpu.cu.i
 
 # target to preprocess a source file
 __/src_cuda/camera_cpu.cu.i:
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src_cuda/camera_cpu.cu.i
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_cpu.cu.i
 .PHONY : __/src_cuda/camera_cpu.cu.i
 
@@ -403,7 +371,6 @@ __/src_cuda/camera_cpu.s: __/src_cuda/camera_cpu.cu.s
 
 # target to generate assembly for a file
 __/src_cuda/camera_cpu.cu.s:
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src_cuda/camera_cpu.cu.s
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_cpu.cu.s
 .PHONY : __/src_cuda/camera_cpu.cu.s
 
@@ -413,7 +380,6 @@ __/src_cuda/camera_gpu.o: __/src_cuda/camera_gpu.cu.o
 
 # target to build an object file
 __/src_cuda/camera_gpu.cu.o:
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src_cuda/camera_gpu.cu.o
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_gpu.cu.o
 .PHONY : __/src_cuda/camera_gpu.cu.o
 
@@ -423,7 +389,6 @@ __/src_cuda/camera_gpu.i: __/src_cuda/camera_gpu.cu.i
 
 # target to preprocess a source file
 __/src_cuda/camera_gpu.cu.i:
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src_cuda/camera_gpu.cu.i
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_gpu.cu.i
 .PHONY : __/src_cuda/camera_gpu.cu.i
 
@@ -433,7 +398,6 @@ __/src_cuda/camera_gpu.s: __/src_cuda/camera_gpu.cu.s
 
 # target to generate assembly for a file
 __/src_cuda/camera_gpu.cu.s:
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src_cuda/camera_gpu.cu.s
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_gpu.cu.s
 .PHONY : __/src_cuda/camera_gpu.cu.s
 
@@ -443,7 +407,6 @@ __/src_cuda/dtam_cuda.o: __/src_cuda/dtam_cuda.cu.o
 
 # target to build an object file
 __/src_cuda/dtam_cuda.cu.o:
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src_cuda/dtam_cuda.cu.o
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o
 .PHONY : __/src_cuda/dtam_cuda.cu.o
 
@@ -453,7 +416,6 @@ __/src_cuda/dtam_cuda.i: __/src_cuda/dtam_cuda.cu.i
 
 # target to preprocess a source file
 __/src_cuda/dtam_cuda.cu.i:
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src_cuda/dtam_cuda.cu.i
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.i
 .PHONY : __/src_cuda/dtam_cuda.cu.i
 
@@ -463,7 +425,6 @@ __/src_cuda/dtam_cuda.s: __/src_cuda/dtam_cuda.cu.s
 
 # target to generate assembly for a file
 __/src_cuda/dtam_cuda.cu.s:
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src_cuda/dtam_cuda.cu.s
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.s
 .PHONY : __/src_cuda/dtam_cuda.cu.s
 
@@ -473,7 +434,6 @@ __/src_cuda/environment.o: __/src_cuda/environment.cu.o
 
 # target to build an object file
 __/src_cuda/environment.cu.o:
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src_cuda/environment.cu.o
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/environment.cu.o
 .PHONY : __/src_cuda/environment.cu.o
 
@@ -483,7 +443,6 @@ __/src_cuda/environment.i: __/src_cuda/environment.cu.i
 
 # target to preprocess a source file
 __/src_cuda/environment.cu.i:
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src_cuda/environment.cu.i
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/environment.cu.i
 .PHONY : __/src_cuda/environment.cu.i
 
@@ -493,36 +452,8 @@ __/src_cuda/environment.s: __/src_cuda/environment.cu.s
 
 # target to generate assembly for a file
 __/src_cuda/environment.cu.s:
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src_cuda/environment.cu.s
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src_cuda/environment.cu.s
 .PHONY : __/src_cuda/environment.cu.s
-
-__/src_cuda/renderer.o: __/src_cuda/renderer.cu.o
-
-.PHONY : __/src_cuda/renderer.o
-
-# target to build an object file
-__/src_cuda/renderer.cu.o:
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src_cuda/renderer.cu.o
-.PHONY : __/src_cuda/renderer.cu.o
-
-__/src_cuda/renderer.i: __/src_cuda/renderer.cu.i
-
-.PHONY : __/src_cuda/renderer.i
-
-# target to preprocess a source file
-__/src_cuda/renderer.cu.i:
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src_cuda/renderer.cu.i
-.PHONY : __/src_cuda/renderer.cu.i
-
-__/src_cuda/renderer.s: __/src_cuda/renderer.cu.s
-
-.PHONY : __/src_cuda/renderer.s
-
-# target to generate assembly for a file
-__/src_cuda/renderer.cu.s:
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/__/src_cuda/renderer.cu.s
-.PHONY : __/src_cuda/renderer.cu.s
 
 dataset_maker.o: dataset_maker.cpp.o
 
@@ -578,33 +509,6 @@ test_synth_cuda.cpp.s:
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/test_synth_cuda.cpp.s
 .PHONY : test_synth_cuda.cpp.s
 
-test_synth_cuda0.o: test_synth_cuda0.cpp.o
-
-.PHONY : test_synth_cuda0.o
-
-# target to build an object file
-test_synth_cuda0.cpp.o:
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/test_synth_cuda0.cpp.o
-.PHONY : test_synth_cuda0.cpp.o
-
-test_synth_cuda0.i: test_synth_cuda0.cpp.i
-
-.PHONY : test_synth_cuda0.i
-
-# target to preprocess a source file
-test_synth_cuda0.cpp.i:
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/test_synth_cuda0.cpp.i
-.PHONY : test_synth_cuda0.cpp.i
-
-test_synth_cuda0.s: test_synth_cuda0.cpp.s
-
-.PHONY : test_synth_cuda0.s
-
-# target to generate assembly for a file
-test_synth_cuda0.cpp.s:
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/test_synth_cuda0.cpp.s
-.PHONY : test_synth_cuda0.cpp.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -614,7 +518,6 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... dataset_maker"
-	@echo "... test_synth_cuda0"
 	@echo "... test_synth_cuda"
 	@echo "... __/src/camera.o"
 	@echo "... __/src/camera.i"
@@ -649,18 +552,12 @@ help:
 	@echo "... __/src_cuda/environment.o"
 	@echo "... __/src_cuda/environment.i"
 	@echo "... __/src_cuda/environment.s"
-	@echo "... __/src_cuda/renderer.o"
-	@echo "... __/src_cuda/renderer.i"
-	@echo "... __/src_cuda/renderer.s"
 	@echo "... dataset_maker.o"
 	@echo "... dataset_maker.i"
 	@echo "... dataset_maker.s"
 	@echo "... test_synth_cuda.o"
 	@echo "... test_synth_cuda.i"
 	@echo "... test_synth_cuda.s"
-	@echo "... test_synth_cuda0.o"
-	@echo "... test_synth_cuda0.i"
-	@echo "... test_synth_cuda0.s"
 .PHONY : help
 
 

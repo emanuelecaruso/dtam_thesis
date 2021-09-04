@@ -64,14 +64,12 @@ CMAKE_BINARY_DIR = /home/manu/Desktop/dtam_thesis/prova_dr/build
 
 # Convenience name for "all" pass in the directory.
 executables/all: executables/CMakeFiles/dataset_maker.dir/all
-executables/all: executables/CMakeFiles/test_synth_cuda0.dir/all
 executables/all: executables/CMakeFiles/test_synth_cuda.dir/all
 
 .PHONY : executables/all
 
 # Convenience name for "clean" pass in the directory.
 executables/clean: executables/CMakeFiles/dataset_maker.dir/clean
-executables/clean: executables/CMakeFiles/test_synth_cuda0.dir/clean
 executables/clean: executables/CMakeFiles/test_synth_cuda.dir/clean
 
 .PHONY : executables/clean
@@ -115,43 +113,6 @@ executables/CMakeFiles/dataset_maker.dir/clean:
 
 # clean rule for target.
 clean: executables/CMakeFiles/dataset_maker.dir/clean
-
-.PHONY : clean
-
-#=============================================================================
-# Target rules for target executables/CMakeFiles/test_synth_cuda0.dir
-
-# All Build rule for target.
-executables/CMakeFiles/test_synth_cuda0.dir/all:
-	$(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/depend
-	$(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/manu/Desktop/dtam_thesis/prova_dr/build/CMakeFiles --progress-num=23,24,25,26,27,28,29,30,31,32,33,34,35 "Built target test_synth_cuda0"
-.PHONY : executables/CMakeFiles/test_synth_cuda0.dir/all
-
-# Include target in all.
-all: executables/CMakeFiles/test_synth_cuda0.dir/all
-
-.PHONY : all
-
-# Build rule for subdir invocation for target.
-executables/CMakeFiles/test_synth_cuda0.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/manu/Desktop/dtam_thesis/prova_dr/build/CMakeFiles 13
-	$(MAKE) -f CMakeFiles/Makefile2 executables/CMakeFiles/test_synth_cuda0.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/manu/Desktop/dtam_thesis/prova_dr/build/CMakeFiles 0
-.PHONY : executables/CMakeFiles/test_synth_cuda0.dir/rule
-
-# Convenience name for target.
-test_synth_cuda0: executables/CMakeFiles/test_synth_cuda0.dir/rule
-
-.PHONY : test_synth_cuda0
-
-# clean rule for target.
-executables/CMakeFiles/test_synth_cuda0.dir/clean:
-	$(MAKE) -f executables/CMakeFiles/test_synth_cuda0.dir/build.make executables/CMakeFiles/test_synth_cuda0.dir/clean
-.PHONY : executables/CMakeFiles/test_synth_cuda0.dir/clean
-
-# clean rule for target.
-clean: executables/CMakeFiles/test_synth_cuda0.dir/clean
 
 .PHONY : clean
 

@@ -66,6 +66,5 @@ set(CMAKE_MAKEFILE_PRODUCTS
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
   "executables/CMakeFiles/dataset_maker.dir/DependInfo.cmake"
-  "executables/CMakeFiles/test_synth_cuda0.dir/DependInfo.cmake"
   "executables/CMakeFiles/test_synth_cuda.dir/DependInfo.cmake"
   )

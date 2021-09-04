@@ -52,25 +52,5 @@ if (USE_CUDA)
   ../src_cuda/cuda_utils.cuh
   )
   target_link_libraries(test_synth_cuda opencv_highgui)
-
-  #synthetic simulator test with cuda
-  add_executable(test_synth_cuda0 test_synth_cuda0.cpp
-  ../src/dataset.cpp
-  ../src_cuda/camera_cpu.cu
-  ../src/image.cpp
-  ../src/camera.cpp
-  ../src_cuda/renderer.cu
-  ../src_cuda/environment.cu
-  ../src/environment.cpp
-  ../src_cuda/dtam_cuda.cu
-  ../src/utils.cpp
-  ../src_cuda/camera_gpu.cu
-  ../src_cuda/cuda_utils.cuh
-  )
-  #target_link_libraries(test_synth_cuda0 opencv_highgui ${PYTHON_LIBRARIES})
-  target_link_libraries(test_synth_cuda0 opencv_highgui)
-
-
   target_compile_options(test_synth_cuda PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:-dc>)
-  target_compile_options(test_synth_cuda0 PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:-dc>)
 endif()

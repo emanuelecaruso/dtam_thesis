@@ -21,20 +21,20 @@ struct cameraDataForDtam{
 
 __global__ void prepareCameraForDtam_kernel(Camera_gpu* camera_r, Camera_gpu* camera_m, cv::cuda::PtrStepSz<float3> query_proj_matrix);
 
-__global__ void UpdateCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camera_m, cv::cuda::PtrStepSz<uchar2> cost_volume,
+__global__ void UpdateCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camera_m, cv::cuda::PtrStepSz<int2> cost_volume,
                                                       cameraDataForDtam* camera_data_for_dtam_, float* depth_r_array);
 
-__global__ void ComputeCostVolumeMin_kernel( cv::cuda::PtrStepSz<uchar2> cost_volume, float* depth_r_array);
+__global__ void ComputeCostVolumeMin_kernel( cv::cuda::PtrStepSz<int2> cost_volume, float* depth_r_array);
 
-__global__ void ComputeGradientImageSobel_kernel(cv::cuda::PtrStepSz<float> image_in, cv::cuda::PtrStepSz<float> image_out);
+__global__ void ComputeGradientSobelImage_kernel(cv::cuda::PtrStepSz<float> image_in, cv::cuda::PtrStepSz<float> image_out);
 
-__global__ void ComputeDivergenceImage_kernel(cv::cuda::PtrStepSz<float> image_in, cv::cuda::PtrStepSz<float> image_out);
+__global__ void ComputeDivergenceSobelImage_kernel(cv::cuda::PtrStepSz<float> image_in, cv::cuda::PtrStepSz<float> image_out);
 
 __global__ void gradDesc_Q_toNormalize_kernel(cv::cuda::PtrStepSz<float> q, cv::cuda::PtrStepSz<float> gradient_d, float eps, float sigma_q, float* vector_to_normalize );
 
 __global__ void gradDesc_D_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepSz<float> a, cv::cuda::PtrStepSz<float> gradient_q, float sigma_d, float theta);
 
-__global__ void search_A_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepSz<float> a, cv::cuda::PtrStepSz<uchar2> cost_volume , float lambda, float theta, float* depth_r_array);
+__global__ void search_A_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepSz<float> a, cv::cuda::PtrStepSz<int2> cost_volume , float lambda, float theta, float* depth_r_array);
 
 __global__ void sumReduction_kernel(float* v, float* v_r, int size);
 
@@ -130,7 +130,7 @@ class Dtam{
     void UpdateCostVolume(int index_m, cameraDataForDtam* camera_data_for_dtam_ );
     void ComputeCostVolumeMin();
     void StudyCostVolumeMin(int row, int col);
-    void Regularize( cv::cuda::PtrStepSz<uchar2> cost_volume, float* depth_r_array);
+    void Regularize( cv::cuda::PtrStepSz<int2> cost_volume, float* depth_r_array);
     void ComputeGradientImage(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* image_out);
     void ComputeGradientSobelImage(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* image_out);
     void ComputeDivergenceImage(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* image_out);
