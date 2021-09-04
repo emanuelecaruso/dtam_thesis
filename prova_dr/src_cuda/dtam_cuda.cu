@@ -39,53 +39,20 @@ bool Dtam::setReferenceCamera(int index_r){
 __global__ void ComputeGradientSobelImage_kernel(cv::cuda::PtrStepSz<float> image_in, cv::cuda::PtrStepSz<float> image_out){
   int row = blockIdx.x * blockDim.x + threadIdx.x;
   int col = blockIdx.y * blockDim.y + threadIdx.y;
-  int filter_idx = blockIdx.z * blockDim.z + threadIdx.z;
 
   int rows = blockDim.x*gridDim.x;
   int cols = blockDim.y*gridDim.y;
 
-  __shared__ float grad_h[8][8][9]; //horizontal gradient
-  __shared__ float grad_v[8][8][9]; //vertical gradient
-
-  //hotizontal sobel filter
-  Eigen::Matrix3f sobel_h;
-  sobel_h <<  -1,  0, +1,
-              -2,  0, +2,
-              -1,  0, +1;
-
-  //vertical sobel filter
-  Eigen::Matrix3f sobel_v;
-  sobel_v <<  -1, -2, -1,
-               0,  0,  0,
-              +1, +2, +1;
-
-  int sobel_row = filter_idx/3;
-  int sobel_col = filter_idx%3;
-
-  int current_row = row+sobel_row-1;
-  int current_col = col+sobel_col-1;
 
   if ( row >0 && col>0 && row<rows-1 && col<cols-1){
-    grad_h[threadIdx.x][threadIdx.y][filter_idx]=sobel_h(sobel_row,sobel_col)*image_in(current_row,current_col);
-    grad_v[threadIdx.x][threadIdx.y][filter_idx]=sobel_v(sobel_row,sobel_col)*image_in(current_row,current_col);
+    image_out(row,col)= -image_in(row-1,col-1)-2*image_in(row-1,col)-image_in(row-1,col+1)+image_in(row+1,col-1)+2*image_in(row+1,col)+image_in(row+1,col+1);
+    image_out(row,col+cols)=-image_in(row-1,col-1)-2*image_in(row,col-1)-image_in(row+1,col-1)+image_in(row-1,col+1)+2*image_in(row,col+1)+image_in(row+1,col+1);
   }
   else
   {
-    grad_h[threadIdx.x][threadIdx.y][filter_idx]=0;
-    grad_v[threadIdx.x][threadIdx.y][filter_idx]=0;
-  }
+    image_out(row,col)= 0;
+    image_out(row,col+cols)=0;
 
-  __syncthreads();
-
-  if (filter_idx==0){
-    float value_h =0;
-    float value_v =0;
-    for (int i=0; i<9; i++){
-      value_h+=grad_h[threadIdx.x][threadIdx.y][i];
-      value_v+=grad_v[threadIdx.x][threadIdx.y][i];
-    }
-    image_out(row,col)=value_h;
-    image_out(row,col+cols)=value_v;
   }
 
 
@@ -142,47 +109,15 @@ __global__ void ComputeDivergenceSobelImage_kernel(cv::cuda::PtrStepSz<float> im
   int rows = blockDim.x*gridDim.x;
   int cols = blockDim.y*gridDim.y;
 
-  __shared__ float grad_h[8][8][9]; //horizontal gradient
-  __shared__ float grad_v[8][8][9]; //vertical gradient
-
-  //hotizontal sobel filter
-  Eigen::Matrix3f sobel_h;
-  sobel_h <<  -1,  0, +1,
-              -2,  0, +2,
-              -1,  0, +1;
-
-  //vertical sobel filter
-  Eigen::Matrix3f sobel_v;
-  sobel_v <<  -1, -2, -1,
-               0,  0,  0,
-              +1, +2, +1;
-
-  int sobel_row = filter_idx/3;
-  int sobel_col = filter_idx%3;
-
-  int current_row = row+sobel_row-1;
-  int current_col = col+sobel_col-1;
-
-  if (current_row >-1 && current_col>-1 && current_row<rows && current_col<cols){
-    grad_h[threadIdx.x][threadIdx.y][filter_idx]=sobel_h(sobel_row,sobel_col)*image_in(current_row,current_col);
-    grad_v[threadIdx.x][threadIdx.y][filter_idx]=sobel_v(sobel_row,sobel_col)*image_in(current_row,current_col+cols);
-  }
-  else{
-    grad_h[threadIdx.x][threadIdx.y][filter_idx]=0;
-    grad_v[threadIdx.x][threadIdx.y][filter_idx]=0;
-  }
-
-  __syncthreads();
-
-  if (filter_idx==0){
-    float value_h =0;
-    float value_v =0;
-    for (int i=0; i<9; i++){
-      value_h+=grad_h[threadIdx.x][threadIdx.y][i];
-      value_v+=grad_v[threadIdx.x][threadIdx.y][i];
-    }
+  if (row >0 && col>0 && row<rows-1 && col<cols-1){
+    float value_h = -image_in(row-1,col-1)-2*image_in(row-1,col)-image_in(row-1,col+1)+image_in(row+1,col-1)+2*image_in(row+1,col)+image_in(row+1,col+1);
+    float value_v = -image_in(row-1,col+cols-1)-2*image_in(row,col+cols-1)-image_in(row+1,col+cols-1)+image_in(row-1,col+cols+1)+2*image_in(row,col+cols+1)+image_in(row+1,col+cols+1);
     image_out(row,col)=value_h+value_v;
   }
+  else{
+    image_out(row,col)=0;
+  }
+
 
 
 }
@@ -620,11 +555,10 @@ void Dtam::ComputeGradientSobelImage(cv::cuda::GpuMat* image_in, cv::cuda::GpuMa
 
   image_out->create(rows,cols*2,CV_32FC1);
 
-  dim3 threadsPerBlock( 8 , 8 , 9);
-  dim3 numBlocks( rows/8, cols/8 , 1);
+  dim3 threadsPerBlock( 32 , 32 , 1);
+  dim3 numBlocks( rows/32, cols/32 , 1);
   ComputeGradientSobelImage_kernel<<<numBlocks,threadsPerBlock>>>(*image_in, *image_out);
   printCudaError("Kernel computing gradient");
-
 }
 
 void Dtam::ComputeGradientImage(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* image_out){
@@ -648,8 +582,8 @@ void Dtam::ComputeDivergenceSobelImage(cv::cuda::GpuMat* image_in, cv::cuda::Gpu
 
   image_out->create(rows,cols,CV_32FC1);
 
-  dim3 threadsPerBlock( 8 , 8 , 9);
-  dim3 numBlocks( rows/8, cols/8 , 1);
+  dim3 threadsPerBlock( 32 , 32 , 1);
+  dim3 numBlocks( rows/32, cols/32 , 1);
   ComputeDivergenceSobelImage_kernel<<<numBlocks,threadsPerBlock>>>(*image_in, *image_out);
   printCudaError("Kernel computing gradient");
 
@@ -1248,10 +1182,10 @@ void Dtam::updateDepthMap_parallel_gpu(int index_m){
   t_end=getTime();
   std::cerr << "ComputeCostVolumeMin took: " << (t_end-t_start) << " ms " << std::endl;
 
-  // t_start=getTime();
-  // Dtam::Regularize(cost_volume_, depth_r_array_);
-  // t_end=getTime();
-  // std::cerr << "Regularize took: " << (t_end-t_start) << " ms " << std::endl;
+  t_start=getTime();
+  Dtam::Regularize(cost_volume_, depth_r_array_);
+  t_end=getTime();
+  std::cerr << "Regularize took: " << (t_end-t_start) << " ms " << std::endl;
 
 
 
