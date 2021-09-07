@@ -2,15 +2,17 @@
 -- dataset 				XXXX
 -- stream depthmap			XXXX
 -- norm of image			XXXX
-
+-- depth->invdepth sampling		XXXX
+-- improve sobel filter 		XXXX
+-- padding				maybe not
+-- add rotation for dataset maker	maybe not
 
 -- plot costs for pixel in graph
--- depth->invdepth sampling
-
 -- pathtrace->dataset
 
--- improve sobel filter & padding
--- add rotation for dataset maker
+
+
+
 
 
 
@@ -19,4 +21,4 @@
 -- reference camera update system
 
 token:
-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
+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

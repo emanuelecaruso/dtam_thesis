@@ -78,23 +78,37 @@ class Dtam{
       float depth2_r=environment->max_depth_;
       float* depth_r_array_h = new float[NUM_INTERPOLATIONS];
 
-
+      initialization_=true;
       threshold_=50;
-      theta_end_=0.001;
-      eps_=0.0001;
-      beta1_=0.01;
-      // beta1_=0.0001;
-      // beta2_=0.05;
-      // lambda_=1.0/(1.0+0.5*depth1_r);
-      lambda_=0.002;
-      // lambda_=0;
 
 
-      for (int i=0; i<NUM_INTERPOLATIONS; i++){
-        float ratio_depth_r = (float)i/((float)NUM_INTERPOLATIONS-1);
-        float depth_r = depth1_r+ratio_depth_r*(depth2_r-depth1_r);
+
+      int switch_idx=6;
+      float switch_depth=0.6;
+
+      for (int i=0; i<switch_idx; i++){
+        float ratio_depth_r = (float)(i+1)/((float)switch_idx);
+        float depth_r = depth1_r+ratio_depth_r*(switch_depth-depth1_r);
         depth_r_array_h[i]=depth_r;
+        std::cout << "depth: " << depth_r << std::endl;
       }
+      for (int i=switch_idx; i<NUM_INTERPOLATIONS; i++){
+        float ratio_depth_r = (float)i/((float)NUM_INTERPOLATIONS-1);
+        float invdepth_r = (1.0/switch_depth)+ratio_depth_r*((1.0/depth2_r)-(1.0/switch_depth));
+        float depth_r = 1.0/invdepth_r;
+        depth_r_array_h[i]=depth_r;
+        std::cout << "depth: " << depth_r << std::endl;
+
+      }
+
+      // for (int i=0; i<NUM_INTERPOLATIONS; i++){
+      //   float ratio_depth_r = (float)i/((float)NUM_INTERPOLATIONS-1);
+      //   float depth_r = depth1_r+ratio_depth_r*(depth2_r-depth1_r);
+      //   depth_r_array_h[i]=depth_r;
+      // }
+
+
+
       cudaError_t err ;
 
       cudaMalloc(&depth_r_array_, sizeof(float)*NUM_INTERPOLATIONS);
@@ -116,9 +130,6 @@ class Dtam{
     bool setReferenceCamera(int index_r);
     void prepareCameraForDtam(int index_m);
 
-    // void CostVolumeMin(int num_interpolations);
-    // bool get1stDepthWithUV(Camera* camera_r, Camera* camera_m, Eigen::Vector2f& uv_r, Eigen::Vector2f& uv_m, float& depth);
-
     void updateDepthMap_parallel_gpu(int index_m);
 
   private:
@@ -129,10 +140,18 @@ class Dtam{
     float beta1_;
     float beta2_;
     float lambda_;
+    int threshold_;
+    float sigma_q0_;
+    float sigma_d0_;
     float sigma_q_;
     float sigma_d_;
-    int threshold_;
+    float r_;
+    bool initialization_;
+    cv::cuda::GpuMat d;
+    cv::cuda::GpuMat a;
+    cv::cuda::GpuMat q;
 
+    void Initialize();
     void UpdateCostVolume(int index_m, cameraDataForDtam* camera_data_for_dtam_ );
     void ComputeCostVolumeMin();
     void StudyCostVolumeMin(int index_m, cameraDataForDtam* camera_data_for_dtam, int row, int col);
@@ -147,8 +166,8 @@ class Dtam{
     void getVectorNorm(float* vector_to_normalize, float* norm, int N);
     void getVectorMax(float* vector_to_normalize, float* max, int N);
     void getImageNorm(cv::cuda::GpuMat* image, float* norm);
-  private:
     void Image2Vector(cv::cuda::GpuMat* image, float* vector);
+
 
 
 

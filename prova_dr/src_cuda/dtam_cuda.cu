@@ -429,7 +429,29 @@ __global__ void Image2Vector_kernel(cv::cuda::PtrStepSz<float> image, float* vec
 
 }
 
+void Dtam::Initialize(){
 
+  n_ = 0;
+  theta_=1;
+  theta_end_=0.001;
+  eps_=0.0001;
+  beta1_=0.001;
+  // beta1_=0.0001;
+  // beta2_=0.05;
+  // lambda_=1.0/(1.0+0.5*depth1_r);
+  lambda_=0.005;
+  // lambda_=0;
+  sigma_q0_=0.05;
+  sigma_d0_=1.5;
+  sigma_q_=sigma_q0_;
+  sigma_d_=sigma_d0_;
+  r_=0.9;
+  d = camera_vector_cpu_[index_r_]->depth_map_gpu_.clone();
+  a = camera_vector_cpu_[index_r_]->depth_map_gpu_.clone();
+  q.create(d.rows,d.cols*2,CV_32FC1);
+  initialization_=false;
+
+}
 
 void Dtam::UpdateCostVolume(int index_m, cameraDataForDtam* camera_data_for_dtam ){
 
@@ -461,8 +483,6 @@ void Dtam::StudyCostVolumeMin(int index_m, cameraDataForDtam* camera_data_for_dt
 
   camera_vector_cpu_[index_r_]->image_rgb_gpu_.download(camera_vector_cpu_[index_r_]->image_rgb_->image_);
   camera_vector_cpu_[index_r_]->image_rgb_->show(800/camera_vector_cpu_[index_r_]->resolution_);
-
-  cv::waitKey(0);
 
 }
 
@@ -571,9 +591,9 @@ __global__ void search_A_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepS
 		__syncthreads();
 	}
 
-  if (i == 0) {
+  if (i == indx_array[threadIdx.x][threadIdx.y][0]) {
     a(row,col)=depth_r_array[indx_array[threadIdx.x][threadIdx.y][0]]/depth_r_array[NUM_INTERPOLATIONS-1];
-    if (indx_array[threadIdx.x][threadIdx.y][0]==0)
+    if (cost_volume(row,col_).y==0)
       a(row,col)=1;
 	}
   // -----------------------------------
@@ -609,7 +629,9 @@ __global__ void sumReduction_kernel(float *v, float *v_r, int size) {
 	// Result is inexed by this block
 	if (threadIdx.x == 0) {
 		v_r[blockIdx.x] = partial_sum[0];
-	}
+	}    // void CostVolumeMin(int num_interpolations);
+    // bool get1stDepthWithUV(Camera* camera_r, Camera* camera_m, Eigen::Vector2f& uv_r, Eigen::Vector2f& uv_m, float& depth);
+
 }
 
 
@@ -885,26 +907,12 @@ void Dtam::search_A(cv::cuda::GpuMat* d, cv::cuda::GpuMat* a ){
 
 void Dtam::Regularize(cv::cuda::PtrStepSz<int2> cost_volume, float* depth_r_array){
 
-
-  cv::cuda::GpuMat d = camera_vector_cpu_[index_r_]->depth_map_gpu_.clone();
-  cv::cuda::GpuMat a = camera_vector_cpu_[index_r_]->depth_map_gpu_.clone();
-
-
-  cv::cuda::GpuMat q;
-  q.create(d.rows,d.cols*2,CV_32FC1);
+  if(initialization_){
+    Dtam::Initialize();
+  }
 
   cv::cuda::GpuMat* gradient_d = new cv::cuda::GpuMat;
   cv::cuda::GpuMat* gradient_q = new cv::cuda::GpuMat;
-
-  n_ = 0;
-  theta_=0.2;
-
-  // sigma_q_=0.1;
-  // sigma_d_=0.1;
-
-  float sigma_q0=0.1;
-  float sigma_d0=0.1;
-  float r=0.9;
 
   int resolution=camera_vector_cpu_[index_r_]->resolution_;
 
@@ -926,91 +934,81 @@ void Dtam::Regularize(cv::cuda::PtrStepSz<int2> cost_volume, float* depth_r_arra
   // Dtam::getImageNorm(&d, norm_d0);
   // std::cout << "\nd norm 0 is: " << *norm_d0 << std::endl;
 
-  while(theta_>theta_end_){
+
+  Dtam::ComputeGradientSobelImage( &d, gradient_d ); // compute gradient of d (n)
+
+  Dtam::gradDesc_Q( &q, gradient_d);  // compute q (n+1)
+
+  Dtam::ComputeDivergenceSobelImage( &q, gradient_q ); // compute gradient of q (n+1)
+
+  Dtam::gradDesc_D( &d, &a, gradient_q );  // compute d (n+1)
 
 
 
-    Dtam::ComputeGradientSobelImage( &d, gradient_d ); // compute gradient of d (n)
-
-    Dtam::gradDesc_Q( &q, gradient_d);  // compute q (n+1)
-
-    Dtam::ComputeDivergenceSobelImage( &q, gradient_q ); // compute gradient of q (n+1)
-
-    Dtam::gradDesc_D( &d, &a, gradient_q );  // compute d (n+1)
+  Dtam::search_A( &d, &a );  // compute a (n+1)
 
 
 
-    Dtam::search_A( &d, &a );  // compute a (n+1)
+  // upgrade theta
+  // std::cout << "theta: " << theta_ <<std::endl;
+  // float beta = (theta_>0.001) ? beta1_ : beta2_;
+  theta_ = theta_*(1-beta1_*n_);
 
-    // // // upgrade steps
-    // sigma_d_=sigma_d_*theta_;
-    // sigma_q_=sigma_q_/theta_;
+  n_++;  // upgrade n
 
-    // upgrade theta
-    // std::cout << "theta: " << theta_ <<std::endl;
-    // float beta = (theta_>0.001) ? beta1_ : beta2_;
-    theta_ = theta_*(1-beta1_*n_);
-
-    n_++;  // upgrade n
-
-    float r_pow_n=pow(r,n_);
-    sigma_q_=sigma_q0/r_pow_n;
-    sigma_d_=sigma_d0*r_pow_n;
+  float r_pow_n=pow(r_,n_);
+  sigma_q_=sigma_q0_/r_pow_n;
+  sigma_d_=sigma_d0_*r_pow_n;
 
 
-    // float* norm_d = new float;
-    // Dtam::getImageNorm(&d, norm_d);
-    // std::cout << "\nd norm is: " << *norm_d << std::endl;
-    //
-    // float* norm_q = new float;
-    // Dtam::getImageNorm(&q, norm_q);
-    // std::cout << "q norm is: " << *norm_q << std::endl;
-    //
-    // float* norm_sobel_d = new float;
-    // Dtam::getImageNorm(gradient_d, norm_sobel_d);
-    // std::cout << "sobel d norm is: " << *norm_sobel_d << std::endl;
-    //
-    // std::cout << "theta is: " << theta_ << std::endl;
+  // float* norm_d = new float;
+  // Dtam::getImageNorm(&d, norm_d);
+  // std::cout << "\nd norm is: " << *norm_d << std::endl;
+  //
+  // float* norm_q = new float;
+  // Dtam::getImageNorm(&q, norm_q);
+  // std::cout << "q norm is: " << *norm_q << std::endl;
+  //
+  // float* norm_sobel_d = new float;
+  // Dtam::getImageNorm(gradient_d, norm_sobel_d);
+  // std::cout << "sobel d norm is: " << *norm_sobel_d << std::endl;
+  //
+  // std::cout << "theta is: " << theta_ << std::endl;
 
-    cv::Mat_< float > d_1;
-    d.download(d_1);
-    cv::Mat_< float > resized_image_d_1;
-    cv::resize(d_1, resized_image_d_1, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
-    cv::imshow("d 1", resized_image_d_1);
+  cv::Mat_< float > d_1;
+  d.download(d_1);
+  cv::Mat_< float > resized_image_d_1;
+  cv::resize(d_1, resized_image_d_1, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
+  cv::imshow("d 1", resized_image_d_1);
 
-    cv::Mat_< float > a_1;
-    a.download(a_1);
-    cv::Mat_< float > resized_image_a;
-    cv::resize(a_1, resized_image_a, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
-    cv::imshow("a 1", resized_image_a);
+  cv::Mat_< float > a_1;
+  a.download(a_1);
+  cv::Mat_< float > resized_image_a;
+  cv::resize(a_1, resized_image_a, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
+  cv::imshow("a 1", resized_image_a);
 
-    cv::Mat_< float > d_gradient;
-    (*gradient_d).download(d_gradient);
-    cv::Mat_< float > resized_image_d_gradient;
-    cv::resize(d_gradient, resized_image_d_gradient, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
-    cv::imshow("gradient_d", resized_image_d_gradient);
-    //
-    // cv::Mat_< float > q_1;
-    // q.download(q_1);
-    // cv::Mat_< float > resized_image_q_1;
-    // cv::resize(q_1, resized_image_q_1, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
-    // cv::imshow("q_1", resized_image_q_1);
-    //
-    // cv::Mat_< float > q_gradient;
-    // (*gradient_q).download(q_gradient);
-    // cv::Mat_< float > resized_image_q_gradient;
-    // cv::resize(q_gradient, resized_image_q_gradient, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
-    // cv::imshow("gradient_q", resized_image_q_gradient);
+  cv::Mat_< float > d_gradient;
+  (*gradient_d).download(d_gradient);
+  cv::Mat_< float > resized_image_d_gradient;
+  cv::resize(d_gradient, resized_image_d_gradient, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
+  cv::imshow("gradient_d", resized_image_d_gradient);
+  //
+  // cv::Mat_< float > q_1;
+  // q.download(q_1);
+  // cv::Mat_< float > resized_image_q_1;
+  // cv::resize(q_1, resized_image_q_1, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
+  // cv::imshow("q_1", resized_image_q_1);
+  //
+  // cv::Mat_< float > q_gradient;
+  // (*gradient_q).download(q_gradient);
+  // cv::Mat_< float > resized_image_q_gradient;
+  // cv::resize(q_gradient, resized_image_q_gradient, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
+  // cv::imshow("gradient_q", resized_image_q_gradient);
 
-    cv::waitKey(0);
-
-    // if(n_==100)
-    //   break;
+  // cv::waitKey(0);
 
 
-  }
-  sigma_q_=sigma_q0;
-  sigma_d_=sigma_d0;
+
 
   // cv::Mat_< float > opt;
   // a.download(opt);
@@ -1020,6 +1018,7 @@ void Dtam::Regularize(cv::cuda::PtrStepSz<int2> cost_volume, float* depth_r_arra
   // cv::waitKey(1);
 
   // std::cout << "number of iterations n: " << n_ << std::endl;
+  // std::cout << "theta: " << theta_ << std::endl;
 
 
 
@@ -1067,36 +1066,40 @@ void Dtam::Regularize(cv::cuda::PtrStepSz<int2> cost_volume, float* depth_r_arra
   delete gradient_d;
   delete gradient_q;
 
-  // camera_vector_cpu_[index_r_]->depth_map_gpu_= a;
+  camera_vector_cpu_[index_r_]->depth_map_gpu_= a;
 
 }
 
 void Dtam::updateDepthMap_parallel_gpu(int index_m){
 
-  double t_start=getTime();  // time start for computing computation time
-  double t_end=getTime();    // time end for computing computation time
+  double t_start;  // time start for computing computation time
+  double t_end;    // time end for computing computation time
+  double t_start_tot=getTime();  // time start for computing computation time
+  double t_end_tot;    // time end for computing computation time
 
   t_start=getTime();
   Dtam::UpdateCostVolume(index_m, camera_data_for_dtam_);
   t_end=getTime();
   std::cerr << "discrete cost volume computation took: " << (t_end-t_start) << " ms " << std::endl;
 
-  // t_start=getTime();
-  // Dtam::StudyCostVolumeMin(index_m, camera_data_for_dtam_, 14, 41);
-  // t_end=getTime();
+  // Dtam::StudyCostVolumeMin(index_m, camera_data_for_dtam_, 200, 200);
+
+  if(initialization_){
+    t_start=getTime();
+    Dtam::ComputeCostVolumeMin();
+    t_end=getTime();
+    std::cerr << "ComputeCostVolumeMin took: " << (t_end-t_start) << " ms " << std::endl;
+  }
+
+
 
   t_start=getTime();
-  Dtam::ComputeCostVolumeMin();
+  Dtam::Regularize(cost_volume_, depth_r_array_);
   t_end=getTime();
-  std::cerr << "ComputeCostVolumeMin took: " << (t_end-t_start) << " ms " << std::endl;
+  std::cerr << "Regularize took: " << (t_end-t_start) << " ms " << std::endl;
 
-
-
-  // t_start=getTime();
-  // Dtam::Regularize(cost_volume_, depth_r_array_);
-  // t_end=getTime();
-  // std::cerr << "Regularize took: " << (t_end-t_start) << " ms " << std::endl;
-
+  t_end_tot=getTime();    // time end for computing computation time
+  std::cerr << "Regularize TOT took: " << (t_end_tot-t_start_tot) << " ms\n " << std::endl;
 
 
 }
