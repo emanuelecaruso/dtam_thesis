@@ -151,7 +151,8 @@ void Dtam::prepareCameraForDtam(int index_m){
 
 
 __global__ void UpdateCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camera_m,
-              cv::cuda::PtrStepSz<int2> cost_volume, cameraDataForDtam* camera_data_for_dtam_, float* depth_r_array){
+              cv::cuda::PtrStepSz<int2> cost_volume, cameraDataForDtam* camera_data_for_dtam_,
+              float* depth_r_array, int threshold){
 
 
   int row = blockIdx.x * blockDim.x + threadIdx.x;
@@ -209,6 +210,7 @@ __global__ void UpdateCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camera
 
     // int cost_current=((clr_r.x-clr_current.x)*(clr_r.x-clr_current.x)+(clr_r.y-clr_current.y)*(clr_r.y-clr_current.y)+(clr_r.z-clr_current.z)*(clr_r.z-clr_current.z));
     int cost_current=(abs(clr_r.x-clr_current.x)+abs(clr_r.y-clr_current.y)+abs(clr_r.z-clr_current.z));
+    cost_current=min(cost_current, 50);
 
     int2 cost_volume_val = cost_volume(row,col_);
 
@@ -258,6 +260,117 @@ __global__ void UpdateCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camera
   // // -----------------------------------
 
 }
+
+
+
+__global__ void StudyCostVolumeMin_kernel(Camera_gpu* camera_r, Camera_gpu* camera_m,
+              cv::cuda::PtrStepSz<int2> cost_volume, cameraDataForDtam* camera_data_for_dtam_, float* depth_r_array,
+              int row, int col){
+
+
+  int i = blockIdx.z * blockDim.z + threadIdx.z;
+
+  int cols = camera_r->resolution_;
+
+  // initializations
+  Eigen::Vector2f uv_r;
+  bool stop = false;
+
+  uchar3 clr_r = camera_r->image_rgb_(row,col);
+  float depth1_r=camera_r->lens_;
+  float depth2_r=camera_r->max_depth_;
+  float3 val = camera_data_for_dtam_->query_proj_matrix(row,col);
+  if (val.z<0)
+    stop = true;
+  Eigen::Vector2f uv1_fixed = camera_data_for_dtam_->cam_r_projected_on_cam_m;
+  Eigen::Vector2f uv2_fixed;
+  uv2_fixed.x()=val.x;
+  uv2_fixed.y()=val.y;
+  float depth1_m_fixed = camera_data_for_dtam_->cam_r_depth_on_camera_m;
+  float depth2_m_fixed = val.z;
+  Eigen::Matrix3f r=camera_data_for_dtam_->T_r;
+  Eigen::Vector3f t=camera_data_for_dtam_->T_t;
+  float f = camera_m->lens_;
+  float w=camera_m->width_;
+  float h=camera_m->width_/camera_m->aspect_;
+
+  Eigen::Vector2i pixel_current;
+
+  if(!stop){
+
+    float depth_r = depth_r_array[i];
+
+    float depth_m = depth_r*r(2,2)-t(2)-((depth_r*r(2,0)*(2*col-w))/(2*f))-((depth_r*r(2,1)*(-2*row+h))/(2*f));
+    float ratio_invdepth_m = ((1.0/depth_m)-(1.0/depth1_m_fixed))/((1.0/depth2_m_fixed)-(1.0/depth1_m_fixed));
+
+    Eigen::Vector2f uv_current;
+    uv_current.x()=uv1_fixed.x()+ratio_invdepth_m*(uv2_fixed.x()-uv1_fixed.x()) ;
+    uv_current.y()=uv1_fixed.y()+ratio_invdepth_m*(uv2_fixed.y()-uv1_fixed.y()) ;
+
+    camera_m->uv2pixelCoords( uv_current, pixel_current);
+
+    if(pixel_current.x()<0 || pixel_current.y()<0 || pixel_current.x()>=(camera_m->resolution_) || pixel_current.y()>=(int)((float)camera_m->resolution_/(float)camera_m->aspect_) )
+      stop=true;
+  }
+
+  int col_ = cols*i+col;
+
+  int cost_current;
+
+  if (!stop){
+
+    uchar3 clr_current = camera_m->image_rgb_(pixel_current.y(),pixel_current.x());
+
+    // int cost_current=((clr_r.x-clr_current.x)*(clr_r.x-clr_current.x)+(clr_r.y-clr_current.y)*(clr_r.y-clr_current.y)+(clr_r.z-clr_current.z)*(clr_r.z-clr_current.z));
+    cost_current=(abs(clr_r.x-clr_current.x)+abs(clr_r.y-clr_current.y)+abs(clr_r.z-clr_current.z));
+
+    int val =255-(cost_current/3);
+    uchar3 magenta = make_uchar3(val,0,val);
+
+    camera_m->image_rgb_(pixel_current.y(),pixel_current.x())=magenta;
+
+  }
+  if (i==0){
+    uchar3 red = make_uchar3(0,0,255);
+
+    // camera_r->image_rgb_(row,col)=red;
+  }
+
+  __syncthreads();
+
+  __shared__ int cost_array[4][4][NUM_INTERPOLATIONS];
+  __shared__ int indx_array[4][4][NUM_INTERPOLATIONS];
+
+  cost_array[threadIdx.x][threadIdx.y][i]=cost_volume(row,col_).x;
+  indx_array[threadIdx.x][threadIdx.y][i]=i;
+
+  // REDUCTION
+  // Iterate of log base 2 the block dimension
+  for (int s = 1; s < NUM_INTERPOLATIONS; s *= 2) {
+    // Reduce the threads performing work by half previous the previous
+    // iteration each cycle
+    if (i % (2 * s) == 0) {
+      int min_cost = min(cost_array[threadIdx.x][threadIdx.y][i + s], cost_array[threadIdx.x][threadIdx.y][i]);
+      if (cost_array[threadIdx.x][threadIdx.y][i] > min_cost){
+        indx_array[threadIdx.x][threadIdx.y][i] = indx_array[threadIdx.x][threadIdx.y][i+s];
+        cost_array[threadIdx.x][threadIdx.y][i] = min_cost ;
+      }
+    }
+    __syncthreads();
+  }
+  if (i == indx_array[threadIdx.x][threadIdx.y][0]) {
+  // if (i == 9) {
+    uchar3 blue = make_uchar3(255,0,0);
+    camera_m->image_rgb_(pixel_current.y(),pixel_current.x())=blue;
+    printf("stop flag is: %i\n", stop);
+    printf("cost current is: %i\n", cost_current);
+    printf("min cost is: %i\n", cost_array[threadIdx.x][threadIdx.y][i]);
+    printf("coords: %i %i\n", pixel_current.y(), pixel_current.x());
+    printf("idx: %i\n", i);
+  }
+
+}
+
 
 __global__ void ComputeCostVolumeMin_kernel( Camera_gpu* camera_r, cv::cuda::PtrStepSz<int2> cost_volume, float* depth_r_array){
 
@@ -316,6 +429,8 @@ __global__ void Image2Vector_kernel(cv::cuda::PtrStepSz<float> image, float* vec
 
 }
 
+
+
 void Dtam::UpdateCostVolume(int index_m, cameraDataForDtam* camera_data_for_dtam ){
 
   Camera_cpu* camera_r_cpu = camera_vector_cpu_[index_r_];
@@ -325,9 +440,29 @@ void Dtam::UpdateCostVolume(int index_m, cameraDataForDtam* camera_data_for_dtam
 
   dim3 threadsPerBlock( 4 , 4 , NUM_INTERPOLATIONS);
   dim3 numBlocks( rows/4, cols/4 , 1);
-  UpdateCostVolume_kernel<<<numBlocks,threadsPerBlock>>>(camera_r_gpu, camera_vector_gpu_[index_m], cost_volume_, camera_data_for_dtam, depth_r_array_);
+  UpdateCostVolume_kernel<<<numBlocks,threadsPerBlock>>>(camera_r_gpu, camera_vector_gpu_[index_m], cost_volume_, camera_data_for_dtam, depth_r_array_, threshold_);
   printCudaError("Kernel updating cost volume");
 
+
+}
+
+void Dtam::StudyCostVolumeMin(int index_m, cameraDataForDtam* camera_data_for_dtam, int row, int col){
+
+  Camera_cpu* camera_r_cpu = camera_vector_cpu_[index_r_];
+  Camera_gpu* camera_r_gpu = camera_vector_gpu_[index_r_];
+
+  dim3 threadsPerBlock( 1 , 1 , NUM_INTERPOLATIONS);
+  dim3 numBlocks( 1, 1 , 1);
+  StudyCostVolumeMin_kernel<<<numBlocks,threadsPerBlock>>>(camera_r_gpu, camera_vector_gpu_[index_m], cost_volume_, camera_data_for_dtam, depth_r_array_,row,col);
+  printCudaError("Kernel studying cost volume");
+
+  camera_vector_cpu_[index_m]->image_rgb_gpu_.download(camera_vector_cpu_[index_m]->image_rgb_->image_);
+  camera_vector_cpu_[index_m]->image_rgb_->show(800/camera_vector_cpu_[index_m]->resolution_);
+
+  camera_vector_cpu_[index_r_]->image_rgb_gpu_.download(camera_vector_cpu_[index_r_]->image_rgb_->image_);
+  camera_vector_cpu_[index_r_]->image_rgb_->show(800/camera_vector_cpu_[index_r_]->resolution_);
+
+  cv::waitKey(0);
 
 }
 
@@ -345,138 +480,6 @@ void Dtam::ComputeCostVolumeMin(){
 
 }
 
-void Dtam::StudyCostVolumeMin(int row, int col){
-
-  // Eigen::Vector2i pixel_coords_r(col,row);
-  // cv::Vec3b clr_r;
-  // camera_r->image_rgb_->evalPixel(pixel_coords_r,clr_r);
-  //
-  // // query point
-  // Eigen::Vector3f query_p;
-  // Eigen::Vector2f uv_r;
-  // camera_r->pixelCoords2uv(pixel_coords_r, uv_r);
-  // camera_r->pointAtDepth(uv_r, depth2_r, query_p);
-  // Eigen::Vector2f query_p_projected_on_cam_m;
-  // float query_depth_on_camera_m;
-  // bool query_in_front = camera_m->projectPoint(query_p, query_p_projected_on_cam_m, query_depth_on_camera_m);
-  //
-  // // if both camera r and query point are on back of camera m return false or
-  // // if camera r is in front of camera m whereas query point is on the back
-  // if ((!query_in_front && !cam_r_in_front) || (!query_in_front && cam_r_in_front))
-  //   continue;
-  //
-  // int cost_min = 999999;
-  // int index_min = -1;
-  // Eigen::Vector2i pixel_min;
-  //
-  //
-  // // initializations
-  // Eigen::Vector2f uv1_fixed, uv2_fixed;
-  // float depth1_m_fixed, depth2_m_fixed;
-  //
-  // uv1_fixed=cam_r_projected_on_cam_m;
-  // uv2_fixed=query_p_projected_on_cam_m;
-  // depth1_m_fixed=cam_r_depth_on_camera_m;
-  // depth2_m_fixed=query_depth_on_camera_m;
-  //
-  // Eigen::Vector2i pixel_current;
-  //
-  //
-  // for (int i=0; i<num_interpolations_; i++){
-  //
-  //   float depth_r = depth_r_array_[i];
-  //   float depth_m = depth_r*r(2,2)-t(2)-((depth_r*r(2,0)*(2*uv_r.x()-w))/(2*f))-((depth_r*r(2,1)*(-2*uv_r.y()+h))/(2*f));
-  //   float ratio_invdepth_m = ((1.0/depth_m)-(1.0/depth1_m_fixed))/((1.0/depth2_m_fixed)-(1.0/depth1_m_fixed));
-  //
-  //   Eigen::Vector2f uv_current;
-  //   uv_current.x()=uv1_fixed.x()+ratio_invdepth_m*(uv2_fixed.x()-uv1_fixed.x()) ;
-  //   uv_current.y()=uv1_fixed.y()+ratio_invdepth_m*(uv2_fixed.y()-uv1_fixed.y()) ;
-  //
-  //
-  //   camera_m->uv2pixelCoords( uv_current, pixel_current);
-  //   cv::Vec3b clr_current;
-  //   bool flag = camera_m->image_rgb_->evalPixel(pixel_current,clr_current);
-  //
-  //   int cost_i;
-  //   int col_ = col+cols*i;
-  //   int num_valid_projections;
-  //
-  //   if (!flag){
-  //     cost_matrix_->evalPixel(row,col_,cost_i);
-  //   }
-  //   else{
-  //
-  //     cost_matrix_->evalPixel(row,col_,cost_i);
-  //     n_valid_proj_matrix_->evalPixel(row,col_,num_valid_projections);
-  //
-  //     int cost_current = mseBetween2Colors(clr_r, clr_current);
-  //     if (cost_i==999999)
-  //       cost_i=cost_current;
-  //     else{
-  //       cost_i=(cost_i*num_valid_projections+cost_current)/(num_valid_projections+1);
-  //       // cost_i=cost_current;
-  //     }
-  //     if (check){
-  //       // std::cout  << "i " << i<< ", cost_i " << cost_i << std::endl;
-  //       float ratio = (float)i/(float)num_interpolations_;
-  //       cv::Vec3b magenta = cv::Vec3b(ratio*255,0,ratio*255);
-  //       cv::Vec3b red = cv::Vec3b(0,0,255);
-  //       cv::Vec3b blue = cv::Vec3b(255,0,0);
-  //       if (i==0)
-  //         camera_m->image_rgb_->setPixel(pixel_current,red);
-  //       else if(i==num_interpolations_-1)
-  //         camera_m->image_rgb_->setPixel(pixel_current,blue);
-  //       else
-  //         camera_m->image_rgb_->setPixel(pixel_current,magenta);
-  //       camera_r->image_rgb_->setPixel(pixel_coords_r,red);
-  //     }
-  //   }
-  //
-  //   if (cost_i<999999){
-  //
-  //     cost_matrix_->setPixel(row,col_,cost_i);
-  //     n_valid_proj_matrix_->setPixel(row,col_,(num_valid_projections+1));
-  //
-  //     if (cost_i<cost_min){
-  //       index_min = i;
-  //       cost_min=cost_i;
-  //       pixel_min=pixel_current;
-  //     }
-  //   }
-  //
-  // }
-  //
-  //
-  // if (index_min>=0){
-  //   float depth_value = depth_r_array_[index_min]/camera_r->max_depth_;
-  //   camera_r->depth_map_->setPixel(pixel_coords_r,depth_value);
-  // }
-  // else
-  //   camera_r->depth_map_->setPixel(pixel_coords_r,1);
-  //
-  // if (check){
-  //   cv::Vec3b green = cv::Vec3b(0,255,0);
-  //   camera_m->image_rgb_->setPixel(pixel_min,green);
-  //
-  //   break;
-  // }
-
-
-
-
-  // RGBABitmapImageReference *imageReference;
-  // RGBABitmapImageReference *imageReference = CreateRGBABitmapImageReference();
-
-	// std::vector<double> xs{-2, -1, 0, 1, 2};
-	// std::vector<double> ys{2, -1, -2, -1, 2};
-  //
-	// DrawScatterPlot(imageReference, 600, 400, &xs, &ys);
-
-	// std::vector<double> *pngdata = ConvertToPNG(imageReference->image);
-	// WriteToFile(pngdata, "example1.png");
-	// DeleteImage(imageReference->image);
-
-}
 
 void Dtam::ComputeGradientSobelImage(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* image_out){
 
@@ -1078,15 +1081,21 @@ void Dtam::updateDepthMap_parallel_gpu(int index_m){
   t_end=getTime();
   std::cerr << "discrete cost volume computation took: " << (t_end-t_start) << " ms " << std::endl;
 
+  // t_start=getTime();
+  // Dtam::StudyCostVolumeMin(index_m, camera_data_for_dtam_, 14, 41);
+  // t_end=getTime();
+
   t_start=getTime();
   Dtam::ComputeCostVolumeMin();
   t_end=getTime();
   std::cerr << "ComputeCostVolumeMin took: " << (t_end-t_start) << " ms " << std::endl;
 
-  t_start=getTime();
-  Dtam::Regularize(cost_volume_, depth_r_array_);
-  t_end=getTime();
-  std::cerr << "Regularize took: " << (t_end-t_start) << " ms " << std::endl;
+
+
+  // t_start=getTime();
+  // Dtam::Regularize(cost_volume_, depth_r_array_);
+  // t_end=getTime();
+  // std::cerr << "Regularize took: " << (t_end-t_start) << " ms " << std::endl;
 
 
 
