@@ -181,6 +181,7 @@ enum struct shader_type {
   naive,     // naive path tracing
   path,      // path tracing with mis
   eyelight,  // eyelight rendering
+  depth,  // depth rendering
   // clang-format off
 };
 
@@ -216,17 +217,17 @@ void init_state(ptr::state* state, const ptr::scene* scene,
     const ptr::camera* camera, const trace_params& params);
 
 // Initialize lights
-void init_lights(ptr::scene* scene, const trace_params& params, 
+void init_lights(ptr::scene* scene, const trace_params& params,
   progress_callback progress_cb);
 
 // Progressively computes an image.
-void trace_samples(ptr::state* state, 
-    const ptr::scene* scene, const ptr::camera* camera, 
+void trace_samples(ptr::state* state,
+    const ptr::scene* scene, const ptr::camera* camera,
     const trace_params& params);
 
 // Progressively computes an image. Stop if requested.
-void trace_samples(ptr::state* state, 
-    const ptr::scene* scene, const ptr::camera* camera, 
+void trace_samples(ptr::state* state,
+    const ptr::scene* scene, const ptr::camera* camera,
     const trace_params& params, std::atomic<bool>* stop);
 
 }  // namespace yocto::pathtrace

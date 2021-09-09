@@ -1222,6 +1222,22 @@ static vec4f trace_eyelight(const ptr::scene* scene, const ray3f& ray_,
   return {radiance, hit ? 1.0f : 0.0f};
 }
 
+// Normal rendering for debugging.
+static vec4f trace_depth(const ptr::scene* scene, const ray3f& ray,
+    rng_state& rng, const trace_params& params) {
+  // intersect next point
+  auto intersection = intersect_scene_bvh(scene, ray);
+  if (!intersection.hit) {
+    return {eval_environment(scene, ray), 1};
+  }
+
+  // prepare shading point
+  auto distance =   intersection.distance;
+  auto val = (float)1.0/((float)intersection.distance*4);
+  auto output = vec4f{val, val, val, 1};
+  return output;
+}
+
 // Trace a single ray from the camera using the given algorithm.
 using shader_func = vec4f (*)(const ptr::scene* scene, const ray3f& ray,
     rng_state& rng, const trace_params& params);
@@ -1230,6 +1246,7 @@ static shader_func get_trace_shader_func(const trace_params& params) {
     case shader_type::naive: return trace_naive;
     case shader_type::path: return trace_path;
     case shader_type::eyelight: return trace_eyelight;
+    case shader_type::depth: return trace_depth;
     default: {
       throw std::runtime_error("sampler unknown");
       return nullptr;

@@ -4,9 +4,9 @@
 The following packages are required <br>
 Before installing anything one should make sure what packages are already installed on the system!
 
-CMake build utilities:
+CMake 3.15:
 
-    sudo apt install build-essential cmake
+    install CMake 3.15 https://cmake.org/files/v3.15/
 
 Eigen3 stable version 3.3.9:
 
@@ -20,17 +20,17 @@ OpenCV version 4.2:
 
     installation guide here: https://gist.github.com/raulqf/f42c718a658cddc16f9df07ecc627be7
 
-    troubleshooting:
-	in case of compilation error, you may need to disable CUDNN:
-							remove  -D CUDA_ARCH_BIN=7.5 \
-								-D WITH_CUDNN=ON \
-							        -D OPENCV_DNN_CUDA=ON \
+  	Disable CUDNN by removing these lines:
 
-	be sure that the path to opencv_contrib-4.5.2/modules is correct
+        -D CUDA_ARCH_BIN=7.5 \
+				-D WITH_CUDNN=ON \
+        -D OPENCV_DNN_CUDA=ON \
 
-	gcc versions higher than 6 may cause problems
+    gcc and g++ version must be 6.5 for this installation
 
-  be sure that CUDA toolkit is already installed (previous step)
+  	be sure that the path to opencv_contrib-4.5.2/modules is correct
+
+    be sure that CUDA toolkit is already installed (previous step)
 
 ### Compilation
 From the system console, execute the build sequence (out of source build):

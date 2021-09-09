@@ -53,4 +53,6 @@ if (USE_CUDA)
   )
   target_link_libraries(test_synth_cuda opencv_highgui)
   target_compile_options(test_synth_cuda PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:-dc>)
+  set_property(TARGET test_synth_cuda
+            PROPERTY CUDA_SEPARABLE_COMPILATION ON)
 endif()

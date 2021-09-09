@@ -224,7 +224,8 @@ int main(int argc, const char* argv[]) {
     auto state = state_guard.get();
     init_state(state, scene, camera, params);
 
-    // render
+    params.shader=yocto::pathtrace::shader_type::path;
+    // render pathtrace
     cli::print_progress("render image", 0, params.samples);
     for(auto sample = 0; sample < params.samples; sample ++) {
       cli::print_progress("render image", sample, params.samples);
@@ -243,7 +244,32 @@ int main(int argc, const char* argv[]) {
 
     // save image
     cli::print_progress("save image", 0, 1);
-    auto imfilename_ = imfilename.substr(0,imfilename.size()-4)+camera_name+".jpg";
+    auto imfilename_ = imfilename.substr(0,imfilename.size()-4)+"rgb_"+camera_name+".png";
+    if (!save_image(imfilename_, state->render, ioerror)) cli::print_fatal(ioerror);
+    cli::print_progress("save image", 1, 1);
+
+    init_state(state, scene, camera, params);
+
+    params.shader=yocto::pathtrace::shader_type::depth;
+    // render invdepthmap
+    cli::print_progress("render invdepthmap", 0, 1);
+
+    trace_samples(state, scene, camera, params);
+    if(save_batch) {
+        auto ext = "-s" + std::to_string(0) +
+                   fs::path(imfilename).extension().string();
+        auto outfilename = fs::path(imfilename).replace_extension(ext).string();
+        auto ioerror     = ""s;
+        cli::print_progress("save invdepthmap", 0, params.samples);
+        if (!save_image(outfilename, state->render, ioerror))
+          cli::print_fatal(ioerror);
+    }
+
+    cli::print_progress("render invdepthmap", 1, 1);
+
+    // save image
+    cli::print_progress("save image", 0, 1);
+    imfilename_ = imfilename.substr(0,imfilename.size()-4)+"depth_"+camera_name+".png";
     if (!save_image(imfilename_, state->render, ioerror)) cli::print_fatal(ioerror);
     cli::print_progress("save image", 1, 1);
   }

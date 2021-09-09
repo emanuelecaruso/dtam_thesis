@@ -1098,10 +1098,6 @@ lapacke_mangling.h
 
 /usr/local/include/eigen3/Eigen/src/plugins/MatrixCwiseUnaryOps.h
 
-/usr/local/include/opencv4/opencv2/./imgproc/segmentation.hpp
-opencv2/imgproc.hpp
-/usr/local/include/opencv4/opencv2/./imgproc/opencv2/imgproc.hpp
-
 /usr/local/include/opencv4/opencv2/calib3d.hpp
 opencv2/core.hpp
 /usr/local/include/opencv4/opencv2/opencv2/core.hpp
@@ -1916,7 +1912,11 @@ opencv2/core.hpp
 opencv2/core.hpp
 /usr/local/include/opencv4/opencv2/opencv2/core.hpp
 ./imgproc/segmentation.hpp
-/usr/local/include/opencv4/opencv2/./imgproc/segmentation.hpp
+/usr/local/include/opencv4/opencv2/imgproc/segmentation.hpp
+
+/usr/local/include/opencv4/opencv2/imgproc/segmentation.hpp
+opencv2/imgproc.hpp
+/usr/local/include/opencv4/opencv2/imgproc/opencv2/imgproc.hpp
 
 /usr/local/include/opencv4/opencv2/ml.hpp
 opencv2/core.hpp

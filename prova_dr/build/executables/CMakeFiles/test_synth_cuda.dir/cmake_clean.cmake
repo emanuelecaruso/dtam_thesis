@@ -1,18 +1,18 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/test_synth_cuda.dir/test_synth_cuda.cpp.o"
-  "CMakeFiles/test_synth_cuda.dir/__/src/dataset.cpp.o"
-  "CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_cpu.cu.o"
-  "CMakeFiles/test_synth_cuda.dir/__/src/image.cpp.o"
   "CMakeFiles/test_synth_cuda.dir/__/src/camera.cpp.o"
-  "CMakeFiles/test_synth_cuda.dir/__/src/renderer.cpp.o"
-  "CMakeFiles/test_synth_cuda.dir/__/src_cuda/environment.cu.o"
+  "CMakeFiles/test_synth_cuda.dir/__/src/dataset.cpp.o"
   "CMakeFiles/test_synth_cuda.dir/__/src/environment.cpp.o"
-  "CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o"
+  "CMakeFiles/test_synth_cuda.dir/__/src/image.cpp.o"
+  "CMakeFiles/test_synth_cuda.dir/__/src/renderer.cpp.o"
   "CMakeFiles/test_synth_cuda.dir/__/src/utils.cpp.o"
+  "CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_cpu.cu.o"
   "CMakeFiles/test_synth_cuda.dir/__/src_cuda/camera_gpu.cu.o"
+  "CMakeFiles/test_synth_cuda.dir/__/src_cuda/dtam_cuda.cu.o"
+  "CMakeFiles/test_synth_cuda.dir/__/src_cuda/environment.cu.o"
   "CMakeFiles/test_synth_cuda.dir/cmake_device_link.o"
-  "test_synth_cuda.pdb"
+  "CMakeFiles/test_synth_cuda.dir/test_synth_cuda.cpp.o"
   "test_synth_cuda"
+  "test_synth_cuda.pdb"
 )
 
 # Per-language clean rules from dependency scanning.

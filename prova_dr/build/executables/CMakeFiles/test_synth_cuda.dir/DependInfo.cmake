@@ -15,11 +15,11 @@ set(CMAKE_CUDA_COMPILER_ID "NVIDIA")
 # The include file search paths:
 set(CMAKE_CUDA_TARGET_INCLUDE_PATH
   "/usr/local/include/eigen3"
-  "/usr/local/include/opencv4"
   "/usr/include/python3.6m"
   "../src"
   "../src_cuda"
   "../libs"
+  "/usr/local/include/opencv4"
   )
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/manu/Desktop/dtam_thesis/prova_dr/src/camera.cpp" "/home/manu/Desktop/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src/camera.cpp.o"
@@ -35,11 +35,11 @@ set(CMAKE_CXX_COMPILER_ID "GNU")
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "/usr/local/include/eigen3"
-  "/usr/local/include/opencv4"
   "/usr/include/python3.6m"
   "../src"
   "../src_cuda"
   "../libs"
+  "/usr/local/include/opencv4"
   )
 
 # Targets to which this target links.
