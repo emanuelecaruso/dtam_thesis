@@ -163,6 +163,8 @@ __global__ void UpdateCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camera
 
   // initializations
   Eigen::Vector2f uv_r;
+  Eigen::Vector2i pixel_coords_r(col,row);
+  camera_r->pixelCoords2uv(pixel_coords_r, uv_r);
   bool stop = false;
 
   uchar3 clr_r = camera_r->image_rgb_(row,col);
@@ -189,7 +191,7 @@ __global__ void UpdateCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camera
 
     float depth_r = depth_r_array[i];
 
-    float depth_m = depth_r*r(2,2)-t(2)-((depth_r*r(2,0)*(2*col-w))/(2*f))-((depth_r*r(2,1)*(-2*row+h))/(2*f));
+    float depth_m = depth_r*r(2,2)-t(2)-((depth_r*r(2,0)*(2*uv_r.x()-w))/(2*f))-((depth_r*r(2,1)*(-2*uv_r.y()+h))/(2*f));
     float ratio_invdepth_m = ((1.0/depth_m)-(1.0/depth1_m_fixed))/((1.0/depth2_m_fixed)-(1.0/depth1_m_fixed));
 
     Eigen::Vector2f uv_current;
@@ -274,6 +276,9 @@ __global__ void StudyCostVolumeMin_kernel(Camera_gpu* camera_r, Camera_gpu* came
 
   // initializations
   Eigen::Vector2f uv_r;
+  Eigen::Vector2i pixel_coords_r(col,row);
+  camera_r->pixelCoords2uv(pixel_coords_r, uv_r);
+
   bool stop = false;
 
   uchar3 clr_r = camera_r->image_rgb_(row,col);
@@ -300,8 +305,11 @@ __global__ void StudyCostVolumeMin_kernel(Camera_gpu* camera_r, Camera_gpu* came
 
     float depth_r = depth_r_array[i];
 
-    float depth_m = depth_r*r(2,2)-t(2)-((depth_r*r(2,0)*(2*col-w))/(2*f))-((depth_r*r(2,1)*(-2*row+h))/(2*f));
+    float depth_m = depth_r*r(2,2)-t(2)-((depth_r*r(2,0)*(2*uv_r.x()-w))/(2*f))-((depth_r*r(2,1)*(-2*uv_r.y()+h))/(2*f));
+    // float ratio_invdepth_m = ((1.0/depth_m)-(1.0/depth1_m_fixed))/((1.0/depth2_m_fixed)-(1.0/depth1_m_fixed));
     float ratio_invdepth_m = ((1.0/depth_m)-(1.0/depth1_m_fixed))/((1.0/depth2_m_fixed)-(1.0/depth1_m_fixed));
+
+    printf("%f\n", depth_m );
 
     Eigen::Vector2f uv_current;
     uv_current.x()=uv1_fixed.x()+ratio_invdepth_m*(uv2_fixed.x()-uv1_fixed.x()) ;
@@ -316,16 +324,18 @@ __global__ void StudyCostVolumeMin_kernel(Camera_gpu* camera_r, Camera_gpu* came
   int col_ = cols*i+col;
 
   int cost_current;
+  uchar3 clr_current;
 
   if (!stop){
 
-    uchar3 clr_current = camera_m->image_rgb_(pixel_current.y(),pixel_current.x());
+    clr_current = camera_m->image_rgb_(pixel_current.y(),pixel_current.x());
 
     // int cost_current=((clr_r.x-clr_current.x)*(clr_r.x-clr_current.x)+(clr_r.y-clr_current.y)*(clr_r.y-clr_current.y)+(clr_r.z-clr_current.z)*(clr_r.z-clr_current.z));
     cost_current=(abs(clr_r.x-clr_current.x)+abs(clr_r.y-clr_current.y)+abs(clr_r.z-clr_current.z));
 
     int val =255-(cost_current/3);
-    uchar3 magenta = make_uchar3(val,0,val);
+    uchar3 magenta = make_uchar3(255,0,255);
+    uchar3 magenta_ = make_uchar3(val,0,val);
 
     camera_m->image_rgb_(pixel_current.y(),pixel_current.x())=magenta;
 
@@ -338,11 +348,11 @@ __global__ void StudyCostVolumeMin_kernel(Camera_gpu* camera_r, Camera_gpu* came
 
   __syncthreads();
 
-  __shared__ int cost_array[4][4][NUM_INTERPOLATIONS];
-  __shared__ int indx_array[4][4][NUM_INTERPOLATIONS];
+  __shared__ int cost_array[NUM_INTERPOLATIONS];
+  __shared__ int indx_array[NUM_INTERPOLATIONS];
 
-  cost_array[threadIdx.x][threadIdx.y][i]=cost_volume(row,col_).x;
-  indx_array[threadIdx.x][threadIdx.y][i]=i;
+  cost_array[i]=cost_volume(row,col_).x;
+  indx_array[i]=i;
 
   // REDUCTION
   // Iterate of log base 2 the block dimension
@@ -350,23 +360,34 @@ __global__ void StudyCostVolumeMin_kernel(Camera_gpu* camera_r, Camera_gpu* came
     // Reduce the threads performing work by half previous the previous
     // iteration each cycle
     if (i % (2 * s) == 0) {
-      int min_cost = min(cost_array[threadIdx.x][threadIdx.y][i + s], cost_array[threadIdx.x][threadIdx.y][i]);
-      if (cost_array[threadIdx.x][threadIdx.y][i] > min_cost){
-        indx_array[threadIdx.x][threadIdx.y][i] = indx_array[threadIdx.x][threadIdx.y][i+s];
-        cost_array[threadIdx.x][threadIdx.y][i] = min_cost ;
+      int min_cost = min(cost_array[i + s], cost_array[i]);
+      printf("min between %i and %i is %i\n", cost_array[i + s], cost_array[i], min_cost);
+
+      if (cost_array[i] > min_cost){
+        indx_array[i] = indx_array[i+s];
+        cost_array[i] = min_cost ;
       }
     }
     __syncthreads();
   }
-  if (i == indx_array[threadIdx.x][threadIdx.y][0]) {
-  // if (i == 9) {
+  printf("cost current at i=%i is: %i\n",i, cost_current);
+
+  if (i == indx_array[0]) {
+  // if (i == 40) {
     uchar3 blue = make_uchar3(255,0,0);
     camera_m->image_rgb_(pixel_current.y(),pixel_current.x())=blue;
+
+    printf("camera_r->max_depth_: %f\n", camera_r->max_depth_);
+    printf("depth1_m_fixed: %f\n", depth1_m_fixed);
+    printf("depth2_m_fixed: %f\n", depth2_m_fixed);
+    printf("clr_r is: %i,%i,%i\n", clr_r.x ,clr_r.y ,clr_r.z);
+    printf("clr_current is: %i,%i,%i\n", clr_current.x ,clr_current.y ,clr_current.z);
     printf("stop flag is: %i\n", stop);
     printf("cost current is: %i\n", cost_current);
-    printf("min cost is: %i\n", cost_array[threadIdx.x][threadIdx.y][i]);
+    printf("min cost is: %i\n", cost_array[0]);
     printf("coords: %i %i\n", pixel_current.y(), pixel_current.x());
     printf("idx: %i\n", i);
+    printf("\n");
   }
 
 }
@@ -479,10 +500,10 @@ void Dtam::StudyCostVolumeMin(int index_m, cameraDataForDtam* camera_data_for_dt
   printCudaError("Kernel studying cost volume");
 
   camera_vector_cpu_[index_m]->image_rgb_gpu_.download(camera_vector_cpu_[index_m]->image_rgb_->image_);
-  camera_vector_cpu_[index_m]->image_rgb_->show(800/camera_vector_cpu_[index_m]->resolution_);
+  camera_vector_cpu_[index_m]->image_rgb_->show(1500/camera_vector_cpu_[index_m]->resolution_);
 
   camera_vector_cpu_[index_r_]->image_rgb_gpu_.download(camera_vector_cpu_[index_r_]->image_rgb_->image_);
-  camera_vector_cpu_[index_r_]->image_rgb_->show(800/camera_vector_cpu_[index_r_]->resolution_);
+  camera_vector_cpu_[index_r_]->image_rgb_->show(1500/camera_vector_cpu_[index_r_]->resolution_);
 
 }
 
@@ -1077,26 +1098,32 @@ void Dtam::updateDepthMap_parallel_gpu(int index_m){
   double t_start_tot=getTime();  // time start for computing computation time
   double t_end_tot;    // time end for computing computation time
 
+  // camera_vector_cpu_[index_m]->showWorldFrame({0,0,0}, 0.1, 100);
+  // camera_vector_cpu_[index_m]->image_rgb_->show(800/camera_vector_cpu_[index_m]->resolution_);
+
+
   t_start=getTime();
   Dtam::UpdateCostVolume(index_m, camera_data_for_dtam_);
   t_end=getTime();
   std::cerr << "discrete cost volume computation took: " << (t_end-t_start) << " ms " << std::endl;
-
-  // Dtam::StudyCostVolumeMin(index_m, camera_data_for_dtam_, 200, 200);
-
-  if(initialization_){
+  //
+  int col=0.5*camera_vector_cpu_[0]->resolution_;
+  int row=0.5*camera_vector_cpu_[0]->resolution_/camera_vector_cpu_[0]->aspect_;
+  Dtam::StudyCostVolumeMin(index_m, camera_data_for_dtam_, row, col);
+  //
+  // if(initialization_){
     t_start=getTime();
     Dtam::ComputeCostVolumeMin();
     t_end=getTime();
     std::cerr << "ComputeCostVolumeMin took: " << (t_end-t_start) << " ms " << std::endl;
-  }
-
+  // }
 
 
   t_start=getTime();
   Dtam::Regularize(cost_volume_, depth_r_array_);
   t_end=getTime();
   std::cerr << "Regularize took: " << (t_end-t_start) << " ms " << std::endl;
+
 
   t_end_tot=getTime();    // time end for computing computation time
   std::cerr << "Regularize TOT took: " << (t_end_tot-t_start_tot) << " ms\n " << std::endl;

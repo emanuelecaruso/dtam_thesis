@@ -84,15 +84,15 @@ class Dtam{
 
 
       int switch_idx=6;
-      float switch_depth=0.6;
+      float switch_depth=1;
 
-      for (int i=0; i<switch_idx; i++){
-        float ratio_depth_r = (float)(i+1)/((float)switch_idx);
-        float depth_r = depth1_r+ratio_depth_r*(switch_depth-depth1_r);
-        depth_r_array_h[i]=depth_r;
-        std::cout << "depth: " << depth_r << std::endl;
-      }
-      for (int i=switch_idx; i<NUM_INTERPOLATIONS; i++){
+      // for (int i=0; i<switch_idx; i++){
+      //   float ratio_depth_r = (float)(i+1)/((float)switch_idx);
+      //   float depth_r = depth1_r+ratio_depth_r*(switch_depth-depth1_r);
+      //   depth_r_array_h[i]=depth_r;
+      //   std::cout << "depth: " << depth_r << std::endl;
+      // }
+      for (int i=0; i<NUM_INTERPOLATIONS; i++){
         float ratio_depth_r = (float)i/((float)NUM_INTERPOLATIONS-1);
         float invdepth_r = (1.0/switch_depth)+ratio_depth_r*((1.0/depth2_r)-(1.0/switch_depth));
         float depth_r = 1.0/invdepth_r;

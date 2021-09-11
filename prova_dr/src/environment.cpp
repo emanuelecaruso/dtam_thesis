@@ -180,6 +180,7 @@ bool Environment::loadEnvironment(std::string path_name, std::string dataset_nam
   const char* path_name_ = path_name.c_str(); // dataset name
 
   std::string complete_path = path_name+"/"+dataset_name+".json";
+
   // const char* path_name_ = complete_path.c_str(); // dataset name
   struct stat info;
   if( stat( path_name_, &info ) != 0 )
@@ -211,6 +212,20 @@ bool Environment::loadEnvironment(std::string path_name, std::string dataset_nam
   for (json::iterator it = cameras.begin(); it != cameras.end(); ++it) {
 
     std::string name=it.key();
+
+    // if(path_name+"/rgb_"+name+".png")
+
+    // const char* path_name_ = complete_path.c_str(); // dataset name
+    struct stat info_;
+    std::string path_rgb_=(path_name+"/rgb_"+name+".png");
+    const char* path_rgb = path_rgb_.c_str(); // dataset name
+    if( stat( path_rgb, &info_ ) != 0 )
+      continue;
+
+    // struct stat info_;
+    // if( stat( path_rgb, &info_ ) != 0 )
+    //   continue;
+
 
     float lens;
     float aspect;
@@ -253,7 +268,7 @@ bool Environment::loadEnvironment(std::string path_name, std::string dataset_nam
 
     Camera* camera = new Camera(name,lens_,aspect_,film_,resolution_,max_depth_,frame_camera_wrt_world,frame_world_wrt_camera);
 
-    camera->loadRGB(path_name+"/rgb_"+name+".png");
+    camera->loadRGB(path_rgb);
     camera->loadDepthMap(path_name+"/depth_"+name+".png");
 
     camera_vector_.push_back(camera);

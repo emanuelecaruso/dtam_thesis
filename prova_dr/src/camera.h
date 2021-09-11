@@ -48,7 +48,7 @@ class Camera{
        Kinv_=K_.inverse();
     };
 
-    // void showWorldFrame(Eigen::Vector3f origin, float delta,int length);
+    void showWorldFrame(Eigen::Vector3f origin, float delta,int length);
     void printMembers();
 
     void clearImgs();

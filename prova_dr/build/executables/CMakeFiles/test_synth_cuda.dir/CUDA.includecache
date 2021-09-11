@@ -50,16 +50,6 @@ thread
 vector
 -
 
-/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_cpu.cu
-camera_cpu.cuh
-/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_cpu.cuh
-thread
--
-vector
--
-mutex
--
-
 /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_cpu.cuh
 defs.h
 /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/defs.h
@@ -69,16 +59,6 @@ camera.h
 /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera.h
 camera_gpu.cuh
 /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_gpu.cuh
-
-/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_gpu.cu
-camera_gpu.cuh
-/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_gpu.cuh
-thread
--
-vector
--
-mutex
--
 
 /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_gpu.cuh
 defs.h
@@ -119,12 +99,6 @@ cuda_runtime.h
 -
 environment.cuh
 /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/environment.cuh
-
-/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/environment.cu
-environment.cuh
-/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/environment.cuh
-utils.h
-/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/utils.h
 
 /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/environment.cuh
 defs.h

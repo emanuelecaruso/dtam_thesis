@@ -102,65 +102,56 @@ void Camera::loadDepthMap(std::string path){
   depth_map_->image_.convertTo(depth_map_->image_, CV_32FC1, 1.0/255.0);
 }
 
-// void Camera::showWorldFrame(Eigen::Vector3f origin, float delta, int length){
-//   Camera::clearImgs();
-//   std::vector<Cp> cps_world_frame;
-//   for (int i=0; i<length; i++)
-//   {
-//     Eigen::Vector3f x(origin[0]+delta*i,origin[1],origin[2]);
-//     cv::Vec3b color1(0,0,255);
-//     struct Cp cp1 = {x, color1};
-//     cps_world_frame.push_back(cp1);
-//
-//     Eigen::Vector3f y(origin[0],origin[1]+delta*i,origin[2]);
-//     cv::Vec3b color2(0,255,0);
-//     struct Cp cp2 = {y, color2};
-//     cps_world_frame.push_back(cp2);
-//
-//     if (i>0)
-//     {
-//       Eigen::Vector3f z(origin[0],origin[1],origin[2]+delta*i);
-//       cv::Vec3b color3(255,0,0);
-//       struct Cp cp3 = {z, color3};
-//       cps_world_frame.push_back(cp3);
-//     }
-//   }
-//
-//   Eigen::Matrix3f K;
-//   Camera::extractCameraMatrix(K);
-//
-//   int cols=resolution_;
-//   int rows=resolution_/aspect_;
-//
-//   for (Cp cp : cps_world_frame){
-//     Eigen::Vector3f p_cam = *frame_world_wrt_camera_*cp.point;
-//
-//     if (p_cam.z()>-lens_)
-//       continue;
-//
-//     Eigen::Vector3f p_proj = K*p_cam;
-//
-//     Eigen::Vector2f uv = p_proj.head<2>()*(1./p_proj.z());
-//
-//     if(uv.x()<0 || uv.x()>width_)
-//       continue;
-//     if(uv.y()<0 || uv.y()>(width_/aspect_))
-//       continue;
-//
-//     Eigen::Vector2i pixel_coords;
-//     Camera::uv2pixelCoords( uv, pixel_coords);
-//
-//     if (cp.color[0]>255 || cp.color[1]>255 || cp.color[2]>255)
-//       continue;
-//
-//     int r=pixel_coords.y();
-//     int c=pixel_coords.x();
-//     if(r<0||r>=rows)
-//       continue;
-//     if(c<0||c>=cols)
-//       continue;
-//
-//     cv::circle(image_rgb_->image_, cv::Point(c,r), 3, cp.color);
-//   }
-//
-// }
+void Camera::showWorldFrame(Eigen::Vector3f origin, float delta, int length){
+  Camera::clearImgs();
+  std::vector<Cp> cps_world_frame;
+  for (int i=0; i<length; i++)
+  {
+    Eigen::Vector3f x(origin[0]+delta*i,origin[1],origin[2]);
+    cv::Vec3b color1(0,0,255);
+    struct Cp cp1 = {x, color1};
+    cps_world_frame.push_back(cp1);
+
+    Eigen::Vector3f y(origin[0],origin[1]+delta*i,origin[2]);
+    cv::Vec3b color2(0,255,0);
+    struct Cp cp2 = {y, color2};
+    cps_world_frame.push_back(cp2);
+
+    if (i>0)
+    {
+      Eigen::Vector3f z(origin[0],origin[1],origin[2]+delta*i);
+      cv::Vec3b color3(255,0,0);
+      struct Cp cp3 = {z, color3};
+      cps_world_frame.push_back(cp3);
+    }
+  }
+
+
+  int cols=resolution_;
+  int rows=resolution_/aspect_;
+
+  for (Cp cp : cps_world_frame){
+
+    Eigen::Vector2f uv;
+    float p_cam_z;
+
+    if (!projectPoint(cp.point, uv, p_cam_z ))
+      continue;
+
+    Eigen::Vector2i pixel_coords;
+    Camera::uv2pixelCoords( uv, pixel_coords);
+
+    if (cp.color[0]>255 || cp.color[1]>255 || cp.color[2]>255)
+      continue;
+
+    int r=pixel_coords.y();
+    int c=pixel_coords.x();
+    if(r<0||r>=rows)
+      continue;
+    if(c<0||c>=cols)
+      continue;
+
+    cv::circle(image_rgb_->image_, cv::Point(c,r), 3, cp.color);
+  }
+
+}

@@ -24,6 +24,8 @@ void Environment_gpu::generateCamera(std::string name, float t1, float t2, float
 
 bool Environment_gpu::loadEnvironment_gpu(std::string path_name, std::string dataset_name){
 
+    std::cout << "loading dataset at: " << path_name << std::endl;
+
     camera_vector_cpu_.clear();
     camera_vector_gpu_.clear();
     loadEnvironment(path_name, dataset_name);
@@ -45,6 +47,9 @@ bool Environment_gpu::loadEnvironment_gpu(std::string path_name, std::string dat
       Camera_gpu* camera_gpu = camera_cpu->getCamera_gpu();
       camera_vector_gpu_.push_back(camera_gpu);
     }
+
+    std::cout << "dataset loaded successfully" << std::endl;
+
 
   // }
 

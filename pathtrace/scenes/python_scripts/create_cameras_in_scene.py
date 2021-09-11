@@ -67,16 +67,25 @@ for obj_ in bpy.data.objects:
         angle=(2*pi)*ratio
         Rx=0.3
         Ry=3
-        x=math.cos(angle)*Rx-3
-        y=math.sin(angle)*Ry
         z=1.80
         scl=0.05
+        
+        x=-2
+        y=-2+4*ratio
+
+        obj_.rotation_euler.z=pi/2
+        
+        #x=math.cos(angle)*Rx-3
+        #y=math.sin(angle)*Ry
+
         obj_.location=(x,y,z)
+        
+
         
         slide=0.5
         tar_y=-slide+slide*2*math.sin(ratio*pi)
         target=(0,tar_y,0.5)
-        point_at(obj_, target)
+        #point_at(obj_, target)
         obj_.scale=(scl,scl,scl)
         
         marker = bpy.data.scenes[0].timeline_markers.new('F_'+str(i), frame=i)

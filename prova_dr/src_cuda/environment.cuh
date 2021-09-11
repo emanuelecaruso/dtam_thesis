@@ -21,7 +21,7 @@ class Environment_gpu : public Environment{
 
 
     Environment_gpu(int resolution = 640, float aspect = 1, float film = 0.024,
-                            float lens = 0.035, float max_depth =4.2)
+                            float lens = 0.035, float max_depth =20)
 
     : Environment(resolution, aspect, film, lens, max_depth ) {}
 

@@ -4,16 +4,20 @@
 -- norm of image			XXXX
 -- depth->invdepth sampling		XXXX
 -- improve sobel filter 		XXXX
+-- pathtrace->dataset XXXX
+
+-- show invdepth
+-- show world frame
+
+-- depth->invdepth
+
+-- dataset as argument
+-- plot costs for pixel in graph
+
+
+
 -- padding				maybe not
 -- add rotation for dataset maker	maybe not
-
--- plot costs for pixel in graph
--- pathtrace->dataset
-
-
-
-
-
 
 
 -- initialization

@@ -1222,7 +1222,7 @@ static vec4f trace_eyelight(const ptr::scene* scene, const ray3f& ray_,
   return {radiance, hit ? 1.0f : 0.0f};
 }
 
-// Normal rendering for debugging.
+// Depth rendering.
 static vec4f trace_depth(const ptr::scene* scene, const ray3f& ray,
     rng_state& rng, const trace_params& params) {
   // intersect next point
@@ -1233,7 +1233,7 @@ static vec4f trace_depth(const ptr::scene* scene, const ray3f& ray,
 
   // prepare shading point
   auto distance =   intersection.distance;
-  auto val = (float)1.0/((float)intersection.distance*4);
+  auto val = (float)intersection.distance/(float)4.2;
   auto output = vec4f{val, val, val, 1};
   return output;
 }

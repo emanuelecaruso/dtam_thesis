@@ -1,5 +1,5 @@
 import bpy
-import os 
+import os
 import json
 import shutil
 import numpy as np
@@ -10,7 +10,7 @@ from shutil import copy
 scene_name=bpy.context.scene.name
 
 cwd = os.getcwd()
-scene_path_yocto=cwd+"/"+scene_name
+scene_path_yocto=cwd+"/yocto_dataset/"+scene_name
 scene_path_dtam=cwd+"/../../prova_dr/dataset/"+scene_name+"/"
 shutil.rmtree(scene_path_yocto, ignore_errors=True)
 shutil.rmtree(scene_path_dtam, ignore_errors=True)
@@ -50,13 +50,13 @@ for obj in bpy.data.objects:
             R.item(3), R.item(4), R.item(5),
             R.item(6), R.item(7), R.item(8),
             l[0], l[1], l[2] ]
-    
+
     if obj.type=="CAMERA":
         lens=obj.data.lens*0.001
         data['cameras'][name]={}
         data['cameras'][name]['aspect']=1.3333333333
         data['cameras'][name]['width']=0.024
-        data['cameras'][name]['resolution']=720
+        data['cameras'][name]['resolution']=640
         data['cameras'][name]['frame']=frame
         data['cameras'][name]['lens']=lens
     elif obj.type=="MESH":
@@ -66,22 +66,22 @@ for obj in bpy.data.objects:
                 filepath=scene_path_yocto+"/shapes/"+name+".ply",
                 use_selection=True)
         obj.select_set(False)
-        
-        
+
+
         active_material=obj.active_material
-        
+
         color = 0;
         if active_material is not None and 'Principled BSDF' in active_material.node_tree.nodes:
             color = active_material.node_tree.nodes['Principled BSDF'].inputs['Base Color'].default_value
         else:
             color = obj.color
-            
+
         data['objects'][name]={}
         data['objects'][name]['material']=name
         data['objects'][name]['shape']=name
-        
+
         data['materials'][name]={}
-        
+
         if active_material is not None and 'Emission' in obj.active_material.node_tree.nodes:
             emission_strength = active_material.node_tree.nodes['Emission'].inputs[1].default_value
             emission_color = active_material.node_tree.nodes['Emission'].inputs[0].default_value
@@ -94,8 +94,8 @@ for obj in bpy.data.objects:
         else:
             data['materials'][name]['displacement']=1
             data['materials'][name]['color']=[color[0],color[1],color[2]]
-            
-            
+
+
         if active_material is not None and 'Image Texture' in obj.active_material.node_tree.nodes:
             filepath=active_material.node_tree.nodes['Image Texture'].image.filepath
             name_tex = filepath.split('/')[-1]
@@ -126,21 +126,21 @@ data_['cameras']={}
 # iterate through objects
 for obj_ in bpy.data.objects:
     if obj_.type=="CAMERA":
-        
+
         name_=obj_.name
         pi=math.pi
-        
+
         eul_ang_=obj_.rotation_euler
-        ex_=eul_ang_.x 
+        ex_=eul_ang_.x
         ey_=eul_ang_.y
         ez_=eul_ang_.z
-        
+
 
         Rx_ = np.matrix([[1, 0, 0],[0, math.cos(ex_), -math.sin(ex_)],[0, math.sin(ex_), math.cos(ex_)]])
         Ry_ = np.matrix([[math.cos(ey_), 0, math.sin(ey_)],[0, 1, 0],[-math.sin(ey_), 0, math.cos(ey_)]])
         Rz_ = np.matrix([[math.cos(ez_), -math.sin(ez_), 0],[math.sin(ez_), math.cos(ez_), 0],[0, 0, 1]])
-        
-        
+
+
         # here euler angles are applyied in zyx order
         Rzy_=np.dot(Rz_,Ry_)
         R_=np.dot(Rzy_,Rx_)
@@ -150,20 +150,18 @@ for obj_ in bpy.data.objects:
                 R_.item(3), R_.item(4), R_.item(5),
                 R_.item(6), R_.item(7), R_.item(8),
                 l_[0], l_[1], l_[2] ]
-            
-    
+
+
         lens_=obj_.data.lens*0.001 #millimiters to meters
         data_['cameras'][name_]={}
         data_['cameras'][name_]['aspect']=1.3333333333
         data_['cameras'][name_]['width']=0.024
-        data_['cameras'][name_]['resolution']=720
+        data_['cameras'][name_]['resolution']=640
         data_['cameras'][name_]['frame']=frame_
         data_['cameras'][name_]['lens']=lens_
-        
-    
-        
+
+
+
 
 with open(cwd+"/../../prova_dr/dataset/"+scene_name+"/"+scene_name+".json", 'w') as outfile_:
     json.dump(data_, outfile_)
-    
-

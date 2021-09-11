@@ -33,12 +33,14 @@ int main (int argc, char * argv[]) {
   Environment_gpu* environment = new Environment_gpu(); // environment generator object (pointer)
   Dtam* dtam = new Dtam(environment); // dense mapper and tracker
 
+  std::string dataset_name = "bunny_scene"; // dataset name
+
   // std::string dataset_name = "rotatedcube_9cams_64res"; // dataset name
 
   // std::string dataset_name = "rotatedcube_2cams"; // dataset name
   // std::string dataset_name = "rotatedcube_9cams"; // dataset name
   // std::string dataset_name = "rotatedcube_17cams"; // dataset name
-  std::string dataset_name = "rotatedcube_25cams"; // dataset name
+  // std::string dataset_name = "rotatedcube_25cams"; // dataset name
   // std::string dataset_name = "sin_9cams"; // dataset name
   // std::string dataset_name = "sin_9cams_64res"; // dataset name
 
