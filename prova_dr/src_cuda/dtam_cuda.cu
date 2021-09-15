@@ -24,13 +24,7 @@ bool Dtam::setReferenceCamera(int index_r){
 
   index_r_ = index_r;
 
-  int cols = camera_vector_cpu_[index_r_]->depth_map_->image_.cols;
-  int rows = camera_vector_cpu_[index_r_]->depth_map_->image_.rows;
-
-  cost_volume_.create(rows,cols*NUM_INTERPOLATIONS,CV_32SC2);
-  // int2 init_val;
-  // init_val
-  cost_volume_.setTo(cv::Scalar(INT_MAX,0));
+  Dtam::Initialize();
 
   return true;
 
@@ -70,6 +64,86 @@ __global__ void ComputeDivergenceSobelImage_kernel(cv::cuda::PtrStepSz<float> im
     float value_h = -image_in(row-1,col-1)-2*image_in(row-1,col)-image_in(row-1,col+1)+image_in(row+1,col-1)+2*image_in(row+1,col)+image_in(row+1,col+1);
     float value_v = -image_in(row-1,col+cols-1)-2*image_in(row,col+cols-1)-image_in(row+1,col+cols-1)+image_in(row-1,col+cols+1)+2*image_in(row,col+cols+1)+image_in(row+1,col+cols+1);
     image_out(row,col)=value_h+value_v;
+  }
+  else{
+    image_out(row,col)=0;
+  }
+
+}
+
+
+__global__ void ComputeWeightedGradientSobelImage_kernel(cv::cuda::PtrStepSz<float> image_in, cv::cuda::PtrStepSz<float> image_out, cv::cuda::PtrStepSz<float> weight_matrix){
+  int row = blockIdx.x * blockDim.x + threadIdx.x;
+  int col = blockIdx.y * blockDim.y + threadIdx.y;
+
+  int rows = blockDim.x*gridDim.x;
+  int cols = blockDim.y*gridDim.y;
+
+
+  if ( row >0 && col>0 && row<rows-1 && col<cols-1){
+
+    float weight=weight_matrix(row,col);
+
+    image_out(row,col)= weight*(-image_in(row-1,col-1)-2*image_in(row-1,col)-image_in(row-1,col+1)+image_in(row+1,col-1)+2*image_in(row+1,col)+image_in(row+1,col+1));
+    image_out(row,col+cols)=weight*(-image_in(row-1,col-1)-2*image_in(row,col-1)-image_in(row+1,col-1)+image_in(row-1,col+1)+2*image_in(row,col+1)+image_in(row+1,col+1));
+  }
+  else
+  {
+    image_out(row,col)= 0;
+    image_out(row,col+cols)=0;
+
+  }
+
+}
+
+__global__ void ComputeWeights_kernel(Camera_gpu* camera_r, cv::cuda::PtrStepSz<float> weight_matrix, float alpha, float beta){
+
+  int row = blockIdx.x * blockDim.x + threadIdx.x;
+  int col = blockIdx.y * blockDim.y + threadIdx.y;
+
+  int rows = blockDim.x*gridDim.x;
+  int cols = blockDim.y*gridDim.y;
+
+  auto rgb_image= camera_r->image_rgb_;
+
+  float grad_rgbr_x=-rgb_image(row-1,col-1).x-2*rgb_image(row-1,col).x-rgb_image(row-1,col+1).x+rgb_image(row+1,col-1).x+2*rgb_image(row+1,col).x+rgb_image(row+1,col+1).x;
+  float grad_rgbg_x=-rgb_image(row-1,col-1).y-2*rgb_image(row-1,col).y-rgb_image(row-1,col+1).y+rgb_image(row+1,col-1).y+2*rgb_image(row+1,col).y+rgb_image(row+1,col+1).y;
+  float grad_rgbb_x=-rgb_image(row-1,col-1).z-2*rgb_image(row-1,col).z-rgb_image(row-1,col+1).z+rgb_image(row+1,col-1).z+2*rgb_image(row+1,col).z+rgb_image(row+1,col+1).z;
+
+  float grad_rgbr_y=-rgb_image(row-1,col-1).x-2*rgb_image(row,col-1).x-rgb_image(row+1,col-1).x+rgb_image(row-1,col+1).x+2*rgb_image(row,col+1).x+rgb_image(row+1,col+1).x;
+  float grad_rgbg_y=-rgb_image(row-1,col-1).y-2*rgb_image(row,col-1).y-rgb_image(row+1,col-1).y+rgb_image(row-1,col+1).y+2*rgb_image(row,col+1).y+rgb_image(row+1,col+1).y;
+  float grad_rgbb_y=-rgb_image(row-1,col-1).z-2*rgb_image(row,col-1).z-rgb_image(row+1,col-1).z+rgb_image(row-1,col+1).z+2*rgb_image(row,col+1).z+rgb_image(row+1,col+1).z;
+
+  // float grad_rgbb_norm=abs(grad_rgbr_x)+abs(grad_rgbg_x)+abs(grad_rgbb_x)+abs(grad_rgbr_y)+abs(grad_rgbg_y)+abs(grad_rgbb_y);
+  float grad_rgbb_norm=grad_rgbr_x*grad_rgbr_x+grad_rgbg_x*grad_rgbg_x+grad_rgbb_x*grad_rgbb_x+grad_rgbr_y*grad_rgbr_y+grad_rgbg_y*grad_rgbg_y+grad_rgbb_y*grad_rgbb_y;
+
+  float weight=exp(-alpha*pow( grad_rgbb_norm, 1.2));
+  // float weight=exp(-alpha* grad_rgbb_norm);
+  // float weight=1;
+
+  weight_matrix(row,col)=weight;
+  // printf("%f\n", weight );
+
+}
+
+
+__global__ void ComputeWeightedDivergenceSobelImage_kernel(cv::cuda::PtrStepSz<float> image_in, cv::cuda::PtrStepSz<float> image_out, cv::cuda::PtrStepSz<float> weight_matrix){
+  int row = blockIdx.x * blockDim.x + threadIdx.x;
+  int col = blockIdx.y * blockDim.y + threadIdx.y;
+  int filter_idx = blockIdx.z * blockDim.z + threadIdx.z;
+
+  int rows = blockDim.x*gridDim.x;
+  int cols = blockDim.y*gridDim.y;
+
+  if (row >0 && col>0 && row<rows-1 && col<cols-1){
+
+    float weight=weight_matrix(row,col);
+
+    // printf("%f\n",weight);
+
+    float value_h = (-image_in(row-1,col-1)-2*image_in(row-1,col)-image_in(row-1,col+1)+image_in(row+1,col-1)+2*image_in(row+1,col)+image_in(row+1,col+1));
+    float value_v = (-image_in(row-1,col+cols-1)-2*image_in(row,col+cols-1)-image_in(row+1,col+cols-1)+image_in(row-1,col+cols+1)+2*image_in(row,col+cols+1)+image_in(row+1,col+cols+1));
+    image_out(row,col)=weight*(value_h+value_v);
   }
   else{
     image_out(row,col)=0;
@@ -212,16 +286,19 @@ __global__ void UpdateCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camera
 
     // int cost_current=((clr_r.x-clr_current.x)*(clr_r.x-clr_current.x)+(clr_r.y-clr_current.y)*(clr_r.y-clr_current.y)+(clr_r.z-clr_current.z)*(clr_r.z-clr_current.z));
     int cost_current=(abs(clr_r.x-clr_current.x)+abs(clr_r.y-clr_current.y)+abs(clr_r.z-clr_current.z));
-    cost_current=min(cost_current, 50);
 
-    int2 cost_volume_val = cost_volume(row,col_);
+    // if (cost_current<100)
+    // {
+        cost_current=min(cost_current, 50);
 
-    cost_volume_val.x = (cost_volume_val.x*cost_volume_val.y+cost_current)/(cost_volume_val.y+1);
+        int2 cost_volume_val = cost_volume(row,col_);
 
-    cost_volume_val.y++;
+        cost_volume_val.x = (cost_volume_val.x*cost_volume_val.y+cost_current)/(cost_volume_val.y+1);
 
-    cost_volume(row,col_) = cost_volume_val;
+        cost_volume_val.y++;
 
+        cost_volume(row,col_) = cost_volume_val;
+    // }
     // if(cost_volume(row,col_).x>255)
     // printf("%i\n", cost_volume(row,col_) );
 
@@ -305,11 +382,17 @@ __global__ void StudyCostVolumeMin_kernel(Camera_gpu* camera_r, Camera_gpu* came
 
     float depth_r = depth_r_array[i];
 
-    float depth_m = depth_r*r(2,2)-t(2)-((depth_r*r(2,0)*(2*uv_r.x()-w))/(2*f))-((depth_r*r(2,1)*(-2*uv_r.y()+h))/(2*f));
-    // float ratio_invdepth_m = ((1.0/depth_m)-(1.0/depth1_m_fixed))/((1.0/depth2_m_fixed)-(1.0/depth1_m_fixed));
-    float ratio_invdepth_m = ((1.0/depth_m)-(1.0/depth1_m_fixed))/((1.0/depth2_m_fixed)-(1.0/depth1_m_fixed));
+    // Eigen::Vector3f p;
+    // float depth_m;
+    // camera_r->pointAtDepth(uv_r, depth_r, p);
+    // Eigen::Vector2f uv_current;
+    // bool query_in_front = camera_m->projectPoint(p, uv_current, depth_m);
 
-    printf("%f\n", depth_m );
+    float depth_m = depth_r*r(2,2)-t(2)-((depth_r*r(2,0)*(2*uv_r.x()-w))/(2*f))-((depth_r*r(2,1)*(-2*uv_r.y()+h))/(2*f));
+    float ratio_invdepth_m = ((1.0/depth_m)-(1.0/depth1_m_fixed))/((1.0/depth2_m_fixed)-(1.0/depth1_m_fixed));
+    // float ratio_invdepth_m = ((1.0/depth_m)-(1.0/depth1_m_fixed))/((1.0/depth2_m_fixed)-(1.0/depth1_m_fixed));
+
+    // printf("%f\n", depth_m );
 
     Eigen::Vector2f uv_current;
     uv_current.x()=uv1_fixed.x()+ratio_invdepth_m*(uv2_fixed.x()-uv1_fixed.x()) ;
@@ -361,7 +444,6 @@ __global__ void StudyCostVolumeMin_kernel(Camera_gpu* camera_r, Camera_gpu* came
     // iteration each cycle
     if (i % (2 * s) == 0) {
       int min_cost = min(cost_array[i + s], cost_array[i]);
-      printf("min between %i and %i is %i\n", cost_array[i + s], cost_array[i], min_cost);
 
       if (cost_array[i] > min_cost){
         indx_array[i] = indx_array[i+s];
@@ -370,7 +452,8 @@ __global__ void StudyCostVolumeMin_kernel(Camera_gpu* camera_r, Camera_gpu* came
     }
     __syncthreads();
   }
-  printf("cost current at i=%i is: %i\n",i, cost_current);
+  __syncthreads();
+  // printf("cost current at i=%i is: %i\n",i, cost_current);
 
   if (i == indx_array[0]) {
   // if (i == 40) {
@@ -432,6 +515,7 @@ __global__ void ComputeCostVolumeMin_kernel( Camera_gpu* camera_r, cv::cuda::Ptr
     camera_r->depth_map_(row,col)=val;
     if (indx_array[threadIdx.x][threadIdx.y][0]==0)
       camera_r->depth_map_(row,col)=1.0;
+
 	}
 
 }
@@ -453,24 +537,32 @@ __global__ void Image2Vector_kernel(cv::cuda::PtrStepSz<float> image, float* vec
 void Dtam::Initialize(){
 
   n_ = 0;
-  theta_=1;
+  theta_=100;
   theta_end_=0.001;
   eps_=0.0001;
-  beta1_=0.001;
+  alpha_=0.000001;
+  beta1_=0.002;
   // beta1_=0.0001;
   // beta2_=0.05;
   // lambda_=1.0/(1.0+0.5*depth1_r);
-  lambda_=0.005;
+  lambda_=0.001;
   // lambda_=0;
-  sigma_q0_=0.05;
-  sigma_d0_=1.5;
+  sigma_q0_=0.0000001;
+  sigma_d0_=10000;
   sigma_q_=sigma_q0_;
   sigma_d_=sigma_d0_;
-  r_=0.9;
-  d = camera_vector_cpu_[index_r_]->depth_map_gpu_.clone();
-  a = camera_vector_cpu_[index_r_]->depth_map_gpu_.clone();
-  q.create(d.rows,d.cols*2,CV_32FC1);
-  initialization_=false;
+  r_=0.8;
+  // r_=1;
+
+  int cols = camera_vector_cpu_[index_r_]->depth_map_->image_.cols;
+  int rows = camera_vector_cpu_[index_r_]->depth_map_->image_.rows;
+
+
+  cost_volume_.create(rows,cols*NUM_INTERPOLATIONS,CV_32SC2);
+  cost_volume_.setTo(cv::Scalar(INT_MAX,0));
+
+  weight_matrix_.create(rows,cols,CV_32FC1);
+
 
 }
 
@@ -499,8 +591,12 @@ void Dtam::StudyCostVolumeMin(int index_m, cameraDataForDtam* camera_data_for_dt
   StudyCostVolumeMin_kernel<<<numBlocks,threadsPerBlock>>>(camera_r_gpu, camera_vector_gpu_[index_m], cost_volume_, camera_data_for_dtam, depth_r_array_,row,col);
   printCudaError("Kernel studying cost volume");
 
-  camera_vector_cpu_[index_m]->image_rgb_gpu_.download(camera_vector_cpu_[index_m]->image_rgb_->image_);
-  camera_vector_cpu_[index_m]->image_rgb_->show(1500/camera_vector_cpu_[index_m]->resolution_);
+  Image< cv::Vec3b >* study_baseline = new Image< cv::Vec3b >("Study baseline");
+
+  camera_vector_cpu_[index_m]->image_rgb_gpu_.download(study_baseline->image_);
+  study_baseline->show(1500/camera_vector_cpu_[index_m]->resolution_);
+
+  delete study_baseline;
 
   camera_vector_cpu_[index_r_]->image_rgb_gpu_.download(camera_vector_cpu_[index_r_]->image_rgb_->image_);
   camera_vector_cpu_[index_r_]->image_rgb_->show(1500/camera_vector_cpu_[index_r_]->resolution_);
@@ -547,7 +643,34 @@ void Dtam::ComputeDivergenceSobelImage(cv::cuda::GpuMat* image_in, cv::cuda::Gpu
   dim3 numBlocks( rows/32, cols/32 , 1);
   ComputeDivergenceSobelImage_kernel<<<numBlocks,threadsPerBlock>>>(*image_in, *image_out);
   printCudaError("Kernel computing gradient");
+}
 
+
+void Dtam::ComputeWeightedGradientSobelImage(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* image_out){
+
+  int cols = image_in->cols;
+  int rows = image_in->rows;
+
+  image_out->create(rows,cols*2,CV_32FC1);
+
+  dim3 threadsPerBlock( 32 , 32 , 1);
+  dim3 numBlocks( rows/32, cols/32 , 1);
+  ComputeWeightedGradientSobelImage_kernel<<<numBlocks,threadsPerBlock>>>(*image_in, *image_out, weight_matrix_);
+  printCudaError("Kernel computing gradient");
+}
+
+
+void Dtam::ComputeWeightedDivergenceSobelImage(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* image_out){
+
+  int cols = image_in->cols/2;
+  int rows = image_in->rows;
+
+  image_out->create(rows,cols,CV_32FC1);
+
+  dim3 threadsPerBlock( 32 , 32 , 1);
+  dim3 numBlocks( rows/32, cols/32 , 1);
+  ComputeWeightedDivergenceSobelImage_kernel<<<numBlocks,threadsPerBlock>>>(*image_in, *image_out, weight_matrix_);
+  printCudaError("Kernel computing gradient");
 }
 
 __global__ void gradDesc_Q_toNormalize_kernel(cv::cuda::PtrStepSz<float> q, cv::cuda::PtrStepSz<float> gradient_d, float eps, float sigma_q, float* vector_to_normalize){
@@ -926,11 +1049,20 @@ void Dtam::search_A(cv::cuda::GpuMat* d, cv::cuda::GpuMat* a ){
 
 }
 
-void Dtam::Regularize(cv::cuda::PtrStepSz<int2> cost_volume, float* depth_r_array){
+void Dtam::ComputeWeights(){
 
-  if(initialization_){
-    Dtam::Initialize();
-  }
+  Camera_cpu* camera_r_cpu = camera_vector_cpu_[index_r_];
+  Camera_gpu* camera_r_gpu = camera_vector_gpu_[index_r_];
+  int cols = camera_r_cpu->depth_map_->image_.cols;
+  int rows = camera_r_cpu->depth_map_->image_.rows;
+  dim3 threadsPerBlock( 4 , 4 , NUM_INTERPOLATIONS);
+  dim3 numBlocks( rows/4, cols/4 , 1);
+  ComputeWeights_kernel<<<numBlocks,threadsPerBlock>>>( camera_r_gpu, weight_matrix_, alpha_, beta1_);
+  printCudaError("Kernel computing cost volume min");
+
+}
+
+void Dtam::Regularize(cv::cuda::PtrStepSz<int2> cost_volume, float* depth_r_array){
 
   cv::cuda::GpuMat* gradient_d = new cv::cuda::GpuMat;
   cv::cuda::GpuMat* gradient_q = new cv::cuda::GpuMat;
@@ -956,19 +1088,24 @@ void Dtam::Regularize(cv::cuda::PtrStepSz<int2> cost_volume, float* depth_r_arra
   // std::cout << "\nd norm 0 is: " << *norm_d0 << std::endl;
 
 
-  Dtam::ComputeGradientSobelImage( &d, gradient_d ); // compute gradient of d (n)
+  // Dtam::ComputeGradientSobelImage( &d, gradient_d ); // compute gradient of d (n)
+  Dtam::ComputeWeightedGradientSobelImage( &d, gradient_d ); // compute gradient of d (n)
 
   Dtam::gradDesc_Q( &q, gradient_d);  // compute q (n+1)
 
-  Dtam::ComputeDivergenceSobelImage( &q, gradient_q ); // compute gradient of q (n+1)
+  // Dtam::ComputeDivergenceSobelImage( &q, gradient_q ); // compute gradient of q (n+1)
+  Dtam::ComputeWeightedDivergenceSobelImage( &q, gradient_q ); // compute gradient of q (n+1)
 
   Dtam::gradDesc_D( &d, &a, gradient_q );  // compute d (n+1)
-
 
 
   Dtam::search_A( &d, &a );  // compute a (n+1)
 
 
+  std::cout << "theta_: " << theta_ << std::endl;
+  std::cout << "sigma_q_: " << sigma_q_ << std::endl;
+  std::cout << "sigma_d_: " << sigma_d_ << std::endl;
+  std::cout << "n_: " << n_ << std::endl;
 
   // upgrade theta
   // std::cout << "theta: " << theta_ <<std::endl;
@@ -1101,28 +1238,43 @@ void Dtam::updateDepthMap_parallel_gpu(int index_m){
   // camera_vector_cpu_[index_m]->showWorldFrame({0,0,0}, 0.1, 100);
   // camera_vector_cpu_[index_m]->image_rgb_->show(800/camera_vector_cpu_[index_m]->resolution_);
 
-
   t_start=getTime();
   Dtam::UpdateCostVolume(index_m, camera_data_for_dtam_);
   t_end=getTime();
   std::cerr << "discrete cost volume computation took: " << (t_end-t_start) << " ms " << std::endl;
-  //
-  int col=0.5*camera_vector_cpu_[0]->resolution_;
-  int row=0.5*camera_vector_cpu_[0]->resolution_/camera_vector_cpu_[0]->aspect_;
-  Dtam::StudyCostVolumeMin(index_m, camera_data_for_dtam_, row, col);
-  //
-  // if(initialization_){
+
+  if(initialization_){
+
+
     t_start=getTime();
     Dtam::ComputeCostVolumeMin();
     t_end=getTime();
     std::cerr << "ComputeCostVolumeMin took: " << (t_end-t_start) << " ms " << std::endl;
+
+    // t_start=getTime();
+    // Dtam::ComputeWeights();
+    // t_end=getTime();
+    // std::cerr << "ComputeWeights took: " << (t_end-t_start) << " ms " << std::endl;
+
+    // d = camera_vector_cpu_[index_r_]->depth_map_gpu_.clone();
+    // a = camera_vector_cpu_[index_r_]->depth_map_gpu_.clone();
+    // q.create(d.rows,d.cols*2,CV_32FC1);
+
+    // if(n_>10)
+      // initialization_=false;
+  }
+
+  int col=0.2*camera_vector_cpu_[0]->resolution_;
+  int row=0.15*camera_vector_cpu_[0]->resolution_/camera_vector_cpu_[0]->aspect_;
+  Dtam::StudyCostVolumeMin(index_m, camera_data_for_dtam_, row, col);
+
+  // if(n_>10){
+    // t_start=getTime();
+    // Dtam::Regularize(cost_volume_, depth_r_array_);
+    // t_end=getTime();
+    // std::cerr << "Regularize took: " << (t_end-t_start) << " ms " << std::endl;
   // }
 
-
-  t_start=getTime();
-  Dtam::Regularize(cost_volume_, depth_r_array_);
-  t_end=getTime();
-  std::cerr << "Regularize took: " << (t_end-t_start) << " ms " << std::endl;
 
 
   t_end_tot=getTime();    // time end for computing computation time

@@ -88,7 +88,7 @@ int main (int argc, char * argv[]) {
     // show final depthmap
     camera_r->depth_map_gpu_.download(camera_r->depth_map_->image_);
     camera_r->depth_map_->show(800/camera_r->resolution_);
-    depth_map_gt->show(800/camera_r->resolution_);
+    // depth_map_gt->show(800/camera_r->resolution_);
     cv::waitKey(0);
 
   }

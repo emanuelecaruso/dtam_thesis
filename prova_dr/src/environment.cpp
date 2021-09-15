@@ -6,6 +6,20 @@
 #include <sys/stat.h>
 using json = nlohmann::json;
 
+void Environment::generateLine(int density){
+  for (int z=0; z<density; z++){
+    float z_ = -((float)z/(float)density)*19-1;
+
+    Cp cp;
+    cp.point=Eigen::Vector3f(0,0,z_);
+    cp.color[0]=0;
+    cp.color[1]=255;
+    cp.color[2]=0;
+    cp_vector_.push_back(cp);
+  }
+}
+
+
 void Environment::generateSinusoidalSurface(float picks_depth, int density){
 
   // generate a "super dense" cloud of points expressed in camera_r frame
@@ -269,9 +283,18 @@ bool Environment::loadEnvironment(std::string path_name, std::string dataset_nam
     Camera* camera = new Camera(name,lens_,aspect_,film_,resolution_,max_depth_,frame_camera_wrt_world,frame_world_wrt_camera);
 
     camera->loadRGB(path_rgb);
-    camera->loadDepthMap(path_name+"/depth_"+name+".png");
 
-    camera_vector_.push_back(camera);
+    struct stat info__;
+    std::string path_depth_=(path_name+"/depth_"+name+".png");
+    const char* path_depth = path_depth_.c_str(); // dataset name
+    if( stat( path_depth, &info__ ) != 0 ){
+      camera_vector_.push_back(camera);
+    }
+    else{
+      camera->loadDepthMap(path_depth_);
+      camera_vector_.push_back(camera);
+    }
+
 
 
   }
