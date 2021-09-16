@@ -3,8 +3,9 @@
 Application of the paper
 
 Dense Tracking and Mapping in Real-Time
-    Richard A. Newcombe, Steven J. Lovegrove and Andrew J. Davison
-    Department of Computing, Imperial College London, UK
+
+Richard A. Newcombe, Steven J. Lovegrove and Andrew J. Davison
+Department of Computing, Imperial College London, UK
 
 
 ## INSTALL
