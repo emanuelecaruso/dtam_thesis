@@ -1,6 +1,4 @@
-################################################
-#########  DENSE TRACKING AND MAPPING  #########
-################################################
+###### DENSE TRACKING AND MAPPING
 
 Application of the paper
 
@@ -9,30 +7,29 @@ Dense Tracking and Mapping in Real-Time
     Department of Computing, Imperial College London, UK
 
 
-###################################
-########     INSTALL     ##########
-###################################
+## INSTALL
 
-### Dependencies (Ubuntu 18.04 LTS)
+
+## Dependencies (Ubuntu 18.04 LTS)
 The following packages are required
 
-#CMake 3.15:
+# CMake 3.15:
 
     install CMake 3.15
 
         https://cmake.org/files/v3.15/
 
-#Eigen3 stable version 3.3.9:
+# Eigen3 stable version 3.3.9:
 
     download stable version 3.3.9 and install it with cmake
 
         http://eigen.tuxfamily.org
 
-#CUDA toolkit version 9.1
+# CUDA toolkit version 9.1
 
     sudo apt install nvidia-cuda-toolkit=9.1.85-3ubuntu1
 
-#OpenCV version 4.2 (with CUDA):
+# OpenCV version 4.2 (with CUDA):
 
     be sure that CUDA toolkit is already installed (previous step)
 
@@ -50,32 +47,31 @@ The following packages are required
 
         https://gist.github.com/raulqf/f42c718a658cddc16f9df07ecc627be7
 
-#(Optional) Blender 3.90
+# (Optional) Blender 3.90
 
     for generating new datasets, download and install Blender 3.90
 
         https://download.blender.org/release/
 
-###################################
-######     COMPILATION     ########
-###################################
+
+## COMPILATION
 
 just run build_dtam.sh script inside directory: "scripts"
 
 to change number of threads involved during the compilation, edit build_dtam.sh
 by default 8 threads are used: make -j8
 
-###################################
-#######     EXECUTION     #########
-###################################
+
+## EXECUTION
+
 
 just run run_dtam.sh script inside directory: "scripts"
 
 to run different datasets, edit run_dtam.sh by changing "dataset_name" variable
 
-###################################
-####     GENERATE DATASET    ######
-###################################
+
+## GENERATE DATASET
+
 
 To generate new Datasets, just a blender scene saved as .blend file is needed inside "blender_scenes" directory
 
