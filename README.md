@@ -8,11 +8,10 @@ Richard A. Newcombe, Steven J. Lovegrove and Andrew J. Davison
 Department of Computing, Imperial College London, UK
 
 
-## INSTALL
+## INSTALL  (Ubuntu 18.04 LTS)
 
 
-###### Dependencies (Ubuntu 18.04 LTS)
-The following packages are required
+The following packages are required for the installation
 
 ###### CMake 3.15:
 
