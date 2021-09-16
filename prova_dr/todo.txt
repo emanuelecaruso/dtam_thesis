@@ -5,19 +5,20 @@
 -- depth->invdepth sampling		XXXX
 -- improve sobel filter 		XXXX
 -- pathtrace->dataset XXXX
+-- show world frame XXXX
 
 -- show invdepth
--- show world frame
 
--- depth->invdepth
+-- depth->invdepth  ???
 
 -- dataset as argument
+
 -- plot costs for pixel in graph
 
 
 
 -- padding				maybe not
--- add rotation for dataset maker	maybe not
+-- add rotation for naive dataset maker	maybe not
 
 
 -- initialization

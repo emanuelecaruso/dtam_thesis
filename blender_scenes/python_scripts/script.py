@@ -13,21 +13,8 @@ render=scene.render
 
 cwd = os.getcwd()
 
-scene_path_dtam=cwd+"/../../prova_dr/dataset/"+scene_name+"/"
+scene_path_dtam=cwd+"/../prova_dr/dataset/"+scene_name+"/"
 shutil.rmtree(scene_path_dtam, ignore_errors=True)
-
-
-#############################################################################
-#		generate json for path tracer
-#############################################################################
-
-data = {}
-data['asset']={}
-data['asset']['generator']="Yocto/GL - https://github.com/xelatihy/yocto-gl"
-data['cameras']={}
-data['materials']={}
-data['objects']={}
-
 
 
 #############################################################################
@@ -136,7 +123,7 @@ for obj_ in bpy.data.objects:
         data_['cameras'][name_]['lens']=lens
 
 
-        with open(cwd+"/../../prova_dr/dataset/"+scene_name+"/"+scene_name+".json", 'w') as outfile_:
+        with open(scene_path_dtam+scene_name+".json", 'w') as outfile_:
             json.dump(data_, outfile_)
 
         i=i+1

@@ -24,7 +24,7 @@ class Camera_cpu : public Camera{
     Camera_gpu* getCamera_gpu();
     void computeDataForDtam(int index_r);
     void cloneCameraImages(Camera* camera);
-
+    void showInvdepthmap(int scale);
     // inline Camera_cpu* clone(){
     //   return new Camera_cpu(*this);
     // }
