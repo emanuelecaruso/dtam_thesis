@@ -26,4 +26,4 @@
 -- reference camera update system
 
 token:
-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
+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
