@@ -1,4 +1,4 @@
-###### DENSE TRACKING AND MAPPING
+# DENSE TRACKING AND MAPPING
 
 Application of the paper
 
@@ -13,23 +13,23 @@ Dense Tracking and Mapping in Real-Time
 ## Dependencies (Ubuntu 18.04 LTS)
 The following packages are required
 
-# CMake 3.15:
+###### CMake 3.15:
 
     install CMake 3.15
 
         https://cmake.org/files/v3.15/
 
-# Eigen3 stable version 3.3.9:
+###### Eigen3 stable version 3.3.9:
 
     download stable version 3.3.9 and install it with cmake
 
         http://eigen.tuxfamily.org
 
-# CUDA toolkit version 9.1
+###### CUDA toolkit version 9.1
 
     sudo apt install nvidia-cuda-toolkit=9.1.85-3ubuntu1
 
-# OpenCV version 4.2 (with CUDA):
+###### OpenCV version 4.2 (with CUDA):
 
     be sure that CUDA toolkit is already installed (previous step)
 
@@ -47,7 +47,7 @@ The following packages are required
 
         https://gist.github.com/raulqf/f42c718a658cddc16f9df07ecc627be7
 
-# (Optional) Blender 3.90
+###### (Optional) Blender 3.90
 
     for generating new datasets, download and install Blender 3.90
 
