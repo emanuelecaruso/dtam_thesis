@@ -114,7 +114,10 @@ __global__ void ComputeWeights_kernel(Camera_gpu* camera_r, cv::cuda::PtrStepSz<
   float grad_rgbg_y=-rgb_image(row-1,col-1).y-2*rgb_image(row,col-1).y-rgb_image(row+1,col-1).y+rgb_image(row-1,col+1).y+2*rgb_image(row,col+1).y+rgb_image(row+1,col+1).y;
   float grad_rgbb_y=-rgb_image(row-1,col-1).z-2*rgb_image(row,col-1).z-rgb_image(row+1,col-1).z+rgb_image(row-1,col+1).z+2*rgb_image(row,col+1).z+rgb_image(row+1,col+1).z;
 
+  // // L1 norm
   // float grad_rgbb_norm=abs(grad_rgbr_x)+abs(grad_rgbg_x)+abs(grad_rgbb_x)+abs(grad_rgbr_y)+abs(grad_rgbg_y)+abs(grad_rgbb_y);
+
+  // L2 norm
   float grad_rgbb_norm=grad_rgbr_x*grad_rgbr_x+grad_rgbg_x*grad_rgbg_x+grad_rgbb_x*grad_rgbb_x+grad_rgbr_y*grad_rgbr_y+grad_rgbg_y*grad_rgbg_y+grad_rgbb_y*grad_rgbb_y;
 
   float weight=exp(-alpha*pow( grad_rgbb_norm, 1.2));
@@ -138,8 +141,6 @@ __global__ void ComputeWeightedDivergenceSobelImage_kernel(cv::cuda::PtrStepSz<f
   if (row >0 && col>0 && row<rows-1 && col<cols-1){
 
     float weight=weight_matrix(row,col);
-
-    // printf("%f\n",weight);
 
     float value_h = (-image_in(row-1,col-1)-2*image_in(row-1,col)-image_in(row-1,col+1)+image_in(row+1,col-1)+2*image_in(row+1,col)+image_in(row+1,col+1));
     float value_v = (-image_in(row-1,col+cols-1)-2*image_in(row,col+cols-1)-image_in(row+1,col+cols-1)+image_in(row-1,col+cols+1)+2*image_in(row,col+cols+1)+image_in(row+1,col+cols+1));
@@ -299,44 +300,8 @@ __global__ void UpdateCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camera
 
         cost_volume(row,col_) = cost_volume_val;
     // }
-    // if(cost_volume(row,col_).x>255)
-    // printf("%i\n", cost_volume(row,col_) );
-
-    // if (cost_current>0.01)
-    // printf("row %i col %i i %i\n",row, col, i );
-
 
   }
-
-  // __shared__ int cost_array[4][4][NUM_INTERPOLATIONS];
-  // __shared__ int indx_array[4][4][NUM_INTERPOLATIONS];
-  //
-  // cost_array[threadIdx.x][threadIdx.y][i]=cost_volume(row,col_).x;
-  // indx_array[threadIdx.x][threadIdx.y][i]=i;
-
-  // __syncthreads();
-  //
-  // // -----------------------------------
-  // // REDUCTION
-  // // Iterate of log base 2 the block dimension
-	// for (int s = 1; s < NUM_INTERPOLATIONS; s *= 2) {
-	// 	// Reduce the threads performing work by half previous the previous
-	// 	// iteration each cycle
-	// 	if (i % (2 * s) == 0) {
-  //     int min_cost = min(cost_array[threadIdx.x][threadIdx.y][i + s], cost_array[threadIdx.x][threadIdx.y][i]);
-  //     if (cost_array[threadIdx.x][threadIdx.y][i] > min_cost ){
-  //       indx_array[threadIdx.x][threadIdx.y][i] = indx_array[threadIdx.x][threadIdx.y][i+s];
-  //       cost_array[threadIdx.x][threadIdx.y][i] = min_cost ;
-  //     }
-	// 	}
-	// 	__syncthreads();
-	// }
-  // if (i == 0) {
-  //   camera_r->depth_map_(row,col)=depth_r_array[indx_array[threadIdx.x][threadIdx.y][0]]/camera_r->max_depth_;
-  //   if (indx_array[threadIdx.x][threadIdx.y][0]==0)
-  //     camera_r->depth_map_(row,col)=1;
-	// }
-  // // -----------------------------------
 
 }
 

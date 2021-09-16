@@ -15,17 +15,13 @@ using namespace pr;
 
 int main (int argc, char * argv[]) {
 
-  //############################################################################
-  // choose parameters
-  //############################################################################
-
-  // int resolution = 64;
-  // float aspect = 1.333333333;
-  // float aspect = 1;
 
   //############################################################################
   // initialization
   //############################################################################
+  std::string dataset_name = argv[1]; // dataset name
+
+  std::cout << "dataset name: " << dataset_name << std::endl;
 
   double t_start=getTime();  // time start for computing computation time
   double t_end=getTime();    // time end for computing computation time
@@ -33,7 +29,6 @@ int main (int argc, char * argv[]) {
   Environment_gpu* environment = new Environment_gpu(); // environment generator object (pointer)
   Dtam* dtam = new Dtam(environment); // dense mapper and tracker
 
-  std::string dataset_name = "bunny_scene"; // dataset name
 
   // std::string dataset_name = "rotatedcube_9cams_64res"; // dataset name
 
@@ -86,9 +81,10 @@ int main (int argc, char * argv[]) {
     // --------------------------------------
 
     // show final depthmap
-    camera_r->depth_map_gpu_.download(camera_r->depth_map_->image_);
-    camera_r->depth_map_->show(800/camera_r->resolution_);
+    // camera_r->depth_map_gpu_.download(camera_r->depth_map_->image_);
+    // camera_r->depth_map_->show(800/camera_r->resolution_);
     // depth_map_gt->show(800/camera_r->resolution_);
+    camera_r->showInvdepthmap(800);
     cv::waitKey(0);
 
   }

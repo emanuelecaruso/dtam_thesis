@@ -48,8 +48,8 @@ void Camera_cpu::cloneCameraImages(Camera* camera){
 }
 
 void Camera_cpu::showInvdepthmap(int scale){
-  Image< float >* invdepthmap = new Image< float >;
-  camera_r->depth_map_gpu_.download(invdepthmap->image_);
-  invdepthmap->image_=1.0/(2.0*(invdepthmap->image_));
+  Image<float>* invdepthmap=new Image< float >("depth_"+name_);
+  depth_map_gpu_.download(invdepthmap->image_);
+  invdepthmap->image_=1.0/(2*max_depth_*(invdepthmap->image_));
   invdepthmap->show(scale/resolution_);
 }

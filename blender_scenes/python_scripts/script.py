@@ -14,7 +14,30 @@ render=scene.render
 cwd = os.getcwd()
 
 scene_path_dtam=cwd+"/../prova_dr/dataset/"+scene_name+"/"
-shutil.rmtree(scene_path_dtam, ignore_errors=True)
+json_path=scene_path_dtam+scene_name+".json"
+
+rem = False
+con = False
+
+if os.path.isdir(scene_path_dtam):
+    print("directory "+scene_path_dtam+" already exists")
+    while(True):
+        print("Enter:")
+        print("r to remove existing dataset")
+        print("c to continue the existing dataset")
+        print("q to quit")
+        input1 = input()
+        if (input1=="r"):
+            rem=True
+            break
+        elif (input1=="c"):
+            con=True
+            break
+        elif (input1=="q"):
+            sys.exit()
+
+if(rem):
+    shutil.rmtree(scene_path_dtam, ignore_errors=True)
 
 
 #############################################################################
@@ -37,7 +60,11 @@ links = tree.links
 
 
 data_ = {}
-data_['cameras']={}
+if( not con):
+    data_['cameras']={}
+else:
+    with open(json_path, "r+") as file:
+        data_ = json.load(file)
 
 argv = sys.argv
 
@@ -68,22 +95,28 @@ for obj_ in bpy.data.objects:
 
 
         name_=obj_.name
-        camera=bpy.data.cameras[name_]
+        name_rgb="rgb_"+name_+".png"
+        name_depth="depth_"+name_+".png"
 
+        path_rgb=scene_path_dtam+name_rgb
+        path_depth=scene_path_dtam+name_depth
+
+        camera=bpy.data.cameras[name_]
         scene.frame_current=i
 
         l1=links.new(rl.outputs['Image'], v.inputs[0])
-
-        render.engine=engine
-        render.filepath = os.path.join(scene_path_dtam, "rgb_"+name_+".png" )
-        bpy.ops.render.render(write_still = True)
+        if( (con and not os.path.isfile(path_rgb)) or not con ):
+            render.engine=engine
+            render.filepath = os.path.join(scene_path_dtam,name_rgb )
+            bpy.ops.render.render(write_still = True)
 
         links.remove(l1)
         l2=links.new(mp.outputs[0], v.inputs[0])
+        if( (con and not os.path.isfile(path_depth)) or not con ):
+            render.engine=engine_eevee
+            render.filepath = os.path.join(scene_path_dtam,name_depth )
+            bpy.ops.render.render(write_still = True)
 
-        render.engine=engine_eevee
-        render.filepath = os.path.join(scene_path_dtam, "depth_"+name_+".png" )
-        bpy.ops.render.render(write_still = True)
 
         pi=math.pi
 
@@ -123,7 +156,7 @@ for obj_ in bpy.data.objects:
         data_['cameras'][name_]['lens']=lens
 
 
-        with open(scene_path_dtam+scene_name+".json", 'w') as outfile_:
+        with open(json_path, 'w') as outfile_:
             json.dump(data_, outfile_)
 
         i=i+1
