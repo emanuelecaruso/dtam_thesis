@@ -10,7 +10,7 @@ Dense Tracking and Mapping in Real-Time
 ## INSTALL
 
 
-## Dependencies (Ubuntu 18.04 LTS)
+###### Dependencies (Ubuntu 18.04 LTS)
 The following packages are required
 
 ###### CMake 3.15:
