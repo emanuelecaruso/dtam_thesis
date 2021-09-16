@@ -19,6 +19,3 @@
 -- initialization
 -- tracking
 -- reference camera update system
-
-token:
-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
