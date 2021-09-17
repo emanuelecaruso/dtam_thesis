@@ -39,6 +39,8 @@ if os.path.isdir(scene_path_dtam):
 if(rem):
     shutil.rmtree(scene_path_dtam, ignore_errors=True)
 
+scene.display_settings.display_device = 'sRGB'
+
 
 #############################################################################
 #		generate json for dtam and render images
@@ -106,6 +108,7 @@ for obj_ in bpy.data.objects:
 
         l1=links.new(rl.outputs['Image'], v.inputs[0])
         if( (con and not os.path.isfile(path_rgb)) or not con ):
+            scene.view_settings.view_transform = 'Standard'
             render.engine=engine
             render.filepath = os.path.join(scene_path_dtam,name_rgb )
             bpy.ops.render.render(write_still = True)
@@ -113,6 +116,7 @@ for obj_ in bpy.data.objects:
         links.remove(l1)
         l2=links.new(mp.outputs[0], v.inputs[0])
         if( (con and not os.path.isfile(path_depth)) or not con ):
+            scene.view_settings.view_transform = 'Raw'
             render.engine=engine_eevee
             render.filepath = os.path.join(scene_path_dtam,name_depth )
             bpy.ops.render.render(write_still = True)

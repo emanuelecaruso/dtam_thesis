@@ -309,7 +309,7 @@ __global__ void UpdateCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camera
 
 __global__ void StudyCostVolumeMin_kernel(Camera_gpu* camera_r, Camera_gpu* camera_m,
               cv::cuda::PtrStepSz<int2> cost_volume, cameraDataForDtam* camera_data_for_dtam_, float* depth_r_array,
-              int row, int col){
+              int row, int col, cv::cuda::PtrStepSz<float> depth_groundtruth){
 
 
   int i = blockIdx.z * blockDim.z + threadIdx.z;
@@ -388,11 +388,6 @@ __global__ void StudyCostVolumeMin_kernel(Camera_gpu* camera_r, Camera_gpu* came
     camera_m->image_rgb_(pixel_current.y(),pixel_current.x())=magenta;
 
   }
-  if (i==0){
-    uchar3 red = make_uchar3(0,0,255);
-
-    // camera_r->image_rgb_(row,col)=red;
-  }
 
   __syncthreads();
 
@@ -428,6 +423,9 @@ __global__ void StudyCostVolumeMin_kernel(Camera_gpu* camera_r, Camera_gpu* came
     printf("camera_r->max_depth_: %f\n", camera_r->max_depth_);
     printf("depth1_m_fixed: %f\n", depth1_m_fixed);
     printf("depth2_m_fixed: %f\n", depth2_m_fixed);
+    printf("predicted depth: %f\n", depth_r_array[indx_array[0]]);
+    printf("grondtruth depth: %f\n", ((depth_groundtruth(row,col))));
+    printf("grondtruth val: %f\n", depth_groundtruth(row,col));
     printf("clr_r is: %i,%i,%i\n", clr_r.x ,clr_r.y ,clr_r.z);
     printf("clr_current is: %i,%i,%i\n", clr_current.x ,clr_current.y ,clr_current.z);
     printf("stop flag is: %i\n", stop);
@@ -522,6 +520,11 @@ void Dtam::Initialize(){
   int cols = camera_vector_cpu_[index_r_]->depth_map_->image_.cols;
   int rows = camera_vector_cpu_[index_r_]->depth_map_->image_.rows;
 
+  // depth_groundtruth_.create(rows,cols,CV_32FC1);
+  depth_groundtruth_ = camera_vector_cpu_[index_r_]->depth_map_gpu_.clone();
+  camera_vector_cpu_[index_r_]->depth_map_gpu_.setTo(1);
+  camera_vector_cpu_[index_r_]->depth_map_->setAllPixels(1);
+
 
   cost_volume_.create(rows,cols*NUM_INTERPOLATIONS,CV_32SC2);
   cost_volume_.setTo(cv::Scalar(INT_MAX,0));
@@ -553,18 +556,25 @@ void Dtam::StudyCostVolumeMin(int index_m, cameraDataForDtam* camera_data_for_dt
 
   dim3 threadsPerBlock( 1 , 1 , NUM_INTERPOLATIONS);
   dim3 numBlocks( 1, 1 , 1);
-  StudyCostVolumeMin_kernel<<<numBlocks,threadsPerBlock>>>(camera_r_gpu, camera_vector_gpu_[index_m], cost_volume_, camera_data_for_dtam, depth_r_array_,row,col);
+  StudyCostVolumeMin_kernel<<<numBlocks,threadsPerBlock>>>(camera_r_gpu, camera_vector_gpu_[index_m], cost_volume_, camera_data_for_dtam, depth_r_array_,row,col, depth_groundtruth_);
   printCudaError("Kernel studying cost volume");
 
   Image< cv::Vec3b >* study_baseline = new Image< cv::Vec3b >("Study baseline");
-
   camera_vector_cpu_[index_m]->image_rgb_gpu_.download(study_baseline->image_);
   study_baseline->show(1500/camera_vector_cpu_[index_m]->resolution_);
 
   delete study_baseline;
 
-  camera_vector_cpu_[index_r_]->image_rgb_gpu_.download(camera_vector_cpu_[index_r_]->image_rgb_->image_);
-  camera_vector_cpu_[index_r_]->image_rgb_->show(1500/camera_vector_cpu_[index_r_]->resolution_);
+  Image< cv::Vec3b >* study_ref = new Image< cv::Vec3b >("Study reference");
+  camera_vector_cpu_[index_r_]->image_rgb_gpu_.download(study_ref->image_);
+  Eigen::Vector2i pxl(col,row);
+  cv::Vec3b red(0,0,255);
+  study_ref->setPixel(pxl, red);
+  study_ref->show(1500/camera_vector_cpu_[index_r_]->resolution_);
+
+  Image< float >* invdepth_groundtruth = new Image< float >("invdepth groundtruth");
+  depth_groundtruth_.download(invdepth_groundtruth->image_);
+  invdepth_groundtruth->show(800/camera_vector_cpu_[index_m]->resolution_);
 
 }
 
@@ -1230,7 +1240,7 @@ void Dtam::updateDepthMap_parallel_gpu(int index_m){
   }
 
   int col=0.2*camera_vector_cpu_[0]->resolution_;
-  int row=0.15*camera_vector_cpu_[0]->resolution_/camera_vector_cpu_[0]->aspect_;
+  int row=0.95*camera_vector_cpu_[0]->resolution_/camera_vector_cpu_[0]->aspect_;
   Dtam::StudyCostVolumeMin(index_m, camera_data_for_dtam_, row, col);
 
   // if(n_>10){

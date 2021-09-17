@@ -28,7 +28,7 @@ __global__ void ComputeWeights_kernel(Camera_gpu* camera_r, cv::cuda::PtrStepSz<
 
 __global__ void StudyCostVolumeMin_kernel(Camera_gpu* camera_r, Camera_gpu* camera_m, cv::cuda::PtrStepSz<int2> cost_volume,
                                     cameraDataForDtam* camera_data_for_dtam_, float* depth_r_array,
-                                    int row, int col, int threshold );
+                                    int row, int col, int threshold, cv::cuda::PtrStepSz<float> depth_groundtruth_ );
 
 __global__ void ComputeCostVolumeMin_kernel( cv::cuda::PtrStepSz<int2> cost_volume, float* depth_r_array);
 
@@ -134,6 +134,7 @@ class Dtam{
     void updateDepthMap_parallel_gpu(int index_m);
 
   private:
+    cv::cuda::GpuMat depth_groundtruth_;
     int n_;
     float theta_;
     float theta_end_;

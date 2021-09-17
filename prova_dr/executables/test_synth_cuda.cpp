@@ -47,11 +47,11 @@ int main (int argc, char * argv[]) {
   Camera_cpu* camera_r = environment->camera_vector_cpu_[0];
   Image<float>* depth_map_gt = camera_r->depth_map_->clone("depth map gt");
 
-  // clear depth maps
-  for (Camera_cpu* camera : environment->camera_vector_cpu_){
-    camera->depth_map_->setAllPixels(1.0);
-    camera->depth_map_gpu_.setTo(cv::Scalar::all(1.0));
-  }
+  // // clear depth maps
+  // for (Camera_cpu* camera : environment->camera_vector_cpu_){
+  //   camera->depth_map_->setAllPixels(1.0);
+  //   camera->depth_map_gpu_.setTo(cv::Scalar::all(1.0));
+  // }
 
 
   //############################################################################
