@@ -22,7 +22,7 @@ struct cameraDataForDtam{
 __global__ void prepareCameraForDtam_kernel(Camera_gpu* camera_r, Camera_gpu* camera_m, cv::cuda::PtrStepSz<float3> query_proj_matrix);
 
 __global__ void UpdateCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camera_m, cv::cuda::PtrStepSz<int2> cost_volume,
-                                                cameraDataForDtam* camera_data_for_dtam_, float* depth_r_array, int threshold);
+                                                cameraDataForDtam* camera_data_for_dtam_, float* depth_r_array, int threshold, bool occl);
 
 __global__ void ComputeWeights_kernel(Camera_gpu* camera_r, cv::cuda::PtrStepSz<float> weight_matrix, float alpha, float beta);
 
@@ -80,7 +80,6 @@ class Dtam{
       float depth2_r=environment->max_depth_;
       float* depth_r_array_h = new float[NUM_INTERPOLATIONS];
 
-      initialization_=true;
       threshold_=50;
 
 
@@ -135,6 +134,7 @@ class Dtam{
 
   private:
     cv::cuda::GpuMat depth_groundtruth_;
+    int count_;
     int n_;
     float theta_;
     float theta_end_;
@@ -149,7 +149,6 @@ class Dtam{
     float sigma_q_;
     float sigma_d_;
     float r_;
-    bool initialization_;
     cv::cuda::GpuMat cost_volume_;
     cv::cuda::GpuMat weight_matrix_;
     cv::cuda::GpuMat query_proj_matrix_;
@@ -164,8 +163,9 @@ class Dtam{
     void UpdateCostVolume(int index_m, cameraDataForDtam* camera_data_for_dtam_ );
     void ComputeWeights();
     void ComputeCostVolumeMin();
-    void StudyCostVolumeMin(int index_m, cameraDataForDtam* camera_data_for_dtam, int row, int col);
+    void StudyCostVolumeMin(int index_m, cameraDataForDtam* camera_data_for_dtam, int row, int col, bool showbaseline);
     void Regularize( cv::cuda::PtrStepSz<int2> cost_volume, float* depth_r_array);
+    void UpdateParametersReg();
     void ComputeGradientSobelImage(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* image_out);
     void ComputeDivergenceSobelImage(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* image_out);
     void ComputeWeightedGradientSobelImage(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* image_out);
