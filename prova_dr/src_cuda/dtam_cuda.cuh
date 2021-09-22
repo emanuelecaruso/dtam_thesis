@@ -60,6 +60,7 @@ __global__ void squareVectorElements_kernel(float *vector);
 
 __global__ void Image2Vector_kernel(cv::cuda::PtrStepSz<float> image, float* vector);
 
+__global__ void UpdateState_kernel(cv::cuda::PtrStepSz<float> points_added);
 
 
 class Dtam{
@@ -151,6 +152,7 @@ class Dtam{
     float sigma_d_;
     float r1_;
     float r2_;
+    float theta_switch_;
     cv::cuda::GpuMat cost_volume_;
     cv::cuda::GpuMat weight_matrix_;
     cv::cuda::GpuMat query_proj_matrix_;
@@ -164,6 +166,7 @@ class Dtam{
 
     void Initialize();
     void UpdateCostVolume(int index_m );
+    void UpdateState();
     void ComputeWeights();
     void ComputeCostVolumeMin();
     void StudyCostVolumeMin(int index_m, cameraDataForDtam* camera_data_for_dtam, int row, int col, bool showbaseline);

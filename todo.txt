@@ -8,7 +8,8 @@
 -- show world frame 			XXXX
 -- show invdepth  			XXXX
 -- dataset as argument			XXXX
--- handle borders
+-- handle borders       XXXX
+-- update sampling ??
 -- variance
 -- add points to state
 

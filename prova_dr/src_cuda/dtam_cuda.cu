@@ -293,11 +293,11 @@ __global__ void UpdateCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camera
     // int cost_current=((clr_r.x-clr_current.x)*(clr_r.x-clr_current.x)+(clr_r.y-clr_current.y)*(clr_r.y-clr_current.y)+(clr_r.z-clr_current.z)*(clr_r.z-clr_current.z));
     int cost_current=(abs(clr_r.x-clr_current.x)+abs(clr_r.y-clr_current.y)+abs(clr_r.z-clr_current.z));
 
-    // if(occl)
-      cost_current=min(cost_current, 15);
+    if(occl)
+      cost_current=min(cost_current, 20);
 
-    // if (cost_current<50 || occl)
-    // {
+    if (cost_current<20 || occl)
+    {
         // cost_current=min(cost_current, 50);
 
         int2 cost_volume_val = cost_volume(row,col_);
@@ -307,7 +307,7 @@ __global__ void UpdateCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camera
         cost_volume_val.y++;
 
         cost_volume(row,col_) = cost_volume_val;
-    // }
+    }
 
   }
 
@@ -505,32 +505,43 @@ __global__ void Image2Vector_kernel(cv::cuda::PtrStepSz<float> image, float* vec
 
 }
 
+__global__ void UpdateState_kernel(cv::cuda::PtrStepSz<float> points_added){
+  int row = blockIdx.x * blockDim.x + threadIdx.x;
+  int col = blockIdx.y * blockDim.y + threadIdx.y;
+
+
+}
+
 void Dtam::Initialize(){
 
-  // theta_=1;
-  // theta_end_=0.001;
-  // eps_=0.1;
-  // alpha_=0.00001;
-  // beta1_=0.002;
-  // beta2_=0.02;
-  // lambda_=0.001;
-  // sigma_q0_=0.0368;
-  // sigma_d0_=1;
-  // r1_=0.75;
-  // r2_=0.75;
-
   theta_=0.6;
+  theta_switch_=0.57;
   theta_end_=0.001;
   eps_=0.1;
-  alpha_=0.000015;
+  alpha_=0.00002;
   beta1_=0.0002;
   beta2_=0.03;
   // lambda_=0.005;
   lambda_=0.1;
-  sigma_q0_=0.05/2;
-  sigma_d0_=1*2;
+  sigma_q0_=0.1;
+  sigma_d0_=0.5;
   r1_=0.85;
-  r2_=0.7;
+  r2_=0.73;
+
+
+  // theta_=0.6;
+  // theta_switch_=0.57;
+  // theta_end_=0.001;
+  // eps_=0.1;
+  // alpha_=0.00002;
+  // beta1_=0.0002;
+  // beta2_=0.02;
+  // // lambda_=0.005;
+  // lambda_=0.1;
+  // sigma_q0_=0.05/2;
+  // sigma_d0_=1*2;
+  // r1_=0.85;
+  // r2_=0.7;
 
   count_ = 0;
   n_ = 0;
@@ -571,7 +582,7 @@ void Dtam::UpdateCostVolume(int index_m ){
 
   dim3 threadsPerBlock( 4 , 4 , NUM_INTERPOLATIONS);
   dim3 numBlocks( rows/4, cols/4 , 1);
-  UpdateCostVolume_kernel<<<numBlocks,threadsPerBlock>>>(camera_r_gpu, camera_vector_gpu_[index_m], cost_volume_, camera_data_for_dtam_, depth_r_array_, threshold_, count_<2);
+  UpdateCostVolume_kernel<<<numBlocks,threadsPerBlock>>>(camera_r_gpu, camera_vector_gpu_[index_m], cost_volume_, camera_data_for_dtam_, depth_r_array_, threshold_, count_<4);
   printCudaError("Kernel updating cost volume");
 
 
@@ -743,10 +754,10 @@ __global__ void search_A_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepS
 	}
 
   if (i == indx_array[threadIdx.x][threadIdx.y][0]) {
-    // if(cost_volume(row,col_).x<1){
-    //   points_added(row,col)=1;
-    //
-    // }
+    if(cost_volume(row,col_).x<5){
+      points_added(row,col)=1;
+
+    }
     // else{
     //   a(row,col)=0.025;
     // }
@@ -1070,8 +1081,8 @@ void Dtam::ComputeWeights(){
   Camera_gpu* camera_r_gpu = camera_vector_gpu_[index_r_];
   int cols = camera_r_cpu->depth_map_->image_.cols;
   int rows = camera_r_cpu->depth_map_->image_.rows;
-  dim3 threadsPerBlock( 4 , 4 , NUM_INTERPOLATIONS);
-  dim3 numBlocks( rows/4, cols/4 , 1);
+  dim3 threadsPerBlock( 32 , 32 , 1);
+  dim3 numBlocks( rows/32, cols/32 , 1);
   ComputeWeights_kernel<<<numBlocks,threadsPerBlock>>>( camera_r_gpu, weight_matrix_, alpha_, beta1_);
   printCudaError("Kernel computing cost volume min");
 
@@ -1082,8 +1093,8 @@ void Dtam::UpdateParametersReg(){
 
   // upgrade theta
   // std::cout << "theta: " << theta_ <<std::endl;
-  float beta = (theta_>0.57) ? beta1_ : beta2_;
-  float r = (theta_>0.57) ? r1_ : r2_;
+  float beta = (theta_>theta_switch_) ? beta1_ : beta2_;
+  float r = (theta_>theta_switch_) ? r1_ : r2_;
 
   n_++;  // upgrade n
 
@@ -1156,11 +1167,11 @@ void Dtam::Regularize(){
   //
   // std::cout << "theta is: " << theta_ << std::endl;
 
-  // cv::Mat_< float > pa_1;
-  // points_added_.download(pa_1);
-  // cv::Mat_< float > resized_image_pa_1;
-  // cv::resize(pa_1, resized_image_pa_1, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
-  // cv::imshow("pa 1", resized_image_pa_1);
+  cv::Mat_< float > pa_1;
+  points_added_.download(pa_1);
+  cv::Mat_< float > resized_image_pa_1;
+  cv::resize(pa_1, resized_image_pa_1, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
+  cv::imshow("pa 1", resized_image_pa_1);
 
   cv::Mat_< float > d_1;
   d.download(d_1);
@@ -1256,6 +1267,16 @@ void Dtam::Regularize(){
 
 }
 
+void Dtam::UpdateState(){
+
+  int cols = camera_vector_cpu_[index_r_]->depth_map_->image_.cols;
+  int rows = camera_vector_cpu_[index_r_]->depth_map_->image_.rows;
+
+  dim3 threadsPerBlock( 32 , 32 , 1);
+  dim3 numBlocks( rows/32, cols/32 , 1);
+  UpdateState_kernel<<<numBlocks,threadsPerBlock>>>( points_added_ );
+  printCudaError("Kernel computing search on a");
+}
 
 void Dtam::updateDepthMap_parallel_gpu(int index_m){
 
