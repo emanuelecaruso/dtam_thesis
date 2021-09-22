@@ -8,11 +8,13 @@
 -- show world frame 			XXXX
 -- show invdepth  			XXXX
 -- dataset as argument			XXXX
+-- handle borders
+-- variance
+-- add points to state
 
 -- plot costs for pixel in graph
 
 -- depth->invdepth  			???
--- padding				maybe not
 -- add rotation for naive dataset maker	maybe not
 
 

@@ -44,7 +44,7 @@ __global__ void gradDesc_Q_toNormalize_kernel(cv::cuda::PtrStepSz<float> q, cv::
 
 __global__ void gradDesc_D_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepSz<float> a, cv::cuda::PtrStepSz<float> gradient_q, float sigma_d, float theta);
 
-__global__ void search_A_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepSz<float> a, cv::cuda::PtrStepSz<int2> cost_volume , float lambda, float theta, float* depth_r_array);
+__global__ void search_A_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepSz<float> a, cv::cuda::PtrStepSz<int2> cost_volume , cv::cuda::PtrStepSz<float> points_added, float lambda, float theta, float* depth_r_array);
 
 __global__ void sumReduction_kernel(float* v, float* v_r, int size);
 
@@ -59,6 +59,7 @@ __global__ void normalize_Q_kernel(float *norm, cv::cuda::PtrStepSz<float> q, fl
 __global__ void squareVectorElements_kernel(float *vector);
 
 __global__ void Image2Vector_kernel(cv::cuda::PtrStepSz<float> image, float* vector);
+
 
 
 class Dtam{
@@ -148,10 +149,12 @@ class Dtam{
     float sigma_d0_;
     float sigma_q_;
     float sigma_d_;
-    float r_;
+    float r1_;
+    float r2_;
     cv::cuda::GpuMat cost_volume_;
     cv::cuda::GpuMat weight_matrix_;
     cv::cuda::GpuMat query_proj_matrix_;
+    cv::cuda::GpuMat points_added_;
     cameraDataForDtam* camera_data_for_dtam_;
     Eigen::Matrix3f T_r;
     Eigen::Vector3f T_t;
@@ -160,11 +163,11 @@ class Dtam{
     cv::cuda::GpuMat q;
 
     void Initialize();
-    void UpdateCostVolume(int index_m, cameraDataForDtam* camera_data_for_dtam_ );
+    void UpdateCostVolume(int index_m );
     void ComputeWeights();
     void ComputeCostVolumeMin();
     void StudyCostVolumeMin(int index_m, cameraDataForDtam* camera_data_for_dtam, int row, int col, bool showbaseline);
-    void Regularize( cv::cuda::PtrStepSz<int2> cost_volume, float* depth_r_array);
+    void Regularize();
     void UpdateParametersReg();
     void ComputeGradientSobelImage(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* image_out);
     void ComputeDivergenceSobelImage(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* image_out);
