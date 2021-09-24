@@ -293,11 +293,14 @@ __global__ void UpdateCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camera
     // int cost_current=((clr_r.x-clr_current.x)*(clr_r.x-clr_current.x)+(clr_r.y-clr_current.y)*(clr_r.y-clr_current.y)+(clr_r.z-clr_current.z)*(clr_r.z-clr_current.z));
     int cost_current=(abs(clr_r.x-clr_current.x)+abs(clr_r.y-clr_current.y)+abs(clr_r.z-clr_current.z));
 
-    if(occl)
+    if(occl){
       cost_current=min(cost_current, 20);
+      // cost_current=max(cost_current, 3);
+    }
 
     if (cost_current<20 || occl)
     {
+        // cost_current=max(cost_current, 3);
         // cost_current=min(cost_current, 50);
 
         int2 cost_volume_val = cost_volume(row,col_);
@@ -317,7 +320,7 @@ __global__ void UpdateCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camera
 
 __global__ void StudyCostVolumeMin_kernel(Camera_gpu* camera_r, Camera_gpu* camera_m,
               cv::cuda::PtrStepSz<int2> cost_volume, cameraDataForDtam* camera_data_for_dtam_, float* depth_r_array,
-              int row, int col, cv::cuda::PtrStepSz<float> depth_groundtruth){
+              int row, int col, cv::cuda::PtrStepSz<float> depth_groundtruth, cv::cuda::PtrStepSz<float> a){
 
 
   int i = blockIdx.z * blockDim.z + threadIdx.z;
@@ -424,20 +427,23 @@ __global__ void StudyCostVolumeMin_kernel(Camera_gpu* camera_r, Camera_gpu* came
   // printf("cost current at i=%i is: %i\n",i, cost_current);
 
   if (i == indx_array[0]) {
-  // if (i == 40) {
+  // if (i == 43) {
     uchar3 blue = make_uchar3(255,0,0);
     camera_m->image_rgb_(pixel_current.y(),pixel_current.x())=blue;
 
     printf("camera_r->max_depth_: %f\n", camera_r->max_depth_);
     printf("depth1_m_fixed: %f\n", depth1_m_fixed);
     printf("depth2_m_fixed: %f\n", depth2_m_fixed);
-    printf("predicted depth: %f\n", depth_r_array[indx_array[0]]);
+    printf("predicted depth from costvol: %f\n", depth_r_array[indx_array[0]]);
+    printf("predicted depth from a: %f\n", a(row,col)*depth_r_array[NUM_INTERPOLATIONS-1]);
     printf("grondtruth depth: %f\n", (1.0/(depth_groundtruth(row,col)*2)));
     printf("grondtruth val: %f\n", depth_groundtruth(row,col));
     printf("clr_r is: %i,%i,%i\n", clr_r.x ,clr_r.y ,clr_r.z);
     printf("clr_current is: %i,%i,%i\n", clr_current.x ,clr_current.y ,clr_current.z);
     printf("stop flag is: %i\n", stop);
-    printf("cost current is: %i\n", cost_current);
+    printf("cost current is: %i\n", cost_volume(row,col_).x);
+    printf("n projections: %i\n", cost_volume(row,col_).y);
+    // printf("cost current is: %i\n", cost_current);
     printf("min cost is: %i\n", cost_array[0]);
     printf("coords: %i %i\n", pixel_current.y(), pixel_current.x());
     printf("idx: %i\n", i);
@@ -505,17 +511,27 @@ __global__ void Image2Vector_kernel(cv::cuda::PtrStepSz<float> image, float* vec
 
 }
 
-__global__ void UpdateState_kernel(cv::cuda::PtrStepSz<float> points_added){
-  int row = blockIdx.x * blockDim.x + threadIdx.x;
-  int col = blockIdx.y * blockDim.y + threadIdx.y;
+__global__ void UpdateState_kernel(cv::cuda::PtrStepSz<float> points_added, cv::cuda::PtrStepSz<int2> cost_volume, cv::cuda::PtrStepSz<float> a){
+  // int row = blockIdx.x * blockDim.x + threadIdx.x;
+  // int col = blockIdx.y * blockDim.y + threadIdx.y;
+  //
+  // int rows = blockDim.x*gridDim.x;
+  // int cols = blockDim.y*gridDim.y;
+  //
+  // int depth_idx = a(row,col)*NUM_INTERPOLATIONS;
+
+
+  // if(cost_volume(row,col_).x<3 && cost_volume(row,col_).y>2){
+  //   points_added(row,col)=1;
+  // }
 
 
 }
 
 void Dtam::Initialize(){
 
-  theta_=0.6;
-  theta_switch_=0.57;
+  theta_=0.2;
+  theta_switch_=0.19;
   theta_end_=0.001;
   eps_=0.1;
   alpha_=0.00002;
@@ -525,8 +541,9 @@ void Dtam::Initialize(){
   lambda_=0.1;
   sigma_q0_=0.1;
   sigma_d0_=0.5;
-  r1_=0.85;
-  r2_=0.73;
+  r1_=0.87;
+  r2_=0.7;
+  // r2_=0.65;
 
 
   // theta_=0.6;
@@ -582,7 +599,7 @@ void Dtam::UpdateCostVolume(int index_m ){
 
   dim3 threadsPerBlock( 4 , 4 , NUM_INTERPOLATIONS);
   dim3 numBlocks( rows/4, cols/4 , 1);
-  UpdateCostVolume_kernel<<<numBlocks,threadsPerBlock>>>(camera_r_gpu, camera_vector_gpu_[index_m], cost_volume_, camera_data_for_dtam_, depth_r_array_, threshold_, count_<4);
+  UpdateCostVolume_kernel<<<numBlocks,threadsPerBlock>>>(camera_r_gpu, camera_vector_gpu_[index_m], cost_volume_, camera_data_for_dtam_, depth_r_array_, threshold_, count_<5);
   printCudaError("Kernel updating cost volume");
 
 
@@ -595,7 +612,7 @@ void Dtam::StudyCostVolumeMin(int index_m, cameraDataForDtam* camera_data_for_dt
 
   dim3 threadsPerBlock( 1 , 1 , NUM_INTERPOLATIONS);
   dim3 numBlocks( 1, 1 , 1);
-  StudyCostVolumeMin_kernel<<<numBlocks,threadsPerBlock>>>(camera_r_gpu, camera_vector_gpu_[index_m], cost_volume_, camera_data_for_dtam, depth_r_array_,row,col, depth_groundtruth_);
+  StudyCostVolumeMin_kernel<<<numBlocks,threadsPerBlock>>>(camera_r_gpu, camera_vector_gpu_[index_m], cost_volume_, camera_data_for_dtam, depth_r_array_,row,col, depth_groundtruth_, a);
   printCudaError("Kernel studying cost volume");
 
   if(showbaseline){
@@ -754,10 +771,7 @@ __global__ void search_A_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepS
 	}
 
   if (i == indx_array[threadIdx.x][threadIdx.y][0]) {
-    if(cost_volume(row,col_).x<5){
-      points_added(row,col)=1;
 
-    }
     // else{
     //   a(row,col)=0.025;
     // }
@@ -1274,8 +1288,8 @@ void Dtam::UpdateState(){
 
   dim3 threadsPerBlock( 32 , 32 , 1);
   dim3 numBlocks( rows/32, cols/32 , 1);
-  UpdateState_kernel<<<numBlocks,threadsPerBlock>>>( points_added_ );
-  printCudaError("Kernel computing search on a");
+  UpdateState_kernel<<<numBlocks,threadsPerBlock>>>( points_added_, cost_volume_, a );
+  printCudaError("Kernel Update State");
 }
 
 void Dtam::updateDepthMap_parallel_gpu(int index_m){
@@ -1317,14 +1331,16 @@ void Dtam::updateDepthMap_parallel_gpu(int index_m){
 
   }
 
-  // float cr=0.485; float rr=0.465;  //occlusion
+  // float cr=0.484; float rr=0.465;  //occlusion
   // float cr=0.61; float rr=0.53;  //hightex1
-  float cr=0.61; float rr=0.53;  //hightex2
+  // float cr=0.61; float rr=0.53;  //hightex2
+  float cr=0.95; float rr=0.87;  //corner
+  // float cr=0.9; float rr=0.9;  //corner
   // float cr=0.5; float rr=0.9;  //hightex cube
 
-  // int col=cr*camera_vector_cpu_[0]->resolution_;
-  // int row=rr*camera_vector_cpu_[0]->resolution_/camera_vector_cpu_[0]->aspect_;
-  // Dtam::StudyCostVolumeMin(index_m, camera_data_for_dtam_, row, col, true);
+  int col=cr*camera_vector_cpu_[0]->resolution_;
+  int row=rr*camera_vector_cpu_[0]->resolution_/camera_vector_cpu_[0]->aspect_;
+  Dtam::StudyCostVolumeMin(index_m, camera_data_for_dtam_, row, col, true);
 
   // if(count_>=1){
     t_start=getTime();

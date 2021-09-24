@@ -27,8 +27,8 @@ __global__ void UpdateCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camera
 __global__ void ComputeWeights_kernel(Camera_gpu* camera_r, cv::cuda::PtrStepSz<float> weight_matrix, float alpha, float beta);
 
 __global__ void StudyCostVolumeMin_kernel(Camera_gpu* camera_r, Camera_gpu* camera_m, cv::cuda::PtrStepSz<int2> cost_volume,
-                                    cameraDataForDtam* camera_data_for_dtam_, float* depth_r_array,
-                                    int row, int col, int threshold, cv::cuda::PtrStepSz<float> depth_groundtruth_ );
+                                    cameraDataForDtam* camera_data_for_dtam_, float* depth_r_array, int row, int col,
+                                    int threshold, cv::cuda::PtrStepSz<float> depth_groundtruth_, cv::cuda::PtrStepSz<float> a );
 
 __global__ void ComputeCostVolumeMin_kernel( cv::cuda::PtrStepSz<int2> cost_volume, float* depth_r_array);
 
@@ -60,7 +60,7 @@ __global__ void squareVectorElements_kernel(float *vector);
 
 __global__ void Image2Vector_kernel(cv::cuda::PtrStepSz<float> image, float* vector);
 
-__global__ void UpdateState_kernel(cv::cuda::PtrStepSz<float> points_added);
+__global__ void UpdateState_kernel(cv::cuda::PtrStepSz<float> points_added, cv::cuda::PtrStepSz<int2> cost_volume, cv::cuda::PtrStepSz<float> a);
 
 
 class Dtam{
@@ -157,6 +157,7 @@ class Dtam{
     cv::cuda::GpuMat weight_matrix_;
     cv::cuda::GpuMat query_proj_matrix_;
     cv::cuda::GpuMat points_added_;
+    // cv::cuda::GpuMat variance_matrix_;
     cameraDataForDtam* camera_data_for_dtam_;
     Eigen::Matrix3f T_r;
     Eigen::Vector3f T_t;

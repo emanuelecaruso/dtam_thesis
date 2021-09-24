@@ -12,6 +12,7 @@
 -- update sampling ??
 -- variance
 -- add points to state
+-- points on blender
 
 -- plot costs for pixel in graph
 
