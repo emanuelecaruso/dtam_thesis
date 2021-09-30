@@ -8,12 +8,12 @@
 -- show world frame 			XXXX
 -- show invdepth  			XXXX
 -- dataset as argument			XXXX
--- handle borders       XXXX
+-- handle borders			XXXX
 -- depth->invdepth  			XXXX
+-- function handling			XXXX
+-- add points to state    X...
 
--- thread handling
 -- variance
--- add points to state
 -- update sampling ??
 -- points on blender
 -- play with parameters
