@@ -22,15 +22,15 @@ struct cameraDataForDtam{
 __global__ void prepareCameraForDtam_kernel(Camera_gpu* camera_r, Camera_gpu* camera_m, cv::cuda::PtrStepSz<float3> query_proj_matrix);
 
 __global__ void UpdateCostVolume_kernel(Camera_gpu* camera_r, Camera_gpu* camera_m, cv::cuda::PtrStepSz<int2> cost_volume,
-                                                cameraDataForDtam* camera_data_for_dtam_, float* depth_r_array, int threshold, bool occl);
+                                                cameraDataForDtam* camera_data_for_dtam_, float* invdepth_r_array, int threshold, bool occl);
 
 __global__ void ComputeWeights_kernel(Camera_gpu* camera_r, cv::cuda::PtrStepSz<float> weight_matrix, float alpha, float beta);
 
 __global__ void StudyCostVolumeMin_kernel(Camera_gpu* camera_r, Camera_gpu* camera_m, cv::cuda::PtrStepSz<int2> cost_volume,
-                                    cameraDataForDtam* camera_data_for_dtam_, float* depth_r_array, int row, int col,
+                                    cameraDataForDtam* camera_data_for_dtam_, float* invdepth_r_array, int row, int col,
                                     int threshold, cv::cuda::PtrStepSz<float> depth_groundtruth_, cv::cuda::PtrStepSz<float> a );
 
-__global__ void ComputeCostVolumeMin_kernel( cv::cuda::PtrStepSz<int2> cost_volume, float* depth_r_array);
+__global__ void ComputeCostVolumeMin_kernel( cv::cuda::PtrStepSz<int2> cost_volume, float* invdepth_r_array);
 
 __global__ void ComputeGradientSobelImage_kernel(cv::cuda::PtrStepSz<float> image_in, cv::cuda::PtrStepSz<float> image_out);
 
@@ -44,7 +44,7 @@ __global__ void gradDesc_Q_toNormalize_kernel(cv::cuda::PtrStepSz<float> q, cv::
 
 __global__ void gradDesc_D_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepSz<float> a, cv::cuda::PtrStepSz<float> gradient_q, float sigma_d, float theta);
 
-__global__ void search_A_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepSz<float> a, cv::cuda::PtrStepSz<int2> cost_volume , cv::cuda::PtrStepSz<float> points_added, float lambda, float theta, float* depth_r_array);
+__global__ void search_A_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepSz<float> a, cv::cuda::PtrStepSz<int2> cost_volume , cv::cuda::PtrStepSz<float> points_added, float lambda, float theta, float* invdepth_r_array);
 
 __global__ void sumReduction_kernel(float* v, float* v_r, int size);
 
@@ -69,7 +69,7 @@ class Dtam{
     CameraVector_cpu camera_vector_cpu_;
     CameraVector_gpu camera_vector_gpu_;
     int index_r_;
-    float* depth_r_array_;
+    float* invdepth_r_array_;
 
 
 
@@ -78,52 +78,49 @@ class Dtam{
 
       int rows = environment->resolution_/environment->aspect_;
       int cols = environment->resolution_;
-      float depth1_r=environment->lens_;
+      float depth1_r=environment->min_depth_;
       float depth2_r=environment->max_depth_;
-      float* depth_r_array_h = new float[NUM_INTERPOLATIONS];
+      float* invdepth_r_array_h = new float[NUM_INTERPOLATIONS];
 
       threshold_=50;
 
-
-
-      int switch_idx=6;
+      int switch_idx=10;
       float switch_depth=1;
-      // for (int i=0; i<switch_idx; i++){
-      //   float ratio_depth_r = (float)(i+1)/((float)switch_idx);
-      //   float depth_r = depth1_r+ratio_depth_r*(switch_depth-depth1_r);
-      //   depth_r_array_h[i]=depth_r;
-      //   std::cout << "depth: " << depth_r << std::endl;
-      // }
-      for (int i=0; i<NUM_INTERPOLATIONS; i++){
-        float ratio_depth_r = (float)i/((float)NUM_INTERPOLATIONS-1);
+      for (int i=0; i<switch_idx; i++){
+        float ratio_depth_r = (float)(i)/((float)switch_idx);
+        float depth_r = depth1_r+ratio_depth_r*(switch_depth-depth1_r);
+        invdepth_r_array_h[i]=1.0/depth_r;
+        std::cout << "depth: " << depth_r  << ", idx: " << i << std::endl;
+      }
+      for (int i=switch_idx; i<NUM_INTERPOLATIONS; i++){
+        float ratio_depth_r = (float)(i-switch_idx)/((float)NUM_INTERPOLATIONS-switch_idx-1);
         float invdepth_r = (1.0/switch_depth)+ratio_depth_r*((1.0/depth2_r)-(1.0/switch_depth));
         float depth_r = 1.0/invdepth_r;
-        depth_r_array_h[i]=depth_r;
-        // std::cout << "depth: " << depth_r << std::endl;
-
+        invdepth_r_array_h[i]=1.0/depth_r;
+        std::cout << "depth: " << depth_r  << ", idx: " << i << std::endl;
       }
 
       // for (int i=0; i<NUM_INTERPOLATIONS; i++){
       //   float ratio_depth_r = (float)i/((float)NUM_INTERPOLATIONS-1);
       //   float depth_r = depth1_r+ratio_depth_r*(depth2_r-depth1_r);
-      //   depth_r_array_h[i]=depth_r;
+      //   invdepth_r_array_h[i]=depth_r;
       // }
 
 
 
       cudaError_t err ;
 
-      cudaMalloc(&depth_r_array_, sizeof(float)*NUM_INTERPOLATIONS);
+      cudaMalloc(&invdepth_r_array_, sizeof(float)*NUM_INTERPOLATIONS);
       err = cudaGetLastError();
       if (err != cudaSuccess)
           printf("cudaMalloc (dtam constr) Error: %s\n", cudaGetErrorString(err));
 
-      cudaMemcpy(depth_r_array_, depth_r_array_h, sizeof(float)*NUM_INTERPOLATIONS, cudaMemcpyHostToDevice);
+      cudaMemcpy(invdepth_r_array_, invdepth_r_array_h, sizeof(float)*NUM_INTERPOLATIONS, cudaMemcpyHostToDevice);
       err = cudaGetLastError();
       if (err != cudaSuccess)
           printf("cudaMemcpy (dtam constr) Error: %s\n", cudaGetErrorString(err));
 
-      delete (depth_r_array_h);
+      delete (invdepth_r_array_h);
 
     };
 
@@ -132,7 +129,7 @@ class Dtam{
     bool setReferenceCamera(int index_r);
     void prepareCameraForDtam(int index_m);
 
-    void updateDepthMap_parallel_gpu(int index_m);
+    void updateDepthMap_gpu(Environment_gpu* environment);
 
   private:
     cv::cuda::GpuMat depth_groundtruth_;
@@ -172,7 +169,7 @@ class Dtam{
     void ComputeCostVolumeMin();
     void StudyCostVolumeMin(int index_m, cameraDataForDtam* camera_data_for_dtam, int row, int col, bool showbaseline);
     void Regularize();
-    void UpdateParametersReg();
+    void UpdateParametersReg(bool print);
     void ComputeGradientSobelImage(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* image_out);
     void ComputeDivergenceSobelImage(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* image_out);
     void ComputeWeightedGradientSobelImage(cv::cuda::GpuMat* image_in, cv::cuda::GpuMat* image_out);

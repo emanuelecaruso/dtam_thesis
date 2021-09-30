@@ -69,14 +69,14 @@ __device__ bool Camera_gpu::projectPoint(Eigen::Vector3f& p, Eigen::Vector2f& uv
 //
 //   float depth = depth_cam/max_depth_;
 //
-//   float evaluated_pixel = depth_map_(pixel_coords.x(),pixel_coords.y());
+//   float evaluated_pixel = invdepth_map_(pixel_coords.x(),pixel_coords.y());
 //
 //   if (evaluated_pixel<depth)
 //     return false;
 //
 //   image_rgb_(pixel_coords.x(),pixel_coords.y()) = cp.color;
 //   // image_rgb_->setPixel(pixel_coords, cp.color);
-//   // depth_map_->setPixel(pixel_coords,depth);
+//   // invdepth_map_->setPixel(pixel_coords,depth);
 //
 //   return true;
 // }

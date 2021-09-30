@@ -23,7 +23,6 @@ set(CMAKE_CUDA_TARGET_INCLUDE_PATH
   )
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/manu/Desktop/dtam_thesis/prova_dr/src/camera.cpp" "/home/manu/Desktop/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src/camera.cpp.o"
-  "/home/manu/Desktop/dtam_thesis/prova_dr/src/dataset.cpp" "/home/manu/Desktop/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src/dataset.cpp.o"
   "/home/manu/Desktop/dtam_thesis/prova_dr/src/environment.cpp" "/home/manu/Desktop/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src/environment.cpp.o"
   "/home/manu/Desktop/dtam_thesis/prova_dr/src/image.cpp" "/home/manu/Desktop/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src/image.cpp.o"
   "/home/manu/Desktop/dtam_thesis/prova_dr/src/renderer.cpp" "/home/manu/Desktop/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_synth_cuda.dir/__/src/renderer.cpp.o"

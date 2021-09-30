@@ -9,14 +9,17 @@
 -- show invdepth  			XXXX
 -- dataset as argument			XXXX
 -- handle borders       XXXX
--- update sampling ??
+-- depth->invdepth  			XXXX
+
+-- thread handling
 -- variance
 -- add points to state
+-- update sampling ??
 -- points on blender
+-- play with parameters
 
 -- plot costs for pixel in graph
 
--- depth->invdepth  			???
 -- add rotation for naive dataset maker	maybe not
 
 

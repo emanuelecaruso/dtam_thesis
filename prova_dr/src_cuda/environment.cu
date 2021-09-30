@@ -14,7 +14,7 @@ void Environment_gpu::generateCamera(std::string name, float t1, float t2, float
   frame_world_wrt_camera_r->translation()=t_r;
   Eigen::Isometry3f* frame_camera_wrt_world_r = new Eigen::Isometry3f;
   *frame_camera_wrt_world_r = frame_world_wrt_camera_r->inverse();
-  Camera_cpu* camera = new Camera_cpu(name,lens_,aspect_,film_,resolution_,max_depth_,frame_camera_wrt_world_r,frame_world_wrt_camera_r);
+  Camera_cpu* camera = new Camera_cpu(name,lens_,aspect_,film_,resolution_,max_depth_,min_depth_,frame_camera_wrt_world_r,frame_world_wrt_camera_r);
   camera_vector_cpu_.push_back(camera);
 
   Camera_gpu* camera_d = camera->getCamera_gpu();
@@ -38,6 +38,7 @@ bool Environment_gpu::loadEnvironment_gpu(std::string path_name, std::string dat
         camera->width_,
         camera->resolution_,
         camera->max_depth_,
+        camera->min_depth_,
         camera->frame_camera_wrt_world_,
         camera->frame_world_wrt_camera_
       );

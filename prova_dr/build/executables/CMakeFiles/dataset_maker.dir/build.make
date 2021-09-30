@@ -70,22 +70,9 @@ executables/CMakeFiles/dataset_maker.dir/dataset_maker.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/dataset_maker.dir/dataset_maker.cpp.s"
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build/executables && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/manu/Desktop/dtam_thesis/prova_dr/executables/dataset_maker.cpp -o CMakeFiles/dataset_maker.dir/dataset_maker.cpp.s
 
-executables/CMakeFiles/dataset_maker.dir/__/src/dataset.cpp.o: executables/CMakeFiles/dataset_maker.dir/flags.make
-executables/CMakeFiles/dataset_maker.dir/__/src/dataset.cpp.o: ../src/dataset.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/manu/Desktop/dtam_thesis/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object executables/CMakeFiles/dataset_maker.dir/__/src/dataset.cpp.o"
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build/executables && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/dataset_maker.dir/__/src/dataset.cpp.o -c /home/manu/Desktop/dtam_thesis/prova_dr/src/dataset.cpp
-
-executables/CMakeFiles/dataset_maker.dir/__/src/dataset.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/dataset_maker.dir/__/src/dataset.cpp.i"
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build/executables && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/manu/Desktop/dtam_thesis/prova_dr/src/dataset.cpp > CMakeFiles/dataset_maker.dir/__/src/dataset.cpp.i
-
-executables/CMakeFiles/dataset_maker.dir/__/src/dataset.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/dataset_maker.dir/__/src/dataset.cpp.s"
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build/executables && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/manu/Desktop/dtam_thesis/prova_dr/src/dataset.cpp -o CMakeFiles/dataset_maker.dir/__/src/dataset.cpp.s
-
 executables/CMakeFiles/dataset_maker.dir/__/src/camera.cpp.o: executables/CMakeFiles/dataset_maker.dir/flags.make
 executables/CMakeFiles/dataset_maker.dir/__/src/camera.cpp.o: ../src/camera.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/manu/Desktop/dtam_thesis/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object executables/CMakeFiles/dataset_maker.dir/__/src/camera.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/manu/Desktop/dtam_thesis/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object executables/CMakeFiles/dataset_maker.dir/__/src/camera.cpp.o"
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build/executables && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/dataset_maker.dir/__/src/camera.cpp.o -c /home/manu/Desktop/dtam_thesis/prova_dr/src/camera.cpp
 
 executables/CMakeFiles/dataset_maker.dir/__/src/camera.cpp.i: cmake_force
@@ -98,7 +85,7 @@ executables/CMakeFiles/dataset_maker.dir/__/src/camera.cpp.s: cmake_force
 
 executables/CMakeFiles/dataset_maker.dir/__/src/image.cpp.o: executables/CMakeFiles/dataset_maker.dir/flags.make
 executables/CMakeFiles/dataset_maker.dir/__/src/image.cpp.o: ../src/image.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/manu/Desktop/dtam_thesis/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object executables/CMakeFiles/dataset_maker.dir/__/src/image.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/manu/Desktop/dtam_thesis/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object executables/CMakeFiles/dataset_maker.dir/__/src/image.cpp.o"
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build/executables && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/dataset_maker.dir/__/src/image.cpp.o -c /home/manu/Desktop/dtam_thesis/prova_dr/src/image.cpp
 
 executables/CMakeFiles/dataset_maker.dir/__/src/image.cpp.i: cmake_force
@@ -111,7 +98,7 @@ executables/CMakeFiles/dataset_maker.dir/__/src/image.cpp.s: cmake_force
 
 executables/CMakeFiles/dataset_maker.dir/__/src/renderer.cpp.o: executables/CMakeFiles/dataset_maker.dir/flags.make
 executables/CMakeFiles/dataset_maker.dir/__/src/renderer.cpp.o: ../src/renderer.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/manu/Desktop/dtam_thesis/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object executables/CMakeFiles/dataset_maker.dir/__/src/renderer.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/manu/Desktop/dtam_thesis/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object executables/CMakeFiles/dataset_maker.dir/__/src/renderer.cpp.o"
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build/executables && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/dataset_maker.dir/__/src/renderer.cpp.o -c /home/manu/Desktop/dtam_thesis/prova_dr/src/renderer.cpp
 
 executables/CMakeFiles/dataset_maker.dir/__/src/renderer.cpp.i: cmake_force
@@ -124,7 +111,7 @@ executables/CMakeFiles/dataset_maker.dir/__/src/renderer.cpp.s: cmake_force
 
 executables/CMakeFiles/dataset_maker.dir/__/src/environment.cpp.o: executables/CMakeFiles/dataset_maker.dir/flags.make
 executables/CMakeFiles/dataset_maker.dir/__/src/environment.cpp.o: ../src/environment.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/manu/Desktop/dtam_thesis/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object executables/CMakeFiles/dataset_maker.dir/__/src/environment.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/manu/Desktop/dtam_thesis/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object executables/CMakeFiles/dataset_maker.dir/__/src/environment.cpp.o"
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build/executables && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/dataset_maker.dir/__/src/environment.cpp.o -c /home/manu/Desktop/dtam_thesis/prova_dr/src/environment.cpp
 
 executables/CMakeFiles/dataset_maker.dir/__/src/environment.cpp.i: cmake_force
@@ -137,7 +124,7 @@ executables/CMakeFiles/dataset_maker.dir/__/src/environment.cpp.s: cmake_force
 
 executables/CMakeFiles/dataset_maker.dir/__/src/dtam.cpp.o: executables/CMakeFiles/dataset_maker.dir/flags.make
 executables/CMakeFiles/dataset_maker.dir/__/src/dtam.cpp.o: ../src/dtam.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/manu/Desktop/dtam_thesis/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object executables/CMakeFiles/dataset_maker.dir/__/src/dtam.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/manu/Desktop/dtam_thesis/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object executables/CMakeFiles/dataset_maker.dir/__/src/dtam.cpp.o"
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build/executables && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/dataset_maker.dir/__/src/dtam.cpp.o -c /home/manu/Desktop/dtam_thesis/prova_dr/src/dtam.cpp
 
 executables/CMakeFiles/dataset_maker.dir/__/src/dtam.cpp.i: cmake_force
@@ -150,7 +137,7 @@ executables/CMakeFiles/dataset_maker.dir/__/src/dtam.cpp.s: cmake_force
 
 executables/CMakeFiles/dataset_maker.dir/__/src/utils.cpp.o: executables/CMakeFiles/dataset_maker.dir/flags.make
 executables/CMakeFiles/dataset_maker.dir/__/src/utils.cpp.o: ../src/utils.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/manu/Desktop/dtam_thesis/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object executables/CMakeFiles/dataset_maker.dir/__/src/utils.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/manu/Desktop/dtam_thesis/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object executables/CMakeFiles/dataset_maker.dir/__/src/utils.cpp.o"
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build/executables && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/dataset_maker.dir/__/src/utils.cpp.o -c /home/manu/Desktop/dtam_thesis/prova_dr/src/utils.cpp
 
 executables/CMakeFiles/dataset_maker.dir/__/src/utils.cpp.i: cmake_force
@@ -164,7 +151,6 @@ executables/CMakeFiles/dataset_maker.dir/__/src/utils.cpp.s: cmake_force
 # Object files for target dataset_maker
 dataset_maker_OBJECTS = \
 "CMakeFiles/dataset_maker.dir/dataset_maker.cpp.o" \
-"CMakeFiles/dataset_maker.dir/__/src/dataset.cpp.o" \
 "CMakeFiles/dataset_maker.dir/__/src/camera.cpp.o" \
 "CMakeFiles/dataset_maker.dir/__/src/image.cpp.o" \
 "CMakeFiles/dataset_maker.dir/__/src/renderer.cpp.o" \
@@ -176,7 +162,6 @@ dataset_maker_OBJECTS = \
 dataset_maker_EXTERNAL_OBJECTS =
 
 executables/dataset_maker: executables/CMakeFiles/dataset_maker.dir/dataset_maker.cpp.o
-executables/dataset_maker: executables/CMakeFiles/dataset_maker.dir/__/src/dataset.cpp.o
 executables/dataset_maker: executables/CMakeFiles/dataset_maker.dir/__/src/camera.cpp.o
 executables/dataset_maker: executables/CMakeFiles/dataset_maker.dir/__/src/image.cpp.o
 executables/dataset_maker: executables/CMakeFiles/dataset_maker.dir/__/src/renderer.cpp.o
@@ -251,7 +236,7 @@ executables/dataset_maker: /usr/local/lib/libopencv_cudaarithm.so.4.5.2
 executables/dataset_maker: /usr/local/lib/libopencv_core.so.4.5.2
 executables/dataset_maker: /usr/local/lib/libopencv_cudev.so.4.5.2
 executables/dataset_maker: executables/CMakeFiles/dataset_maker.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/manu/Desktop/dtam_thesis/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX executable dataset_maker"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/manu/Desktop/dtam_thesis/prova_dr/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking CXX executable dataset_maker"
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build/executables && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/dataset_maker.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

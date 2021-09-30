@@ -11,13 +11,13 @@ using namespace pr;
 class Camera_cpu : public Camera{
   public:
 
-    cv::cuda::GpuMat depth_map_gpu_;
+    cv::cuda::GpuMat invdepth_map_gpu_;
     cv::cuda::GpuMat image_rgb_gpu_;
 
     Camera_cpu(std::string name, float lens, float aspect, float width, int resolution,
-       float max_depth, Eigen::Isometry3f* frame_camera_wrt_world, Eigen::Isometry3f* frame_world_wrt_camera)
+       float max_depth, float min_depth, Eigen::Isometry3f* frame_camera_wrt_world, Eigen::Isometry3f* frame_world_wrt_camera)
 
-    : Camera(name, lens, aspect, width, resolution, max_depth, frame_camera_wrt_world, frame_world_wrt_camera){}
+    : Camera(name, lens, aspect, width, resolution, max_depth, min_depth, frame_camera_wrt_world, frame_world_wrt_camera){}
 
 
     void gpuFree();

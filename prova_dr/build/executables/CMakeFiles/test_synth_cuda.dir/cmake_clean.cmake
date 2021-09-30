@@ -1,6 +1,5 @@
 file(REMOVE_RECURSE
   "CMakeFiles/test_synth_cuda.dir/__/src/camera.cpp.o"
-  "CMakeFiles/test_synth_cuda.dir/__/src/dataset.cpp.o"
   "CMakeFiles/test_synth_cuda.dir/__/src/environment.cpp.o"
   "CMakeFiles/test_synth_cuda.dir/__/src/image.cpp.o"
   "CMakeFiles/test_synth_cuda.dir/__/src/renderer.cpp.o"

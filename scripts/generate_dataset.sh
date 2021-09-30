@@ -1,5 +1,6 @@
 #Name of the .blend file inside "blender_scenes" directory
 dataset_name='bunny_scene'
+# dataset_name='classroom'
 
 #Number of samples for CYCLES pathtracer
 samples=128

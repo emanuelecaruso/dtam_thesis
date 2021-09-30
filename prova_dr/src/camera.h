@@ -14,29 +14,31 @@ class Camera{
     float width_;
     int resolution_;
     float max_depth_;
+    float min_depth_;
     Eigen::Matrix3f K_;
     Eigen::Matrix3f Kinv_;
-    Image<float>* depth_map_;
+    Image<float>* invdepth_map_;
     Image<cv::Vec3b>* image_rgb_;
     Eigen::Isometry3f* frame_world_wrt_camera_;
     Eigen::Isometry3f* frame_camera_wrt_world_;
 
     Camera(std::string name, float lens, float aspect, float width, int resolution,
-       float max_depth, Eigen::Isometry3f* frame_camera_wrt_world, Eigen::Isometry3f* frame_world_wrt_camera){
+       float max_depth, float min_depth, Eigen::Isometry3f* frame_camera_wrt_world, Eigen::Isometry3f* frame_world_wrt_camera){
        name_ = name;
        lens_ = lens;
        aspect_ = aspect;
        width_ = width;
        resolution_ = resolution;
        max_depth_ = max_depth;
+       min_depth_ = min_depth;
        frame_camera_wrt_world_ = frame_camera_wrt_world;
        frame_world_wrt_camera_ = frame_world_wrt_camera;
-       depth_map_ = new Image< float >("depth_"+name_);
+       invdepth_map_ = new Image< float >("invdepth_"+name_);
        image_rgb_ = new Image< cv::Vec3b >("rgb_"+name_);
 
        // initialize images with white color
-       depth_map_->initImage(resolution_/aspect_,resolution_);
-       depth_map_->setAllPixels(1.0);
+       invdepth_map_->initImage(resolution_/aspect_,resolution_);
+       invdepth_map_->setAllPixels(1.0);
        image_rgb_->initImage(resolution_/aspect_,resolution_);
        image_rgb_->setAllPixels(cv::Vec3b(255,255,255));
 

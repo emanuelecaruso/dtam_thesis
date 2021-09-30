@@ -26,7 +26,6 @@ link_libraries(${OpenCV_LIBS})
 
 #app for creating datasets
 add_executable(dataset_maker dataset_maker.cpp
-../src/dataset.cpp
 ../src/camera.cpp
 ../src/image.cpp
 ../src/renderer.cpp
@@ -39,7 +38,6 @@ target_link_libraries(dataset_maker opencv_highgui)
 if (USE_CUDA)
   #synthetic simulator test with cuda
   add_executable(test_synth_cuda test_synth_cuda.cpp
-  ../src/dataset.cpp
   ../src_cuda/camera_cpu.cu
   ../src/image.cpp
   ../src/camera.cpp

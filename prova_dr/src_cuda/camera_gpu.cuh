@@ -17,7 +17,7 @@ class Camera_gpu{
     float max_depth_;
     Eigen::Matrix3f K_;
     Eigen::Matrix3f Kinv_;
-    cv::cuda::PtrStepSz<float> depth_map_;
+    cv::cuda::PtrStepSz<float> invdepth_map_;
     cv::cuda::PtrStepSz<uchar3> image_rgb_;
     Eigen::Isometry3f frame_world_wrt_camera_;
     Eigen::Isometry3f frame_camera_wrt_world_;
@@ -25,7 +25,7 @@ class Camera_gpu{
 
     Camera_gpu(std::string name, float lens, float aspect, float width, int resolution,
        float max_depth, Eigen::Matrix3f K, Eigen::Matrix3f Kinv, Eigen::Isometry3f frame_camera_wrt_world,
-       Eigen::Isometry3f frame_world_wrt_camera, cv::cuda::PtrStepSz<float> depth_map, cv::cuda::PtrStepSz<uchar3> image_rgb){
+       Eigen::Isometry3f frame_world_wrt_camera, cv::cuda::PtrStepSz<float> invdepth_map, cv::cuda::PtrStepSz<uchar3> image_rgb){
        name_ = name;
        lens_ = lens;
        aspect_ = aspect;
@@ -36,7 +36,7 @@ class Camera_gpu{
        Kinv_ = Kinv;
        frame_camera_wrt_world_ = frame_camera_wrt_world;
        frame_world_wrt_camera_ = frame_world_wrt_camera;
-       depth_map_ = depth_map;
+       invdepth_map_ = invdepth_map;
        image_rgb_ = image_rgb;
 
     };

@@ -62,11 +62,8 @@ links = tree.links
 
 
 data_ = {}
-if( not con):
-    data_['cameras']={}
-else:
-    with open(json_path, "r+") as file:
-        data_ = json.load(file)
+data_['cameras']={}
+
 
 argv = sys.argv
 
@@ -74,13 +71,17 @@ for n in tree.nodes:
     tree.nodes.remove(n)
 
 rl = tree.nodes.new('CompositorNodeRLayers')
+d = tree.nodes.new('CompositorNodeDenoise')
+l1=links.new(rl.outputs['Image'], d.inputs['Image'])
+
 v = tree.nodes.new('CompositorNodeComposite')
 v.use_alpha = False
 
 
 mm = tree.nodes.new('CompositorNodeMath')
 mm.operation='MULTIPLY'
-mm.inputs[1].default_value=2
+min_depth_=bpy.data.cameras[0].clip_start
+mm.inputs[1].default_value=1.0/min_depth_
 
 links.new(rl.outputs['Depth'], mm.inputs[0])
 
@@ -106,7 +107,7 @@ for obj_ in bpy.data.objects:
         camera=bpy.data.cameras[name_]
         scene.frame_current=i
 
-        l1=links.new(rl.outputs['Image'], v.inputs[0])
+        l1=links.new(d.outputs['Image'], v.inputs[0])
         if( (con and not os.path.isfile(path_rgb)) or not con ):
             scene.view_settings.view_transform = 'Standard'
             render.engine=engine
@@ -150,6 +151,8 @@ for obj_ in bpy.data.objects:
         resolution_y=render.resolution_y
         aspect=resolution_x/resolution_y
         lens=bpy.data.cameras[name_].lens/1000
+        min_depth=bpy.data.cameras[name_].clip_start
+        max_depth=bpy.data.cameras[name_].clip_end
         width=bpy.data.cameras[name_].sensor_width/1000
 
         data_['cameras'][name_]={}
@@ -157,6 +160,9 @@ for obj_ in bpy.data.objects:
         data_['cameras'][name_]['width']=width
         data_['cameras'][name_]['resolution']=resolution_x
         data_['cameras'][name_]['frame']=frame_
+        data_['cameras'][name_]['lens']=lens
+        data_['cameras'][name_]['max_depth']=max_depth
+        data_['cameras'][name_]['min_depth']=min_depth
         data_['cameras'][name_]['lens']=lens
 
 

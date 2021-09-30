@@ -1,6 +1,5 @@
 file(REMOVE_RECURSE
   "CMakeFiles/dataset_maker.dir/__/src/camera.cpp.o"
-  "CMakeFiles/dataset_maker.dir/__/src/dataset.cpp.o"
   "CMakeFiles/dataset_maker.dir/__/src/dtam.cpp.o"
   "CMakeFiles/dataset_maker.dir/__/src/environment.cpp.o"
   "CMakeFiles/dataset_maker.dir/__/src/image.cpp.o"

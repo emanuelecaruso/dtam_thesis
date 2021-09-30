@@ -10,18 +10,18 @@ using namespace pr;
 
 void Camera_cpu::gpuFree(){
   image_rgb_gpu_.release();
-  depth_map_gpu_.release();
+  invdepth_map_gpu_.release();
 }
 
 
 Camera_gpu* Camera_cpu::getCamera_gpu(){
 
   image_rgb_gpu_.upload(image_rgb_->image_);
-  depth_map_gpu_.upload(depth_map_->image_);
+  invdepth_map_gpu_.upload(invdepth_map_->image_);
 
   Camera_gpu* camera_gpu_h = new Camera_gpu(name_, lens_, aspect_, width_, resolution_,
      max_depth_, K_, Kinv_, *frame_camera_wrt_world_, *frame_world_wrt_camera_,
-      depth_map_gpu_, image_rgb_gpu_);
+      invdepth_map_gpu_, image_rgb_gpu_);
 
   cudaError_t err ;
 
@@ -42,14 +42,13 @@ Camera_gpu* Camera_cpu::getCamera_gpu(){
 }
 
 void Camera_cpu::cloneCameraImages(Camera* camera){
-  depth_map_ = camera->depth_map_;
+  invdepth_map_ = camera->invdepth_map_;
   image_rgb_ = camera->image_rgb_;
 
 }
 
 void Camera_cpu::showInvdepthmap(int scale){
-  Image<float>* invdepthmap=new Image< float >("depth_"+name_);
-  depth_map_gpu_.download(invdepthmap->image_);
-  invdepthmap->image_=1.0/(2*max_depth_*(invdepthmap->image_));
+  Image<float>* invdepthmap=new Image< float >("invdepth_"+name_);
+  invdepth_map_gpu_.download(invdepthmap->image_);
   invdepthmap->show(scale/resolution_);
 }

@@ -170,36 +170,6 @@ __/src/camera.cpp.s:
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/camera.cpp.s
 .PHONY : __/src/camera.cpp.s
 
-__/src/dataset.o: __/src/dataset.cpp.o
-
-.PHONY : __/src/dataset.o
-
-# target to build an object file
-__/src/dataset.cpp.o:
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/dataset_maker.dir/build.make executables/CMakeFiles/dataset_maker.dir/__/src/dataset.cpp.o
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/dataset.cpp.o
-.PHONY : __/src/dataset.cpp.o
-
-__/src/dataset.i: __/src/dataset.cpp.i
-
-.PHONY : __/src/dataset.i
-
-# target to preprocess a source file
-__/src/dataset.cpp.i:
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/dataset_maker.dir/build.make executables/CMakeFiles/dataset_maker.dir/__/src/dataset.cpp.i
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/dataset.cpp.i
-.PHONY : __/src/dataset.cpp.i
-
-__/src/dataset.s: __/src/dataset.cpp.s
-
-.PHONY : __/src/dataset.s
-
-# target to generate assembly for a file
-__/src/dataset.cpp.s:
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/dataset_maker.dir/build.make executables/CMakeFiles/dataset_maker.dir/__/src/dataset.cpp.s
-	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/__/src/dataset.cpp.s
-.PHONY : __/src/dataset.cpp.s
-
 __/src/dtam.o: __/src/dtam.cpp.o
 
 .PHONY : __/src/dtam.o
@@ -522,9 +492,6 @@ help:
 	@echo "... __/src/camera.o"
 	@echo "... __/src/camera.i"
 	@echo "... __/src/camera.s"
-	@echo "... __/src/dataset.o"
-	@echo "... __/src/dataset.i"
-	@echo "... __/src/dataset.s"
 	@echo "... __/src/dtam.o"
 	@echo "... __/src/dtam.i"
 	@echo "... __/src/dtam.s"

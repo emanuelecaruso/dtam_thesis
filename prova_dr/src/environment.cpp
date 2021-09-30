@@ -120,7 +120,7 @@ void Environment::generateCamera(std::string name, float t1, float t2, float t3,
   frame_world_wrt_camera_r->translation()=t_r;
   Eigen::Isometry3f* frame_camera_wrt_world_r = new Eigen::Isometry3f;
   *frame_camera_wrt_world_r = frame_world_wrt_camera_r->inverse();
-  Camera* camera = new Camera(name,lens_,aspect_,film_,resolution_,max_depth_,frame_camera_wrt_world_r,frame_world_wrt_camera_r);
+  Camera* camera = new Camera(name,lens_,aspect_,film_,resolution_,max_depth_,min_depth_,frame_camera_wrt_world_r,frame_world_wrt_camera_r);
   camera_vector_.push_back(camera);
 
 }
@@ -245,10 +245,13 @@ bool Environment::loadEnvironment(std::string path_name, std::string dataset_nam
     float aspect;
     float width;
     int resolution;
-    int max_depth;
+    float max_depth;
+    float min_depth;
     nlohmann::basic_json<>::value_type f;
     try{
       lens = it.value().at("lens");
+      max_depth = it.value().at("max_depth");
+      min_depth = it.value().at("min_depth");
       aspect = it.value().at("aspect");
       width = it.value().at("width");
       resolution = it.value().at("resolution");
@@ -258,13 +261,12 @@ bool Environment::loadEnvironment(std::string path_name, std::string dataset_nam
       std::cout << error << std::endl;
       return false;
     };
-    try{
-      max_depth = it.value().at("max_depth");
-    } catch(std::exception& e) {};
 
     resolution_=resolution;
     film_=width;
     lens_=lens;
+    max_depth_=max_depth;
+    min_depth_=min_depth;
     aspect_=aspect;
 
     Eigen::Matrix3f R;
@@ -280,7 +282,8 @@ bool Environment::loadEnvironment(std::string path_name, std::string dataset_nam
     Eigen::Isometry3f* frame_world_wrt_camera = new Eigen::Isometry3f;
     *frame_world_wrt_camera=frame_camera_wrt_world->inverse();
 
-    Camera* camera = new Camera(name,lens_,aspect_,film_,resolution_,max_depth_,frame_camera_wrt_world,frame_world_wrt_camera);
+    Camera* camera = new Camera(name,lens_,aspect_,film_,resolution_,max_depth_,
+      min_depth_,frame_camera_wrt_world,frame_world_wrt_camera);
 
     camera->loadRGB(path_rgb);
 

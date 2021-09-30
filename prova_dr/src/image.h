@@ -82,6 +82,5 @@ class Image{
     }
 };
 
-int mseBetween2Colors(cv::Vec3b& clr1, cv::Vec3b& clr2);
 
 using ImageVector = std::vector< Image<cv::Vec3b>* >;

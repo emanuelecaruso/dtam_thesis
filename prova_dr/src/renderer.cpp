@@ -25,7 +25,7 @@ bool Renderer::renderPoint(Cp& cp, Camera* camera){
   float depth = depth_cam/camera->max_depth_;
 
   float evaluated_pixel;
-  camera->depth_map_->evalPixel(pixel_coords,evaluated_pixel);
+  camera->invdepth_map_->evalPixel(pixel_coords,evaluated_pixel);
 
   if (evaluated_pixel<depth)
     return false;
@@ -36,7 +36,7 @@ bool Renderer::renderPoint(Cp& cp, Camera* camera){
   cv::Vec3b color = cv::Vec3b(cp.color[0],cp.color[1],cp.color[2]);
 
   camera->image_rgb_->setPixel(pixel_coords, color);
-  camera->depth_map_->setPixel(pixel_coords,depth);
+  camera->invdepth_map_->setPixel(pixel_coords,depth);
 
   return true;
 }

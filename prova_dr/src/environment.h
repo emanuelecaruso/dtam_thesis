@@ -8,6 +8,7 @@ class Environment{
     float film_;
     float lens_;
     float aspect_;
+    float min_depth_;
     float max_depth_;
     // environment state
     cpVector cp_vector_;

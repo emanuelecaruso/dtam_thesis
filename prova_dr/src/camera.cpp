@@ -9,7 +9,7 @@ using namespace pr;
 
 
 void Camera::clearImgs(){
-  depth_map_->setAllPixels(1.0);
+  invdepth_map_->setAllPixels(1.0);
   image_rgb_->setAllPixels(cv::Vec3b(255,255,255));
 }
 
@@ -82,7 +82,7 @@ void Camera::saveRGB(std::string path){
 
 void Camera::saveDepthMap(std::string path){
   cv::Mat ucharImg;
-  depth_map_->image_.convertTo(ucharImg, CV_32FC1, 255.0);
+  invdepth_map_->image_.convertTo(ucharImg, CV_32FC1, 255.0);
   cv::imwrite(path+ "/depth_" +name_+".png", ucharImg);
 
 }
@@ -98,8 +98,8 @@ void Camera::loadDepthMap(std::string path){
   cv::Mat channel[3];
   rgbImg = cv::imread(path);
   split(rgbImg, channel);
-  depth_map_->image_=channel[0];
-  depth_map_->image_.convertTo(depth_map_->image_, CV_32FC1, 1.0/255.0);
+  invdepth_map_->image_=channel[0];
+  invdepth_map_->image_.convertTo(invdepth_map_->image_, CV_32FC1, 1.0/255.0);
 }
 
 void Camera::showWorldFrame(Eigen::Vector3f origin, float delta, int length){
