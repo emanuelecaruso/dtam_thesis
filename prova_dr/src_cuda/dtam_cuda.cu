@@ -499,7 +499,7 @@ __global__ void UpdateState_kernel(cv::cuda::PtrStepSz<float> points_added, cv::
   int rows = blockDim.x*gridDim.x;
   int cols = blockDim.y*gridDim.y;
 
-  if(abs(gradient_q(row,col))<0.01){
+  if(abs(gradient_q(row,col))<0.05){
 
     float invdepth=a(row,col);
     float depth=depth1_r/invdepth;
@@ -519,7 +519,7 @@ __global__ void UpdateState_kernel(cv::cuda::PtrStepSz<float> points_added, cv::
     // if(cost_volume(row,col_).x<3 && cost_volume(row,col_).y>2){
     //   points_added(row,col)=1;
     // }
-    if(cost<10)
+    if(cost<5)
       points_added(row,col)=d(row,col);
   }
 
@@ -890,13 +890,15 @@ void Dtam::getVectorNorm(float* vector_to_normalize, float* norm, int N){
   printCudaError("Squaring terms for computing norm");
 
   float* norm_vector_o;
-  cudaMalloc(&norm_vector_o, sizeof(float)*GRID_SIZE);
-  printCudaError("cudaMalloc in norm computation 2");
+
 
   const int TB_SIZE = MAX_THREADS;
   bool init = false;
 
   while (GRID_SIZE>=TB_SIZE){
+
+    cudaMalloc(&norm_vector_o, sizeof(float)*GRID_SIZE);
+    printCudaError("cudaMalloc in norm computation 2");
 
     int REST = GRID_SIZE % TB_SIZE;
     GRID_SIZE = GRID_SIZE / TB_SIZE;
@@ -949,15 +951,16 @@ void Dtam::getVectorMax(float* vector, float* max, int N){
   printCudaError("Copying array for max computation");
 
   float* max_vector_o;
-  cudaMalloc(&max_vector_o, sizeof(float)*GRID_SIZE);
-  printCudaError("cudaMalloc in max computation 2");
+
 
   const int TB_SIZE = MAX_THREADS;
   bool init = false;
 
   while (GRID_SIZE>=TB_SIZE){
 
-    std::cout << "PORCODD " << GRID_SIZE << std::endl;
+    cudaMalloc(&max_vector_o, sizeof(float)*GRID_SIZE);
+    printCudaError("cudaMalloc in max computation 2");
+
     int REST = GRID_SIZE % TB_SIZE;
     GRID_SIZE = GRID_SIZE / TB_SIZE;
     if (REST > 0)
@@ -975,7 +978,6 @@ void Dtam::getVectorMax(float* vector, float* max, int N){
     init = true;
 
   }
-  std::cout << "PORCODD " << GRID_SIZE<< std::endl;
 
   cudaMalloc(&max_vector_o, sizeof(float));
   maxReduction_kernel<<<1, TB_SIZE>>>(max_vector_i, max_vector_o, N_THREADS);
@@ -1041,8 +1043,8 @@ void Dtam::gradDesc_Q(cv::cuda::GpuMat* q, cv::cuda::GpuMat* gradient_d ){
   // printCudaError("Kernel computing sum reduction");
 
   float* max = new float;
-  // Dtam::getVectorMax(vector_to_normalize, max, N);
-  // std::cout << "max is: " << *max << std::endl;
+  Dtam::getVectorMax(vector_to_normalize, max, N);
+  std::cout << "max is: " << *max << std::endl;
   normalize_Q_kernel<<<numBlocks,threadsPerBlock>>> (*max, *q, vector_to_normalize);
   printCudaError("Kernel computing sum reduction");
 
@@ -1387,7 +1389,6 @@ void Dtam::updateDepthMap_gpu(Environment_gpu* environment){
       if(theta_>theta_end_){
       //   // if(count_>=3){
           Dtam::Regularize();
-
       //   // }
       }
       double t_s=getTime();
