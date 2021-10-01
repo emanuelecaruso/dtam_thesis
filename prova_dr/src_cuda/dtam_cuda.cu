@@ -492,7 +492,7 @@ __global__ void Image2Vector_kernel(cv::cuda::PtrStepSz<float> image, float* vec
 
 }
 
-__global__ void UpdateState_kernel(cv::cuda::PtrStepSz<float> points_added, cv::cuda::PtrStepSz<int2> cost_volume, cv::cuda::PtrStepSz<float> a, float* invdepth_r_array, cv::cuda::PtrStepSz<float> gradient_q){
+__global__ void UpdateState_kernel(cv::cuda::PtrStepSz<float> points_added, cv::cuda::PtrStepSz<int2> cost_volume, cv::cuda::PtrStepSz<float> a, cv::cuda::PtrStepSz<float> d, float* invdepth_r_array, cv::cuda::PtrStepSz<float> gradient_q){
   int row = blockIdx.x * blockDim.x + threadIdx.x;
   int col = blockIdx.y * blockDim.y + threadIdx.y;
 
@@ -506,15 +506,16 @@ __global__ void UpdateState_kernel(cv::cuda::PtrStepSz<float> points_added, cv::
   // if(cost_volume(row,col_).x<3 && cost_volume(row,col_).y>2){
   //   points_added(row,col)=1;
   // }
-  if(abs(gradient_q(row,col))<0.01 && points_added(row,col)==0){
-    points_added(row,col)=a(row,col);
+  if(abs(gradient_q(row,col))<0.1){
+    points_added(row,col)=d(row,col);
   }
 
 }
 
 void Dtam::Initialize(){
 
-  theta_=0.05;
+  threshold_=50;
+  theta_=0.07;
   // theta_switch_=0.19;
   theta_switch_=0;
   theta_end_=0.00001;
@@ -522,14 +523,15 @@ void Dtam::Initialize(){
   alpha_=0.00002;
   // alpha_=0.00007;
   // alpha_=0;
-  beta1_=0;
+  beta1_=0.0001;
   // beta1_=0.0002;
   beta2_=0.03;
   // lambda_=0.005;
   lambda_=0.005;
   sigma_q0_=0.1;
   sigma_d0_=0.5;
-  // r1_=0.92;
+  // sigma_d0_=0.1;
+  // r1_=1;
   r1_=0.87;
   // r2_=0.5;
   r2_=0.7;
@@ -1101,6 +1103,69 @@ void Dtam::UpdateParametersReg(bool print){
   }
 
 }
+void Dtam::showImgs(int scale){
+  int resolution=camera_vector_cpu_[index_r_]->resolution_;
+
+  cv::Mat_< float > ad_comp;
+
+
+  cv::Mat_< float > d_1;
+  d.download(d_1);
+  cv::Mat_< float > resized_image_d_1;
+  cv::resize(d_1, resized_image_d_1, cv::Size(), scale/resolution, scale/resolution, cv::INTER_NEAREST );
+  cv::Mat_< float > a_1;
+  a.download(a_1);
+  cv::Mat_< float > resized_image_a;
+  cv::resize(a_1, resized_image_a, cv::Size(), scale/resolution, scale/resolution, cv::INTER_NEAREST );
+  cv::hconcat(resized_image_d_1,resized_image_a,ad_comp);
+
+  cv::Mat_< float > gt_gterr_comp;
+
+  cv::Mat_< float > gt;
+  depth_groundtruth_.download(gt);
+  cv::Mat_< float > resized_image_gt;
+  cv::resize(gt, resized_image_gt, cv::Size(), scale/resolution, scale/resolution, cv::INTER_NEAREST );
+  cv::Mat_< float > gterr;
+  cv::absdiff(resized_image_gt, resized_image_d_1, gterr);
+
+  cv::hconcat(resized_image_gt,gterr,gt_gterr_comp);
+
+  cv::Mat_< float > out;
+  cv::vconcat(ad_comp,gt_gterr_comp,out);
+
+  cv::imshow("comparison", out);
+
+  // Image< float >* invdepth_groundtruth = new Image< float >("invdepth groundtruth");
+  // depth_groundtruth_.download(invdepth_groundtruth->image_);
+  // invdepth_groundtruth->show(scale/camera_vector_cpu_[index_m]->resolution_);
+
+  // cv::Mat_< float > d_gradient;
+  // (gradient_d).download(d_gradient);
+  // cv::Mat_< float > resized_image_d_gradient;
+  // cv::resize(d_gradient, resized_image_d_gradient, cv::Size(), scale/resolution, scale/resolution, cv::INTER_NEAREST );
+  // cv::imshow("gradient_d", resized_image_d_gradient);
+
+  // cv::Mat_< float > q_1;
+  // q.download(q_1);
+  // cv::Mat_< float > resized_image_q_1;
+  // cv::resize(q_1, resized_image_q_1, cv::Size(), scale/resolution, scale/resolution, cv::INTER_NEAREST );
+  // cv::imshow("q_1", resized_image_q_1);
+  //
+  cv::Mat_< float > q_gradient;
+  (gradient_q).download(q_gradient);
+  cv::Mat_< float > resized_image_q_gradient;
+  cv::resize(q_gradient, resized_image_q_gradient, cv::Size(), scale/resolution, scale/resolution, cv::INTER_NEAREST );
+  cv::imshow("gradient_q", resized_image_q_gradient);
+
+  cv::Mat_< float > pa_1;
+  points_added_.download(pa_1);
+  cv::Mat_< float > resized_image_pa_1;
+  cv::resize(pa_1, resized_image_pa_1, cv::Size(), scale/resolution, scale/resolution, cv::INTER_NEAREST );
+  cv::imshow("pa 1", resized_image_pa_1);
+
+  // cv::waitKey(0);
+
+}
 
 void Dtam::Regularize(){
 
@@ -1156,43 +1221,6 @@ void Dtam::Regularize(){
   //
   // std::cout << "theta is: " << theta_ << std::endl;
 
-  cv::Mat_< float > pa_1;
-  points_added_.download(pa_1);
-  cv::Mat_< float > resized_image_pa_1;
-  cv::resize(pa_1, resized_image_pa_1, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
-  cv::imshow("pa 1", resized_image_pa_1);
-
-  cv::Mat_< float > d_1;
-  d.download(d_1);
-  cv::Mat_< float > resized_image_d_1;
-  cv::resize(d_1, resized_image_d_1, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
-  cv::imshow("d 1", resized_image_d_1);
-  //
-  cv::Mat_< float > a_1;
-  a.download(a_1);
-  cv::Mat_< float > resized_image_a;
-  cv::resize(a_1, resized_image_a, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
-  cv::imshow("a 1", resized_image_a);
-
-  // cv::Mat_< float > d_gradient;
-  // (gradient_d).download(d_gradient);
-  // cv::Mat_< float > resized_image_d_gradient;
-  // cv::resize(d_gradient, resized_image_d_gradient, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
-  // cv::imshow("gradient_d", resized_image_d_gradient);
-
-  // cv::Mat_< float > q_1;
-  // q.download(q_1);
-  // cv::Mat_< float > resized_image_q_1;
-  // cv::resize(q_1, resized_image_q_1, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
-  // cv::imshow("q_1", resized_image_q_1);
-  //
-  cv::Mat_< float > q_gradient;
-  (gradient_q).download(q_gradient);
-  cv::Mat_< float > resized_image_q_gradient;
-  cv::resize(q_gradient, resized_image_q_gradient, cv::Size(), 800/resolution, 800/resolution, cv::INTER_NEAREST );
-  cv::imshow("gradient_q", resized_image_q_gradient);
-
-  // cv::waitKey(0);
 
 
   camera_vector_cpu_[index_r_]->invdepth_map_gpu_= a;
@@ -1213,7 +1241,7 @@ void Dtam::UpdateState(){
 
   dim3 threadsPerBlock( 32 , 32 , 1);
   dim3 numBlocks( rows/32, cols/32 , 1);
-  UpdateState_kernel<<<numBlocks,threadsPerBlock>>>( points_added_, cost_volume_, a, invdepth_r_array_, gradient_q);
+  UpdateState_kernel<<<numBlocks,threadsPerBlock>>>( points_added_, cost_volume_, a, d, invdepth_r_array_, gradient_q);
   printCudaError("State Update State");
 
   double t_e=getTime();
@@ -1222,6 +1250,45 @@ void Dtam::UpdateState(){
 
 }
 
+void Dtam::depthSampling(Environment_gpu* environment){
+  int rows = environment->resolution_/environment->aspect_;
+  int cols = environment->resolution_;
+  float depth1_r=environment->min_depth_;
+  float depth2_r=environment->max_depth_;
+  float* invdepth_r_array_h = new float[NUM_INTERPOLATIONS];
+
+  int switch_idx=40;
+  float switch_depth=2;
+  for (int i=0; i<switch_idx; i++){
+    float ratio_depth_r = (float)(i)/((float)switch_idx);
+    float depth_r = depth1_r+ratio_depth_r*(switch_depth-depth1_r);
+    invdepth_r_array_h[i]=1.0/depth_r;
+    std::cout << "depth: " << depth_r  << ", idx: " << i << std::endl;
+  }
+  for (int i=switch_idx; i<NUM_INTERPOLATIONS; i++){
+    float ratio_depth_r = (float)(i-switch_idx)/((float)NUM_INTERPOLATIONS-switch_idx-1);
+    float invdepth_r = (1.0/switch_depth)+ratio_depth_r*((1.0/depth2_r)-(1.0/switch_depth));
+    float depth_r = 1.0/invdepth_r;
+    invdepth_r_array_h[i]=1.0/depth_r;
+    std::cout << "depth: " << depth_r  << ", idx: " << i << std::endl;
+  }
+
+  cudaError_t err ;
+
+  cudaMalloc(&invdepth_r_array_, sizeof(float)*NUM_INTERPOLATIONS);
+  err = cudaGetLastError();
+  if (err != cudaSuccess)
+      printf("cudaMalloc (dtam constr) Error: %s\n", cudaGetErrorString(err));
+
+  cudaMemcpy(invdepth_r_array_, invdepth_r_array_h, sizeof(float)*NUM_INTERPOLATIONS, cudaMemcpyHostToDevice);
+  err = cudaGetLastError();
+  if (err != cudaSuccess)
+      printf("cudaMemcpy (dtam constr) Error: %s\n", cudaGetErrorString(err));
+
+
+  delete (invdepth_r_array_h);
+
+}
 
 void Dtam::updateDepthMap_gpu(Environment_gpu* environment){
 
@@ -1234,11 +1301,14 @@ void Dtam::updateDepthMap_gpu(Environment_gpu* environment){
   int it=0;
   frames_computed_=0;
 
+  depthSampling(environment);
+
   t_start=getTime();
   while (true){
 
     // considering 30 fps camera
-    int current_frame=int((getTime()-t_start-waitKeyDelay)/33.33333);
+    float fps=30;
+    int current_frame=int((getTime()-t_start-waitKeyDelay)/((1.0/fps)*1000));
     int frames_delta=current_frame-frames_computed_;
     if(frames_delta>=0){
       frame_available=true;
@@ -1274,10 +1344,6 @@ void Dtam::updateDepthMap_gpu(Environment_gpu* environment){
           gradient_q.create(d.rows,d.cols,CV_32FC1);
 
 
-          Image< float >* invdepth_groundtruth = new Image< float >("invdepth groundtruth");
-          depth_groundtruth_.download(invdepth_groundtruth->image_);
-          invdepth_groundtruth->show(800/camera_vector_cpu_[index_m]->resolution_);
-
           init = false;
         }
         else if(index_m>(index_r_+2)){
@@ -1298,8 +1364,9 @@ void Dtam::updateDepthMap_gpu(Environment_gpu* environment){
       // float cr=0.95; float rr=0.08;  //corner ur
       // float cr=0.5; float rr=0.9;  //hightex cube
 
-      // int col=cr*camera_vector_cpu_[0]->resolution_;
-      // int row=rr*camera_vector_cpu_[0]->resolution_/camera_vector_cpu_[0]->aspect_;
+      int index_m=frames_computed_-1;
+      int col=cr*camera_vector_cpu_[0]->resolution_;
+      int row=rr*camera_vector_cpu_[0]->resolution_/camera_vector_cpu_[0]->aspect_;
       // Dtam::StudyCostVolumeMin(index_m, camera_data_for_dtam_, row, col, true);
 
       if(theta_>theta_end_){
@@ -1309,6 +1376,7 @@ void Dtam::updateDepthMap_gpu(Environment_gpu* environment){
       //   // }
       }
       double t_s=getTime();
+      Dtam::showImgs(640);
       cv::waitKey(0);
       double t_e=getTime();
       double delta=t_e-t_s;

@@ -60,7 +60,7 @@ __global__ void squareVectorElements_kernel(float *vector);
 
 __global__ void Image2Vector_kernel(cv::cuda::PtrStepSz<float> image, float* vector);
 
-__global__ void UpdateState_kernel(cv::cuda::PtrStepSz<float> points_added, cv::cuda::PtrStepSz<int2> cost_volume, cv::cuda::PtrStepSz<float> a, float* invdepth_r_array_, cv::cuda::PtrStepSz<float> gradient_q);
+__global__ void UpdateState_kernel(cv::cuda::PtrStepSz<float> points_added, cv::cuda::PtrStepSz<int2> cost_volume, cv::cuda::PtrStepSz<float> a, cv::cuda::PtrStepSz<float> d, float* invdepth_r_array_, cv::cuda::PtrStepSz<float> gradient_q);
 
 
 class Dtam{
@@ -73,61 +73,7 @@ class Dtam{
 
 
 
-    Dtam(Environment_gpu* environment){
-
-
-      int rows = environment->resolution_/environment->aspect_;
-      int cols = environment->resolution_;
-      float depth1_r=environment->min_depth_;
-      float depth2_r=environment->max_depth_;
-      float* invdepth_r_array_h = new float[NUM_INTERPOLATIONS];
-
-      threshold_=50;
-
-      int switch_idx=10;
-      float switch_depth=1;
-      for (int i=0; i<switch_idx; i++){
-        float ratio_depth_r = (float)(i)/((float)switch_idx);
-        float depth_r = depth1_r+ratio_depth_r*(switch_depth-depth1_r);
-        invdepth_r_array_h[i]=1.0/depth_r;
-        std::cout << "depth: " << depth_r  << ", idx: " << i << std::endl;
-      }
-      for (int i=switch_idx; i<NUM_INTERPOLATIONS; i++){
-        float ratio_depth_r = (float)(i-switch_idx)/((float)NUM_INTERPOLATIONS-switch_idx-1);
-        float invdepth_r = (1.0/switch_depth)+ratio_depth_r*((1.0/depth2_r)-(1.0/switch_depth));
-        float depth_r = 1.0/invdepth_r;
-        invdepth_r_array_h[i]=1.0/depth_r;
-        std::cout << "depth: " << depth_r  << ", idx: " << i << std::endl;
-      }
-
-      // for (int i=0; i<NUM_INTERPOLATIONS; i++){
-      //   float ratio_depth_r = (float)i/((float)NUM_INTERPOLATIONS-1);
-      //   float depth_r = depth1_r+ratio_depth_r*(depth2_r-depth1_r);
-      //   invdepth_r_array_h[i]=depth_r;
-      // }
-
-
-
-      cudaError_t err ;
-
-      cudaMalloc(&invdepth_r_array_, sizeof(float)*NUM_INTERPOLATIONS);
-      err = cudaGetLastError();
-      if (err != cudaSuccess)
-          printf("cudaMalloc (dtam constr) Error: %s\n", cudaGetErrorString(err));
-
-      cudaMemcpy(invdepth_r_array_, invdepth_r_array_h, sizeof(float)*NUM_INTERPOLATIONS, cudaMemcpyHostToDevice);
-      err = cudaGetLastError();
-      if (err != cudaSuccess)
-          printf("cudaMemcpy (dtam constr) Error: %s\n", cudaGetErrorString(err));
-
-      delete (invdepth_r_array_h);
-
-    };
-
-    void loadCameras(CameraVector_cpu camera_vector_cpu, CameraVector_gpu camera_vector_gpu);
-    void addCamera(Camera_cpu* camera_cpu, Camera_gpu* camera_gpu);
-    bool setReferenceCamera(int index_r);
-    void prepareCameraForDtam(int index_m);
+    Dtam(Environment_gpu* environment){};
 
     void updateDepthMap_gpu(Environment_gpu* environment);
 
@@ -164,7 +110,12 @@ class Dtam{
     cv::cuda::GpuMat gradient_d;
     cv::cuda::GpuMat gradient_q;
 
+    void loadCameras(CameraVector_cpu camera_vector_cpu, CameraVector_gpu camera_vector_gpu);
+    void addCamera(Camera_cpu* camera_cpu, Camera_gpu* camera_gpu);
+    bool setReferenceCamera(int index_r);
+    void prepareCameraForDtam(int index_m);
     void Initialize();
+    void depthSampling(Environment_gpu* environment);
     void UpdateCostVolume(int index_m );
     void UpdateState();
     void ComputeWeights();
@@ -183,6 +134,7 @@ class Dtam{
     void getVectorMax(float* vector_to_normalize, float* max, int N);
     void getImageNorm(cv::cuda::GpuMat* image, float* norm);
     void Image2Vector(cv::cuda::GpuMat* image, float* vector);
+    void showImgs(int scale);
 
 
 
