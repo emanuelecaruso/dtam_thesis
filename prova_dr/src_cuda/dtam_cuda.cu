@@ -1042,9 +1042,9 @@ void Dtam::gradDesc_Q(cv::cuda::GpuMat* q, cv::cuda::GpuMat* gradient_d ){
   // normalize_Q_kernel<<<numBlocks,threadsPerBlock>>> (*norm, *q, vector_to_normalize);
   // printCudaError("Kernel computing sum reduction");
 
-  float* max = new float;
-  Dtam::getVectorMax(vector_to_normalize, max, N);
-  std::cout << "max is: " << *max << std::endl;
+  // float* max = new float;
+  // Dtam::getVectorMax(vector_to_normalize, max, N);
+  // std::cout << "max is: " << *max << std::endl;
   normalize_Q_kernel<<<numBlocks,threadsPerBlock>>> (*max, *q, vector_to_normalize);
   printCudaError("Kernel computing sum reduction");
 
