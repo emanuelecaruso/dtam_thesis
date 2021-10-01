@@ -60,7 +60,9 @@ __global__ void squareVectorElements_kernel(float *vector);
 
 __global__ void Image2Vector_kernel(cv::cuda::PtrStepSz<float> image, float* vector);
 
-__global__ void UpdateState_kernel(cv::cuda::PtrStepSz<float> points_added, cv::cuda::PtrStepSz<int2> cost_volume, cv::cuda::PtrStepSz<float> a, cv::cuda::PtrStepSz<float> d, float* invdepth_r_array_, cv::cuda::PtrStepSz<float> gradient_q);
+__global__ void UpdateState_kernel(cv::cuda::PtrStepSz<float> points_added, cv::cuda::PtrStepSz<int2> cost_volume, cv::cuda::PtrStepSz<float> a,
+                                  cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepSz<float> gradient_q, float* invdepth_r_array, int switch_idx,
+                                  float switch_depth, float depth1_r, float depth2_r);
 
 
 class Dtam{
@@ -81,6 +83,8 @@ class Dtam{
     cv::cuda::GpuMat depth_groundtruth_;
     int frames_computed_;
     int n_;
+    int switch_idx_;
+    float switch_depth_;
     float theta_;
     float theta_end_;
     float eps_;

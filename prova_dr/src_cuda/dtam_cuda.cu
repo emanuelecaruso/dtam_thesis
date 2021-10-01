@@ -492,22 +492,35 @@ __global__ void Image2Vector_kernel(cv::cuda::PtrStepSz<float> image, float* vec
 
 }
 
-__global__ void UpdateState_kernel(cv::cuda::PtrStepSz<float> points_added, cv::cuda::PtrStepSz<int2> cost_volume, cv::cuda::PtrStepSz<float> a, cv::cuda::PtrStepSz<float> d, float* invdepth_r_array, cv::cuda::PtrStepSz<float> gradient_q){
+__global__ void UpdateState_kernel(cv::cuda::PtrStepSz<float> points_added, cv::cuda::PtrStepSz<int2> cost_volume, cv::cuda::PtrStepSz<float> a, cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepSz<float> gradient_q, float* invdepth_r_array, int switch_idx, float switch_depth, float depth1_r, float depth2_r){
   int row = blockIdx.x * blockDim.x + threadIdx.x;
   int col = blockIdx.y * blockDim.y + threadIdx.y;
 
   int rows = blockDim.x*gridDim.x;
   int cols = blockDim.y*gridDim.y;
 
+  if(abs(gradient_q(row,col))<0.01){
 
-  // int depth_idx = int(a(row,col)*NUM_INTERPOLATIONS);
-  //
-  //
-  // if(cost_volume(row,col_).x<3 && cost_volume(row,col_).y>2){
-  //   points_added(row,col)=1;
-  // }
-  if(abs(gradient_q(row,col))<0.1){
-    points_added(row,col)=d(row,col);
+    float invdepth=a(row,col);
+    float depth=depth1_r/invdepth;
+    int i;
+    if(depth<switch_depth){
+      i= (int)roundf( switch_idx*((depth -depth1_r)/(switch_depth-depth1_r)));
+      // if(depth<0.77)
+      //   printf("%i,%i %f \n",row,col,depth );
+    }
+    else
+      i=switch_idx+(int)roundf(((NUM_INTERPOLATIONS-switch_idx-1)*((1.0/depth)-(1.0/switch_depth)))/((1.0/depth2_r)-(1.0/switch_depth)));
+    int col_ = cols*i+col;
+    int cost = cost_volume(row,col_).x;
+
+    //
+    //
+    // if(cost_volume(row,col_).x<3 && cost_volume(row,col_).y>2){
+    //   points_added(row,col)=1;
+    // }
+    if(cost<10)
+      points_added(row,col)=d(row,col);
   }
 
 }
@@ -1238,10 +1251,12 @@ void Dtam::UpdateState(){
 
   int cols = camera_vector_cpu_[index_r_]->invdepth_map_->image_.cols;
   int rows = camera_vector_cpu_[index_r_]->invdepth_map_->image_.rows;
+  float depth1_r=camera_vector_cpu_[index_r_]->min_depth_;
+  float depth2_r=camera_vector_cpu_[index_r_]->max_depth_;
 
   dim3 threadsPerBlock( 32 , 32 , 1);
   dim3 numBlocks( rows/32, cols/32 , 1);
-  UpdateState_kernel<<<numBlocks,threadsPerBlock>>>( points_added_, cost_volume_, a, d, invdepth_r_array_, gradient_q);
+  UpdateState_kernel<<<numBlocks,threadsPerBlock>>>( points_added_, cost_volume_, a, d,  gradient_q,invdepth_r_array_, switch_idx_, switch_depth_, depth1_r, depth2_r);
   printCudaError("State Update State");
 
   double t_e=getTime();
@@ -1257,17 +1272,17 @@ void Dtam::depthSampling(Environment_gpu* environment){
   float depth2_r=environment->max_depth_;
   float* invdepth_r_array_h = new float[NUM_INTERPOLATIONS];
 
-  int switch_idx=40;
-  float switch_depth=2;
-  for (int i=0; i<switch_idx; i++){
-    float ratio_depth_r = (float)(i)/((float)switch_idx);
-    float depth_r = depth1_r+ratio_depth_r*(switch_depth-depth1_r);
+  switch_idx_=40;
+  switch_depth_=2;
+  for (int i=0; i<switch_idx_; i++){
+    float ratio_depth_r = (float)(i)/((float)switch_idx_);
+    float depth_r = depth1_r+ratio_depth_r*(switch_depth_-depth1_r);
     invdepth_r_array_h[i]=1.0/depth_r;
     std::cout << "depth: " << depth_r  << ", idx: " << i << std::endl;
   }
-  for (int i=switch_idx; i<NUM_INTERPOLATIONS; i++){
-    float ratio_depth_r = (float)(i-switch_idx)/((float)NUM_INTERPOLATIONS-switch_idx-1);
-    float invdepth_r = (1.0/switch_depth)+ratio_depth_r*((1.0/depth2_r)-(1.0/switch_depth));
+  for (int i=switch_idx_; i<NUM_INTERPOLATIONS; i++){
+    float ratio_depth_r = (float)(i-switch_idx_)/((float)NUM_INTERPOLATIONS-switch_idx_-1);
+    float invdepth_r = (1.0/switch_depth_)+ratio_depth_r*((1.0/depth2_r)-(1.0/switch_depth_));
     float depth_r = 1.0/invdepth_r;
     invdepth_r_array_h[i]=1.0/depth_r;
     std::cout << "depth: " << depth_r  << ", idx: " << i << std::endl;
