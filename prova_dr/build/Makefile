@@ -111,6 +111,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named test_tracking
+
+# Build rule for target.
+test_tracking: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test_tracking
+.PHONY : test_tracking
+
+# fast build rule for target.
+test_tracking/fast:
+	$(MAKE) -f executables/CMakeFiles/test_tracking.dir/build.make executables/CMakeFiles/test_tracking.dir/build
+.PHONY : test_tracking/fast
+
+#=============================================================================
 # Target rules for targets named dataset_maker
 
 # Build rule for target.
@@ -124,17 +137,17 @@ dataset_maker/fast:
 .PHONY : dataset_maker/fast
 
 #=============================================================================
-# Target rules for targets named test_synth_cuda
+# Target rules for targets named test_mapping
 
 # Build rule for target.
-test_synth_cuda: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 test_synth_cuda
-.PHONY : test_synth_cuda
+test_mapping: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test_mapping
+.PHONY : test_mapping
 
 # fast build rule for target.
-test_synth_cuda/fast:
-	$(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/build
-.PHONY : test_synth_cuda/fast
+test_mapping/fast:
+	$(MAKE) -f executables/CMakeFiles/test_mapping.dir/build.make executables/CMakeFiles/test_mapping.dir/build
+.PHONY : test_mapping/fast
 
 # Help Target
 help:
@@ -144,8 +157,9 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
+	@echo "... test_tracking"
 	@echo "... dataset_maker"
-	@echo "... test_synth_cuda"
+	@echo "... test_mapping"
 .PHONY : help
 
 

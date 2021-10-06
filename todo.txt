@@ -11,11 +11,12 @@
 -- handle borders			XXXX
 -- depth->invdepth  			XXXX
 -- function handling			XXXX
--- add points to state    X...
+-- add points to state    XX..
 
--- variance
--- update sampling ??
+-- classes mapping/tracking
 -- points on blender
+
+-- update sampling ??
 -- play with parameters
 
 -- plot costs for pixel in graph

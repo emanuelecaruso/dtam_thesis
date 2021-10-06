@@ -77,7 +77,7 @@ class Dtam{
 
     Dtam(Environment_gpu* environment){};
 
-    void updateDepthMap_gpu(Environment_gpu* environment);
+    void test_mapping(Environment_gpu* environment);
 
   private:
     cv::cuda::GpuMat depth_groundtruth_;

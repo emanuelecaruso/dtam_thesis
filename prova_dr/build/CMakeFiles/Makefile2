@@ -71,8 +71,9 @@ clean: executables/clean
 # Directory level rules for directory executables
 
 # Recursive "all" directory target.
+executables/all: executables/CMakeFiles/test_tracking.dir/all
 executables/all: executables/CMakeFiles/dataset_maker.dir/all
-executables/all: executables/CMakeFiles/test_synth_cuda.dir/all
+executables/all: executables/CMakeFiles/test_mapping.dir/all
 
 .PHONY : executables/all
 
@@ -82,10 +83,43 @@ executables/preinstall:
 .PHONY : executables/preinstall
 
 # Recursive "clean" directory target.
+executables/clean: executables/CMakeFiles/test_tracking.dir/clean
 executables/clean: executables/CMakeFiles/dataset_maker.dir/clean
-executables/clean: executables/CMakeFiles/test_synth_cuda.dir/clean
+executables/clean: executables/CMakeFiles/test_mapping.dir/clean
 
 .PHONY : executables/clean
+
+#=============================================================================
+# Target rules for target executables/CMakeFiles/test_tracking.dir
+
+# All Build rule for target.
+executables/CMakeFiles/test_tracking.dir/all:
+	$(MAKE) -f executables/CMakeFiles/test_tracking.dir/build.make executables/CMakeFiles/test_tracking.dir/depend
+	$(MAKE) -f executables/CMakeFiles/test_tracking.dir/build.make executables/CMakeFiles/test_tracking.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/manu/Desktop/dtam_thesis/prova_dr/build/CMakeFiles --progress-num=21,22,23,24,25,26,27,28,29,30,31,32 "Built target test_tracking"
+.PHONY : executables/CMakeFiles/test_tracking.dir/all
+
+# Include target in all.
+all: executables/CMakeFiles/test_tracking.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+executables/CMakeFiles/test_tracking.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/manu/Desktop/dtam_thesis/prova_dr/build/CMakeFiles 12
+	$(MAKE) -f CMakeFiles/Makefile2 executables/CMakeFiles/test_tracking.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/manu/Desktop/dtam_thesis/prova_dr/build/CMakeFiles 0
+.PHONY : executables/CMakeFiles/test_tracking.dir/rule
+
+# Convenience name for target.
+test_tracking: executables/CMakeFiles/test_tracking.dir/rule
+
+.PHONY : test_tracking
+
+# clean rule for target.
+executables/CMakeFiles/test_tracking.dir/clean:
+	$(MAKE) -f executables/CMakeFiles/test_tracking.dir/build.make executables/CMakeFiles/test_tracking.dir/clean
+.PHONY : executables/CMakeFiles/test_tracking.dir/clean
 
 #=============================================================================
 # Target rules for target executables/CMakeFiles/dataset_maker.dir
@@ -120,36 +154,36 @@ executables/CMakeFiles/dataset_maker.dir/clean:
 .PHONY : executables/CMakeFiles/dataset_maker.dir/clean
 
 #=============================================================================
-# Target rules for target executables/CMakeFiles/test_synth_cuda.dir
+# Target rules for target executables/CMakeFiles/test_mapping.dir
 
 # All Build rule for target.
-executables/CMakeFiles/test_synth_cuda.dir/all:
-	$(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/depend
-	$(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/manu/Desktop/dtam_thesis/prova_dr/build/CMakeFiles --progress-num=9,10,11,12,13,14,15,16,17,18,19,20 "Built target test_synth_cuda"
-.PHONY : executables/CMakeFiles/test_synth_cuda.dir/all
+executables/CMakeFiles/test_mapping.dir/all:
+	$(MAKE) -f executables/CMakeFiles/test_mapping.dir/build.make executables/CMakeFiles/test_mapping.dir/depend
+	$(MAKE) -f executables/CMakeFiles/test_mapping.dir/build.make executables/CMakeFiles/test_mapping.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/manu/Desktop/dtam_thesis/prova_dr/build/CMakeFiles --progress-num=9,10,11,12,13,14,15,16,17,18,19,20 "Built target test_mapping"
+.PHONY : executables/CMakeFiles/test_mapping.dir/all
 
 # Include target in all.
-all: executables/CMakeFiles/test_synth_cuda.dir/all
+all: executables/CMakeFiles/test_mapping.dir/all
 
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-executables/CMakeFiles/test_synth_cuda.dir/rule: cmake_check_build_system
+executables/CMakeFiles/test_mapping.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/manu/Desktop/dtam_thesis/prova_dr/build/CMakeFiles 12
-	$(MAKE) -f CMakeFiles/Makefile2 executables/CMakeFiles/test_synth_cuda.dir/all
+	$(MAKE) -f CMakeFiles/Makefile2 executables/CMakeFiles/test_mapping.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/manu/Desktop/dtam_thesis/prova_dr/build/CMakeFiles 0
-.PHONY : executables/CMakeFiles/test_synth_cuda.dir/rule
+.PHONY : executables/CMakeFiles/test_mapping.dir/rule
 
 # Convenience name for target.
-test_synth_cuda: executables/CMakeFiles/test_synth_cuda.dir/rule
+test_mapping: executables/CMakeFiles/test_mapping.dir/rule
 
-.PHONY : test_synth_cuda
+.PHONY : test_mapping
 
 # clean rule for target.
-executables/CMakeFiles/test_synth_cuda.dir/clean:
-	$(MAKE) -f executables/CMakeFiles/test_synth_cuda.dir/build.make executables/CMakeFiles/test_synth_cuda.dir/clean
-.PHONY : executables/CMakeFiles/test_synth_cuda.dir/clean
+executables/CMakeFiles/test_mapping.dir/clean:
+	$(MAKE) -f executables/CMakeFiles/test_mapping.dir/build.make executables/CMakeFiles/test_mapping.dir/clean
+.PHONY : executables/CMakeFiles/test_mapping.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

@@ -499,7 +499,8 @@ __global__ void UpdateState_kernel(cv::cuda::PtrStepSz<float> points_added, cv::
   int rows = blockDim.x*gridDim.x;
   int cols = blockDim.y*gridDim.y;
 
-  if(abs(gradient_q(row,col))<0.05){
+  points_added(row,col)=0;
+  if(abs(gradient_q(row,col))<0.5){
 
     float invdepth=a(row,col);
     float depth=depth1_r/invdepth;
@@ -509,17 +510,19 @@ __global__ void UpdateState_kernel(cv::cuda::PtrStepSz<float> points_added, cv::
       // if(depth<0.77)
       //   printf("%i,%i %f \n",row,col,depth );
     }
-    else
+    else{
       i=switch_idx+(int)roundf(((NUM_INTERPOLATIONS-switch_idx-1)*((1.0/depth)-(1.0/switch_depth)))/((1.0/depth2_r)-(1.0/switch_depth)));
+    }
     int col_ = cols*i+col;
     int cost = cost_volume(row,col_).x;
+    int nproj = cost_volume(row,col_).y;
 
     //
     //
     // if(cost_volume(row,col_).x<3 && cost_volume(row,col_).y>2){
     //   points_added(row,col)=1;
     // }
-    if(cost<5)
+    if(cost<5 && nproj>2)
       points_added(row,col)=d(row,col);
   }
 
@@ -529,23 +532,30 @@ void Dtam::Initialize(){
 
   threshold_=50;
   theta_=0.07;
-  // theta_switch_=0.19;
+  theta_switch_=0057;
   theta_switch_=0;
   theta_end_=0.00001;
   eps_=0.1;
   alpha_=0.00002;
   // alpha_=0.00007;
   // alpha_=0;
-  beta1_=0.0001;
+  // beta1_=0.0001;
+  beta1_=0.0;
   // beta1_=0.0002;
-  beta2_=0.03;
+  beta2_=0.01;
   // lambda_=0.005;
   lambda_=0.005;
   sigma_q0_=0.1;
   sigma_d0_=0.5;
+  // sigma_q0_=0.5;
   // sigma_d0_=0.1;
+
+  // sigma_q0_=0.01;
+  // sigma_d0_=5;
+
   // r1_=1;
-  r1_=0.87;
+  r1_=0.93;
+  // r1_=0.87;
   // r2_=0.5;
   r2_=0.7;
 
@@ -603,7 +613,7 @@ void Dtam::UpdateCostVolume(int index_m ){
 
   dim3 threadsPerBlock( 4 , 4 , NUM_INTERPOLATIONS);
   dim3 numBlocks( rows/4, cols/4 , 1);
-  UpdateCostVolume_kernel<<<numBlocks,threadsPerBlock>>>(camera_r_gpu, camera_vector_gpu_[index_m], cost_volume_, camera_data_for_dtam_, invdepth_r_array_, threshold_, frames_computed_<5);
+  UpdateCostVolume_kernel<<<numBlocks,threadsPerBlock>>>(camera_r_gpu, camera_vector_gpu_[index_m], cost_volume_, camera_data_for_dtam_, invdepth_r_array_, threshold_, frames_computed_<2);
   printCudaError("Kernel updating cost volume");
 
   double t_e=getTime();
@@ -850,9 +860,12 @@ __global__ void normalize_Q_kernel(float norm, cv::cuda::PtrStepSz<float> q, flo
 
   int index = row+col*rows;
 
-  float denominator = fmaxf(1,norm);
-
+  // int scale= 200;
+  // float denominator = fmaxf(1,norm/scale);
   // q(row,col)=(vector_to_normalize[index]/denominator);
+
+  // q(row,col)=fmaxf(1,vector_to_normalize[index]);
+
   q(row,col)=vector_to_normalize[index];
 
 }
@@ -1036,17 +1049,17 @@ void Dtam::gradDesc_Q(cv::cuda::GpuMat* q, cv::cuda::GpuMat* gradient_d ){
   gradDesc_Q_toNormalize_kernel<<<numBlocks,threadsPerBlock>>>( *q, *gradient_d, eps_, sigma_q_, vector_to_normalize );
   printCudaError("Kernel computing next q to normalize");
 
-  // float* norm = new float;
-  // Dtam::getVectorNorm(vector_to_normalize, norm, N);
+  float* norm = new float;
+  Dtam::getVectorNorm(vector_to_normalize, norm, N);
   // std::cout << "norm is: " << *norm << std::endl;
-  // normalize_Q_kernel<<<numBlocks,threadsPerBlock>>> (*norm, *q, vector_to_normalize);
-  // printCudaError("Kernel computing sum reduction");
+  normalize_Q_kernel<<<numBlocks,threadsPerBlock>>> (*norm, *q, vector_to_normalize);
+  printCudaError("Kernel computing sum reduction");
 
   // float* max = new float;
   // Dtam::getVectorMax(vector_to_normalize, max, N);
-  // std::cout << "max is: " << *max << std::endl;
-  normalize_Q_kernel<<<numBlocks,threadsPerBlock>>> (*max, *q, vector_to_normalize);
-  printCudaError("Kernel computing sum reduction");
+  // // std::cout << "max is: " << *max << std::endl;
+  // normalize_Q_kernel<<<numBlocks,threadsPerBlock>>> (*max, *q, vector_to_normalize);
+  // printCudaError("Kernel computing sum reduction");
 
 
 
@@ -1307,7 +1320,7 @@ void Dtam::depthSampling(Environment_gpu* environment){
 
 }
 
-void Dtam::updateDepthMap_gpu(Environment_gpu* environment){
+void Dtam::test_mapping(Environment_gpu* environment){
 
   double t_start;  // time start for computing computation time
   double waitKeyDelay=0;
@@ -1337,6 +1350,7 @@ void Dtam::updateDepthMap_gpu(Environment_gpu* environment){
       frames_computed_+=(frames_delta+1);
       if (frames_delta>0)
         std::cout << frames_delta+1 << " frames has been skipped!" << std::endl;
+      std::cout << "\nFrame n: " << frames_computed_-1 << std::endl;
     }
 
     if (frame_available){
@@ -1374,7 +1388,8 @@ void Dtam::updateDepthMap_gpu(Environment_gpu* environment){
     }
     else if(!init){
 
-      float cr=0.484; float rr=0.465;  //occlusion
+      // float cr=0.484; float rr=0.465;  //occlusion
+      float cr=0.51; float rr=0.98;  //strange down
       // float cr=0.61; float rr=0.53;  //hightex1
       // float cr=0.61; float rr=0.53;  //hightex2
       // float cr=0.95; float rr=0.87;  //corner dr

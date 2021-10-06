@@ -8,6 +8,7 @@ dataset_name='bunny_scene'
 cd prova_dr
 
 # ./build/executables/dataset_maker
-./build/executables/test_synth_cuda ${dataset_name}
+# ./build/executables/test_tracking ${dataset_name}
+./build/executables/test_mapping ${dataset_name}
 
 # cuda-memcheck ./build/executables/test_synth_cuda ${dataset_name}
