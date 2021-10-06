@@ -10,6 +10,7 @@ set(CMAKE_DEPENDS_CHECK_CUDA
   "/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/dtam_cuda.cu" "/home/manu/Desktop/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_tracking.dir/__/src_cuda/dtam_cuda.cu.o"
   "/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/environment.cu" "/home/manu/Desktop/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_tracking.dir/__/src_cuda/environment.cu.o"
   "/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/mapper.cu" "/home/manu/Desktop/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_tracking.dir/__/src_cuda/mapper.cu.o"
+  "/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/tracker.cu" "/home/manu/Desktop/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_tracking.dir/__/src_cuda/tracker.cu.o"
   )
 set(CMAKE_CUDA_COMPILER_ID "NVIDIA")
 

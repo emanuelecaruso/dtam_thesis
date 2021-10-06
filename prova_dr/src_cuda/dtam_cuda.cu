@@ -11,6 +11,25 @@ void Dtam::addCamera(Camera_cpu* camera_cpu, Camera_gpu* camera_gpu){
   camera_vector_gpu_.push_back(camera_gpu);
   mapper_->camera_vector_cpu_.push_back(camera_cpu);
   mapper_->camera_vector_gpu_.push_back(camera_gpu);
+  tracker_->camera_vector_cpu_.push_back(camera_cpu);
+  tracker_->camera_vector_gpu_.push_back(camera_gpu);
+}
+
+bool Dtam::setReferenceCamera(int index_r){
+
+  int num_cameras = camera_vector_cpu_.size();
+
+  if (index_r<0 || index_r>=num_cameras)
+    return false;
+
+  index_r_ = index_r;
+  mapper_->index_r_ = index_r;
+  tracker_->index_r_ = index_r;
+
+  mapper_->Initialize();
+
+  return true;
+
 }
 
 void Dtam::showImgs(int scale){
@@ -114,7 +133,7 @@ void Dtam::test_mapping(Environment_gpu* environment){
     if (frame_available){
 
       if (set_reference){
-        mapper_->setReferenceCamera(frames_computed_-1);
+        setReferenceCamera(frames_computed_-1);
         set_reference=false;
       }
       else{
@@ -140,6 +159,7 @@ void Dtam::test_mapping(Environment_gpu* environment){
 
     else if(!init){
 
+      double t_s1=getTime();
       // float cr=0.484; float rr=0.465;  //occlusion
       float cr=0.51; float rr=0.98;  //strange down
       // float cr=0.61; float rr=0.53;  //hightex1
@@ -151,8 +171,7 @@ void Dtam::test_mapping(Environment_gpu* environment){
       int index_m=frames_computed_-1;
       int col=cr*camera_vector_cpu_[0]->resolution_;
       int row=rr*camera_vector_cpu_[0]->resolution_/camera_vector_cpu_[0]->aspect_;
-      double t_s1=getTime();
-      mapper_->StudyCostVolumeMin(index_m, row, col, true);
+      // mapper_->StudyCostVolumeMin(index_m, row, col, true);
       double t_e1=getTime();
       double delta1=t_e1-t_s1;
       waitKeyDelay+=delta1;
@@ -175,100 +194,50 @@ void Dtam::test_mapping(Environment_gpu* environment){
 
 void Dtam::test_tracking(Environment_gpu* environment){
 
-  // double t_start;  // time start for computing computation time
-  // double waitKeyDelay=0;
-  //
-  // bool frame_available=true;
-  // bool set_reference=true;
-  // bool init=true;
-  // int it=0;
-  // frames_computed_=0;
-  //
-  // depthSampling(environment);
-  //
-  // t_start=getTime();
-  // while (true){
-  //
-  //   // considering 30 fps camera
-  //   float fps=30;
-  //   int current_frame=int((getTime()-t_start-waitKeyDelay)/((1.0/fps)*1000));
-  //   int frames_delta=current_frame-frames_computed_;
-  //   if(frames_delta>=0){
-  //     frame_available=true;
-  //     if(frames_computed_>=environment->camera_vector_cpu_.size()){
-  //       break;
-  //     }
-  //     // load camera (already with pose)
-  //     Dtam::addCamera(environment->camera_vector_cpu_[frames_computed_],environment->camera_vector_gpu_[frames_computed_]);
-  //     frames_computed_+=(frames_delta+1);
-  //     if (frames_delta>0)
-  //       std::cout << frames_delta+1 << " frames has been skipped!" << std::endl;
-  //     std::cout << "\nFrame n: " << frames_computed_-1 << std::endl;
-  //   }
-  //
-  //   if (frame_available){
-  //
-  //     if (set_reference){
-  //       Dtam::setReferenceCamera(frames_computed_-1);
-  //       set_reference=false;
-  //     }
-  //     else{
-  //       int index_m=frames_computed_-1;
-  //       // printf("%i\n", index_m);
-  //       Dtam::prepareCameraForDtam(index_m);
-  //       Dtam::UpdateCostVolume(index_m);
-  //
-  //       if(index_m==(index_r_+1)){
-  //         Dtam::ComputeCostVolumeMin();
-  //
-  //         d = camera_vector_cpu_[index_r_]->invdepth_map_gpu_.clone();
-  //         a = camera_vector_cpu_[index_r_]->invdepth_map_gpu_.clone();
-  //         q.create(d.rows*2,d.cols*2,CV_32FC1);
-  //         gradient_d.create(d.rows*2,d.cols*2,CV_32FC1);
-  //         gradient_q.create(d.rows,d.cols,CV_32FC1);
-  //
-  //
-  //         init = false;
-  //       }
-  //       else if(index_m>(index_r_+2)){
-  //         UpdateState();
-  //       }
-  //
-  //     }
-  //
-  //
-  //     frame_available=false;
-  //   }
-  //   else if(!init){
-  //
-  //     // float cr=0.484; float rr=0.465;  //occlusion
-  //     float cr=0.51; float rr=0.98;  //strange down
-  //     // float cr=0.61; float rr=0.53;  //hightex1
-  //     // float cr=0.61; float rr=0.53;  //hightex2
-  //     // float cr=0.95; float rr=0.87;  //corner dr
-  //     // float cr=0.95; float rr=0.08;  //corner ur
-  //     // float cr=0.5; float rr=0.9;  //hightex cube
-  //
-  //     int index_m=frames_computed_-1;
-  //     int col=cr*camera_vector_cpu_[0]->resolution_;
-  //     int row=rr*camera_vector_cpu_[0]->resolution_/camera_vector_cpu_[0]->aspect_;
-  //     // Dtam::StudyCostVolumeMin(index_m, camera_data_for_dtam_, row, col, true);
-  //
-  //     if(theta_>theta_end_){
-  //     //   // if(count_>=3){
-  //         Dtam::Regularize();
-  //     //   // }
-  //     }
-  //     double t_s=getTime();
-  //     Dtam::showImgs(640);
-  //     cv::waitKey(0);
-  //     double t_e=getTime();
-  //     double delta=t_e-t_s;
-  //     waitKeyDelay+=delta;
-  //
-  //   }
-  //
-  //
-  // }
+  double t_start;  // time start for computing computation time
+  double waitKeyDelay=0;
+
+  bool frame_available=true;
+  bool set_reference=true;
+  bool init=true;
+  int it=0;
+  int frames_computed_=0;
+
+  t_start=getTime();
+  while (true){
+
+    // considering 30 fps camera
+    float fps=30;
+    int current_frame=int((getTime()-t_start-waitKeyDelay)/((1.0/fps)*1000));
+    int frames_delta=current_frame-frames_computed_;
+    if(frames_delta>=0){
+      frame_available=true;
+      if(frames_computed_>=environment->camera_vector_cpu_.size()){
+        break;
+      }
+      // load camera (already with pose)
+      addCamera(environment->camera_vector_cpu_[frames_computed_],environment->camera_vector_gpu_[frames_computed_]);
+      
+
+      frames_computed_+=(frames_delta+1);
+      if (frames_delta>0)
+        std::cout << frames_delta+1 << " frames has been skipped!" << std::endl;
+      std::cout << "\nFrame n: " << frames_computed_-1 << std::endl;
+    }
+
+    if (frame_available){
+
+      if (set_reference){
+        setReferenceCamera(frames_computed_-1);
+        set_reference=false;
+      }
+
+
+
+      frame_available=false;
+    }
+
+
+  }
 
 }

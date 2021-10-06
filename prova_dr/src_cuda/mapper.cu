@@ -7,23 +7,6 @@
 
 
 
-bool Mapper::setReferenceCamera(int index_r){
-
-  int num_cameras = camera_vector_cpu_.size();
-
-  if (index_r<0 || index_r>=num_cameras)
-    return false;
-
-  index_r_ = index_r;
-
-  Mapper::Initialize();
-
-  return true;
-
-}
-
-
-
 __global__ void ComputeWeightedGradientSobelImage_kernel(cv::cuda::PtrStepSz<float> image_in, cv::cuda::PtrStepSz<float> image_out, cv::cuda::PtrStepSz<float> weight_matrix){
   int row = blockIdx.x * blockDim.x + threadIdx.x;
   int col = blockIdx.y * blockDim.y + threadIdx.y;

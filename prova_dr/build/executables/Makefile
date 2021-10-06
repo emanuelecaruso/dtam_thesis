@@ -497,6 +497,36 @@ __/src_cuda/mapper.cu.s:
 	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_mapping.dir/build.make executables/CMakeFiles/test_mapping.dir/__/src_cuda/mapper.cu.s
 .PHONY : __/src_cuda/mapper.cu.s
 
+__/src_cuda/tracker.o: __/src_cuda/tracker.cu.o
+
+.PHONY : __/src_cuda/tracker.o
+
+# target to build an object file
+__/src_cuda/tracker.cu.o:
+	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_tracking.dir/build.make executables/CMakeFiles/test_tracking.dir/__/src_cuda/tracker.cu.o
+	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_mapping.dir/build.make executables/CMakeFiles/test_mapping.dir/__/src_cuda/tracker.cu.o
+.PHONY : __/src_cuda/tracker.cu.o
+
+__/src_cuda/tracker.i: __/src_cuda/tracker.cu.i
+
+.PHONY : __/src_cuda/tracker.i
+
+# target to preprocess a source file
+__/src_cuda/tracker.cu.i:
+	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_tracking.dir/build.make executables/CMakeFiles/test_tracking.dir/__/src_cuda/tracker.cu.i
+	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_mapping.dir/build.make executables/CMakeFiles/test_mapping.dir/__/src_cuda/tracker.cu.i
+.PHONY : __/src_cuda/tracker.cu.i
+
+__/src_cuda/tracker.s: __/src_cuda/tracker.cu.s
+
+.PHONY : __/src_cuda/tracker.s
+
+# target to generate assembly for a file
+__/src_cuda/tracker.cu.s:
+	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_tracking.dir/build.make executables/CMakeFiles/test_tracking.dir/__/src_cuda/tracker.cu.s
+	cd /home/manu/Desktop/dtam_thesis/prova_dr/build && $(MAKE) -f executables/CMakeFiles/test_mapping.dir/build.make executables/CMakeFiles/test_mapping.dir/__/src_cuda/tracker.cu.s
+.PHONY : __/src_cuda/tracker.cu.s
+
 dataset_maker.o: dataset_maker.cpp.o
 
 .PHONY : dataset_maker.o
@@ -622,6 +652,9 @@ help:
 	@echo "... __/src_cuda/mapper.o"
 	@echo "... __/src_cuda/mapper.i"
 	@echo "... __/src_cuda/mapper.s"
+	@echo "... __/src_cuda/tracker.o"
+	@echo "... __/src_cuda/tracker.i"
+	@echo "... __/src_cuda/tracker.s"
 	@echo "... dataset_maker.o"
 	@echo "... dataset_maker.i"
 	@echo "... dataset_maker.s"

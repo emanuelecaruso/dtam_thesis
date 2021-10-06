@@ -9,6 +9,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/test_tracking.dir/__/src_cuda/dtam_cuda.cu.o"
   "CMakeFiles/test_tracking.dir/__/src_cuda/environment.cu.o"
   "CMakeFiles/test_tracking.dir/__/src_cuda/mapper.cu.o"
+  "CMakeFiles/test_tracking.dir/__/src_cuda/tracker.cu.o"
   "CMakeFiles/test_tracking.dir/cmake_device_link.o"
   "CMakeFiles/test_tracking.dir/test_tracking.cpp.o"
   "test_tracking"

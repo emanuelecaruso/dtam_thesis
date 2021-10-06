@@ -71,13 +71,13 @@ class Mapper{
     Mapper(Environment_gpu* environment){};
 
     void addCamera(Camera_cpu* camera_cpu, Camera_gpu* camera_gpu);
-    bool setReferenceCamera(int index_r);
     void Regularize();
     void StudyCostVolumeMin(int index_m, int row, int col, bool showbaseline);
     void UpdateState();
     void ComputeCostVolumeMin();
     void UpdateCostVolume(int index_m, bool occl );
     void depthSampling(Environment_gpu* environment);
+    void Initialize();
 
     CameraVector_cpu camera_vector_cpu_;
     CameraVector_gpu camera_vector_gpu_;
@@ -88,10 +88,10 @@ class Mapper{
     cv::cuda::GpuMat gradient_q;
     cv::cuda::GpuMat depth_groundtruth_;
     cv::cuda::GpuMat points_added_;
+    int index_r_;
 
   private:
 
-    int index_r_;
     float* invdepth_r_array_;
     int n_;
     int switch_idx_;
@@ -120,7 +120,6 @@ class Mapper{
     Eigen::Vector3f T_t;
 
 
-    void Initialize();
     void prepareCameraForDtam(int index_m);
     void ComputeWeights();
     void UpdateParametersReg(bool print);

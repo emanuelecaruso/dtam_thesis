@@ -101,6 +101,8 @@ environment.cuh
 /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/environment.cuh
 mapper.cuh
 /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/mapper.cuh
+tracker.cuh
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/tracker.cuh
 
 /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/environment.cuh
 defs.h
@@ -111,20 +113,6 @@ camera_cpu.cuh
 /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_cpu.cuh
 camera_gpu.cuh
 /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_gpu.cuh
-
-/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/mapper.cu
-mapper.cuh
-/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/mapper.cuh
-math.h
--
-utils.h
-/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/utils.h
-stdlib.h
--
-defs.h
-/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/defs.h
-cuda_utils.cuh
-/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/cuda_utils.cuh
 
 /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/mapper.cuh
 camera_cpu.cuh
@@ -137,6 +125,16 @@ cuda_runtime.h
 -
 environment.cuh
 /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/environment.cuh
+
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/tracker.cuh
+defs.h
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/defs.h
+environment.cuh
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/environment.cuh
+camera_cpu.cuh
+/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_cpu.cuh
+cuda_runtime.h
+-
 
 /usr/local/include/eigen3/Eigen/Cholesky
 Core
