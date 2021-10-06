@@ -35,6 +35,7 @@ add_executable(test_mapping test_mapping.cpp
 ../src_cuda/dtam_cuda.cu
 ../src/utils.cpp
 ../src_cuda/camera_gpu.cu
+../src_cuda/mapper.cu
 ../src_cuda/cuda_utils.cuh
 )
 target_link_libraries(test_mapping opencv_highgui)
@@ -52,6 +53,7 @@ add_executable(test_tracking test_tracking.cpp
 ../src_cuda/dtam_cuda.cu
 ../src/utils.cpp
 ../src_cuda/camera_gpu.cu
+../src_cuda/mapper.cu
 ../src_cuda/cuda_utils.cuh
 )
 target_link_libraries(test_tracking opencv_highgui)

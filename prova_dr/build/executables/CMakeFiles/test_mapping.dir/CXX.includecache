@@ -81,6 +81,8 @@ cuda_runtime.h
 -
 environment.cuh
 ../src_cuda/environment.cuh
+mapper.cuh
+../src_cuda/mapper.cuh
 
 ../src_cuda/environment.cuh
 defs.h
@@ -91,6 +93,18 @@ camera_cpu.cuh
 ../src_cuda/camera_cpu.cuh
 camera_gpu.cuh
 ../src_cuda/camera_gpu.cuh
+
+../src_cuda/mapper.cuh
+camera_cpu.cuh
+../src_cuda/camera_cpu.cuh
+camera_gpu.cuh
+../src_cuda/camera_gpu.cuh
+image.h
+../src_cuda/image.h
+cuda_runtime.h
+-
+environment.cuh
+../src_cuda/environment.cuh
 
 ../src_cuda/renderer.cuh
 defs.h

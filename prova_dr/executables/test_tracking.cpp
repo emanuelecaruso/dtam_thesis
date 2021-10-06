@@ -34,7 +34,7 @@ int main (int argc, char * argv[]) {
   // compute depth map
   //############################################################################
 
-  // dtam->updateDepthMap_gpu(environment);
+  dtam->test_tracking(environment);
 
   cv::waitKey(0);
 

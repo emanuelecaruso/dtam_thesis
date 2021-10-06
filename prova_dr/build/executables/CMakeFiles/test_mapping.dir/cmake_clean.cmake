@@ -8,6 +8,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/test_mapping.dir/__/src_cuda/camera_gpu.cu.o"
   "CMakeFiles/test_mapping.dir/__/src_cuda/dtam_cuda.cu.o"
   "CMakeFiles/test_mapping.dir/__/src_cuda/environment.cu.o"
+  "CMakeFiles/test_mapping.dir/__/src_cuda/mapper.cu.o"
   "CMakeFiles/test_mapping.dir/cmake_device_link.o"
   "CMakeFiles/test_mapping.dir/test_mapping.cpp.o"
   "test_mapping"
