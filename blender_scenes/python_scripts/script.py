@@ -72,7 +72,7 @@ for n in tree.nodes:
 
 rl = tree.nodes.new('CompositorNodeRLayers')
 d = tree.nodes.new('CompositorNodeDenoise')
-l1=links.new(rl.outputs['Image'], d.inputs['Image'])
+l1=links.new(rl.outputs['Image'], d.inputs[0])
 
 v = tree.nodes.new('CompositorNodeComposite')
 v.use_alpha = False
@@ -90,6 +90,7 @@ mp.operation='POWER'
 mp.inputs[1].default_value=-1
 links.new(mm.outputs[0], mp.inputs[0])
 
+render.image_settings.compression=0
 
 i=0
 # iterate through objects
@@ -98,8 +99,8 @@ for obj_ in bpy.data.objects:
 
 
         name_=obj_.name
-        name_rgb="rgb_"+name_+".png"
-        name_depth="depth_"+name_+".png"
+        name_rgb="rgb_"+name_
+        name_depth="depth_"+name_
 
         path_rgb=scene_path_dtam+name_rgb
         path_depth=scene_path_dtam+name_depth
@@ -109,6 +110,9 @@ for obj_ in bpy.data.objects:
 
         l1=links.new(d.outputs['Image'], v.inputs[0])
         if( (con and not os.path.isfile(path_rgb)) or not con ):
+            render.image_settings.file_format='PNG'
+            render.image_settings.color_mode='RGB'
+            render.image_settings.color_depth='16'
             scene.view_settings.view_transform = 'Standard'
             render.engine=engine
             render.filepath = os.path.join(scene_path_dtam,name_rgb )
@@ -117,6 +121,10 @@ for obj_ in bpy.data.objects:
         links.remove(l1)
         l2=links.new(mp.outputs[0], v.inputs[0])
         if( (con and not os.path.isfile(path_depth)) or not con ):
+            render.image_settings.file_format='PNG'
+            render.image_settings.color_mode='BW'
+            render.image_settings.color_depth='16'
+            
             scene.view_settings.view_transform = 'Raw'
             render.engine=engine_eevee
             render.filepath = os.path.join(scene_path_dtam,name_depth )

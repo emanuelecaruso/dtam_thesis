@@ -35,6 +35,12 @@ bool Dtam::setReferenceCamera(int index_r){
 void Dtam::showImgs(int scale){
   int resolution=camera_vector_cpu_[index_r_]->resolution_;
 
+  cv::Mat_< float > q_gradient;
+  (mapper_->gradient_q).download(q_gradient);
+  cv::Mat_< float > resized_image_q_gradient;
+  cv::resize(q_gradient, resized_image_q_gradient, cv::Size(), scale/resolution, scale/resolution, cv::INTER_NEAREST );
+  cv::imshow("gradient_q", resized_image_q_gradient);
+
   cv::Mat_< float > ad_comp;
 
 
@@ -56,6 +62,7 @@ void Dtam::showImgs(int scale){
   cv::resize(gt, resized_image_gt, cv::Size(), scale/resolution, scale/resolution, cv::INTER_NEAREST );
   cv::Mat_< float > gterr;
   cv::absdiff(resized_image_gt, resized_image_d_1, gterr);
+  // cv::absdiff(resized_image_gt, resized_image_pa_1, gterr);
 
   cv::hconcat(resized_image_gt,gterr,gt_gterr_comp);
 
@@ -63,6 +70,15 @@ void Dtam::showImgs(int scale){
   cv::vconcat(ad_comp,gt_gterr_comp,out);
 
   cv::imshow("comparison", out);
+
+
+  cv::Mat_< float > state;
+  (camera_vector_cpu_[index_r_]->invdepth_map_gpu_).download(state);
+  cv::Mat_< float > resized_image_state;
+  cv::resize(state, resized_image_state, cv::Size(), scale/resolution, scale/resolution, cv::INTER_NEAREST );
+  cv::imshow("state", resized_image_state);
+
+  // camera_vector_cpu_[index_r_]->invdepth_map_->show(800/camera_vector_cpu_[index_r_]->resolution_);
 
   // Image< float >* invdepth_groundtruth = new Image< float >("invdepth groundtruth");
   // mapper_->depth_groundtruth_.download(invdepth_groundtruth->image_);
@@ -80,17 +96,7 @@ void Dtam::showImgs(int scale){
   // cv::resize(q_1, resized_image_q_1, cv::Size(), scale/resolution, scale/resolution, cv::INTER_NEAREST );
   // cv::imshow("q_1", resized_image_q_1);
   //
-  cv::Mat_< float > q_gradient;
-  (mapper_->gradient_q).download(q_gradient);
-  cv::Mat_< float > resized_image_q_gradient;
-  cv::resize(q_gradient, resized_image_q_gradient, cv::Size(), scale/resolution, scale/resolution, cv::INTER_NEAREST );
-  cv::imshow("gradient_q", resized_image_q_gradient);
 
-  cv::Mat_< float > pa_1;
-  mapper_->points_added_.download(pa_1);
-  cv::Mat_< float > resized_image_pa_1;
-  cv::resize(pa_1, resized_image_pa_1, cv::Size(), scale/resolution, scale/resolution, cv::INTER_NEAREST );
-  cv::imshow("pa 1", resized_image_pa_1);
 
   cv::waitKey(0);
 
@@ -107,7 +113,6 @@ void Dtam::test_mapping(Environment_gpu* environment){
   int it=0;
   int frames_computed_=0;
 
-
   mapper_->depthSampling(environment);
 
   t_start=getTime();
@@ -122,8 +127,12 @@ void Dtam::test_mapping(Environment_gpu* environment){
       if(frames_computed_>=environment->camera_vector_cpu_.size()){
         break;
       }
-      // load camera (already with pose)
-      addCamera(environment->camera_vector_cpu_[frames_computed_],environment->camera_vector_gpu_[frames_computed_]);
+      Camera_cpu* camera_cpu=environment->camera_vector_cpu_[frames_computed_];
+      Camera_gpu* camera_gpu=environment->camera_vector_gpu_[frames_computed_];
+      // set groundtruth pose
+      camera_cpu->setGroundtruthPose(camera_gpu);
+      // load camera
+      addCamera(camera_cpu,camera_gpu);
       frames_computed_+=(frames_delta+1);
       if (frames_delta>0)
         std::cout << frames_delta+1 << " frames has been skipped!" << std::endl;
@@ -215,9 +224,11 @@ void Dtam::test_tracking(Environment_gpu* environment){
       if(frames_computed_>=environment->camera_vector_cpu_.size()){
         break;
       }
-      // load camera (already with pose)
-      addCamera(environment->camera_vector_cpu_[frames_computed_],environment->camera_vector_gpu_[frames_computed_]);
-      
+      Camera_cpu* camera_cpu=environment->camera_vector_cpu_[frames_computed_];
+      Camera_gpu* camera_gpu=environment->camera_vector_gpu_[frames_computed_];
+      // load camera
+      addCamera(camera_cpu,camera_gpu);
+
 
       frames_computed_+=(frames_delta+1);
       if (frames_delta>0)
@@ -230,6 +241,11 @@ void Dtam::test_tracking(Environment_gpu* environment){
       if (set_reference){
         setReferenceCamera(frames_computed_-1);
         set_reference=false;
+      }
+      else{
+        int index_m=frames_computed_-1;
+        tracker_->printPoseComparison(index_m);
+
       }
 
 

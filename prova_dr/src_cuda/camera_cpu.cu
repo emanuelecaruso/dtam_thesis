@@ -21,7 +21,7 @@ Camera_gpu* Camera_cpu::getCamera_gpu(){
 
   Camera_gpu* camera_gpu_h = new Camera_gpu(name_, lens_, aspect_, width_, resolution_,
      max_depth_, K_, Kinv_, *frame_camera_wrt_world_, *frame_world_wrt_camera_,
-      invdepth_map_gpu_, image_rgb_gpu_);
+     *frame_camera_wrt_world_gt_, *frame_world_wrt_camera_gt_, invdepth_map_gpu_, image_rgb_gpu_);
 
   cudaError_t err ;
 
@@ -51,4 +51,14 @@ void Camera_cpu::showInvdepthmap(int scale){
   Image<float>* invdepthmap=new Image< float >("invdepth_"+name_);
   invdepth_map_gpu_.download(invdepthmap->image_);
   invdepthmap->show(scale/resolution_);
+}
+
+void Camera_cpu::setGroundtruthPose( Camera_gpu*& camera_gpu ){
+  *frame_world_wrt_camera_=*frame_world_wrt_camera_gt_;
+  *frame_camera_wrt_world_=*frame_camera_wrt_world_gt_;
+
+  cudaFree(camera_gpu);
+  Camera_gpu* camera_gpu_ = Camera_cpu::getCamera_gpu();
+  camera_gpu=camera_gpu_;
+
 }

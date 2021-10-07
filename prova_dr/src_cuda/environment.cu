@@ -8,17 +8,17 @@
 
 
 void Environment_gpu::generateCamera(std::string name, float t1, float t2, float t3, float alpha1, float alpha2, float alpha3){
-  Eigen::Vector3f t_r(t1,t2,t3);
-  Eigen::Isometry3f* frame_world_wrt_camera_r = new Eigen::Isometry3f;
-  frame_world_wrt_camera_r->linear().setIdentity();  //TODO implement orientation
-  frame_world_wrt_camera_r->translation()=t_r;
-  Eigen::Isometry3f* frame_camera_wrt_world_r = new Eigen::Isometry3f;
-  *frame_camera_wrt_world_r = frame_world_wrt_camera_r->inverse();
-  Camera_cpu* camera = new Camera_cpu(name,lens_,aspect_,film_,resolution_,max_depth_,min_depth_,frame_camera_wrt_world_r,frame_world_wrt_camera_r);
-  camera_vector_cpu_.push_back(camera);
-
-  Camera_gpu* camera_d = camera->getCamera_gpu();
-  camera_vector_gpu_.push_back(camera_d);
+  // Eigen::Vector3f t_r(t1,t2,t3);
+  // Eigen::Isometry3f* frame_world_wrt_camera_r = new Eigen::Isometry3f;
+  // frame_world_wrt_camera_r->linear().setIdentity();  //TODO implement orientation
+  // frame_world_wrt_camera_r->translation()=t_r;
+  // Eigen::Isometry3f* frame_camera_wrt_world_r = new Eigen::Isometry3f;
+  // *frame_camera_wrt_world_r = frame_world_wrt_camera_r->inverse();
+  // Camera_cpu* camera = new Camera_cpu(name,lens_,aspect_,film_,resolution_,max_depth_,min_depth_,frame_camera_wrt_world_r,frame_world_wrt_camera_r);
+  // camera_vector_cpu_.push_back(camera);
+  //
+  // Camera_gpu* camera_d = camera->getCamera_gpu();
+  // camera_vector_gpu_.push_back(camera_d);
 
 }
 
@@ -40,7 +40,9 @@ bool Environment_gpu::loadEnvironment_gpu(std::string path_name, std::string dat
         camera->max_depth_,
         camera->min_depth_,
         camera->frame_camera_wrt_world_,
-        camera->frame_world_wrt_camera_
+        camera->frame_world_wrt_camera_,
+        camera->frame_camera_wrt_world_gt_,
+        camera->frame_world_wrt_camera_gt_
       );
       camera_cpu->cloneCameraImages(camera);
       camera_vector_cpu_.push_back(camera_cpu);

@@ -1537,8 +1537,8 @@ executables/CMakeFiles/test_mapping.dir/__/src_cuda/tracker.cu.o: ../src/image.h
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/tracker.cu.o: ../src_cuda/camera_cpu.cuh
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/tracker.cu.o: ../src_cuda/camera_gpu.cuh
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/tracker.cu.o: ../src_cuda/environment.cuh
-executables/CMakeFiles/test_mapping.dir/__/src_cuda/tracker.cu.o: ../src_cuda/renderer.cuh
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/tracker.cu.o: ../src_cuda/tracker.cu
+executables/CMakeFiles/test_mapping.dir/__/src_cuda/tracker.cu.o: ../src_cuda/tracker.cuh
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/tracker.cu.o: /usr/local/include/eigen3/Eigen/Cholesky
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/tracker.cu.o: /usr/local/include/eigen3/Eigen/Core
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/tracker.cu.o: /usr/local/include/eigen3/Eigen/Geometry

@@ -21,11 +21,14 @@ class Camera_gpu{
     cv::cuda::PtrStepSz<uchar3> image_rgb_;
     Eigen::Isometry3f frame_world_wrt_camera_;
     Eigen::Isometry3f frame_camera_wrt_world_;
+    Eigen::Isometry3f frame_world_wrt_camera_gt_;
+    Eigen::Isometry3f frame_camera_wrt_world_gt_;
 
 
     Camera_gpu(std::string name, float lens, float aspect, float width, int resolution,
-       float max_depth, Eigen::Matrix3f K, Eigen::Matrix3f Kinv, Eigen::Isometry3f frame_camera_wrt_world,
-       Eigen::Isometry3f frame_world_wrt_camera, cv::cuda::PtrStepSz<float> invdepth_map, cv::cuda::PtrStepSz<uchar3> image_rgb){
+       float max_depth, Eigen::Matrix3f K, Eigen::Matrix3f Kinv, Eigen::Isometry3f frame_camera_wrt_world, Eigen::Isometry3f frame_world_wrt_camera,
+       Eigen::Isometry3f frame_camera_wrt_world_gt, Eigen::Isometry3f frame_world_wrt_camera_gt,
+       cv::cuda::PtrStepSz<float> invdepth_map, cv::cuda::PtrStepSz<uchar3> image_rgb){
        name_ = name;
        lens_ = lens;
        aspect_ = aspect;
@@ -36,6 +39,8 @@ class Camera_gpu{
        Kinv_ = Kinv;
        frame_camera_wrt_world_ = frame_camera_wrt_world;
        frame_world_wrt_camera_ = frame_world_wrt_camera;
+       frame_camera_wrt_world_gt_ = frame_camera_wrt_world_gt;
+       frame_world_wrt_camera_gt_ = frame_world_wrt_camera_gt;
        invdepth_map_ = invdepth_map;
        image_rgb_ = image_rgb;
 
@@ -52,6 +57,7 @@ class Camera_gpu{
     inline Camera_gpu* clone(){
       return new Camera_gpu(*this);
     }
+
 
 };
 

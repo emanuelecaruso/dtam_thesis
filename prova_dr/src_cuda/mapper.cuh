@@ -30,7 +30,7 @@ __global__ void StudyCostVolumeMin_kernel(Camera_gpu* camera_r, Camera_gpu* came
                                     cameraDataForDtam* camera_data_for_dtam_, float* invdepth_r_array, int row, int col,
                                     int threshold, cv::cuda::PtrStepSz<float> depth_groundtruth_, cv::cuda::PtrStepSz<float> a );
 
-__global__ void ComputeCostVolumeMin_kernel( cv::cuda::PtrStepSz<int2> cost_volume, float* invdepth_r_array);
+__global__ void ComputeCostVolumeMin_kernel( cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepSz<float> a, float* invdepth_r_array);
 
 __global__ void ComputeGradientSobelImage_kernel(cv::cuda::PtrStepSz<float> image_in, cv::cuda::PtrStepSz<float> image_out);
 
@@ -44,7 +44,7 @@ __global__ void gradDesc_Q_toNormalize_kernel(cv::cuda::PtrStepSz<float> q, cv::
 
 __global__ void gradDesc_D_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepSz<float> a, cv::cuda::PtrStepSz<float> gradient_q, float sigma_d, float theta);
 
-__global__ void search_A_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepSz<float> a, cv::cuda::PtrStepSz<int2> cost_volume , cv::cuda::PtrStepSz<float> points_added, float lambda, float theta, float* invdepth_r_array);
+__global__ void search_A_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepSz<float> a, cv::cuda::PtrStepSz<int2> cost_volume , float lambda, float theta, float* invdepth_r_array);
 
 __global__ void sumReduction_kernel(float* v, float* v_r, int size);
 
@@ -61,7 +61,7 @@ __global__ void squareVectorElements_kernel(float *vector);
 __global__ void Image2Vector_kernel(cv::cuda::PtrStepSz<float> image, float* vector);
 
 __global__ void UpdateState_kernel(cv::cuda::PtrStepSz<float> points_added, cv::cuda::PtrStepSz<int2> cost_volume, cv::cuda::PtrStepSz<float> a,
-                                  cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepSz<float> gradient_q, float* invdepth_r_array, int switch_idx,
+                                  cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepSz<float> gradient_q, int switch_idx,
                                   float switch_depth, float depth1_r, float depth2_r);
 
 
@@ -87,7 +87,6 @@ class Mapper{
     cv::cuda::GpuMat gradient_d;
     cv::cuda::GpuMat gradient_q;
     cv::cuda::GpuMat depth_groundtruth_;
-    cv::cuda::GpuMat points_added_;
     int index_r_;
 
   private:

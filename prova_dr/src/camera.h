@@ -21,9 +21,11 @@ class Camera{
     Image<cv::Vec3b>* image_rgb_;
     Eigen::Isometry3f* frame_world_wrt_camera_;
     Eigen::Isometry3f* frame_camera_wrt_world_;
+    Eigen::Isometry3f* frame_world_wrt_camera_gt_;
+    Eigen::Isometry3f* frame_camera_wrt_world_gt_;
 
     Camera(std::string name, float lens, float aspect, float width, int resolution,
-       float max_depth, float min_depth, Eigen::Isometry3f* frame_camera_wrt_world, Eigen::Isometry3f* frame_world_wrt_camera){
+       float max_depth, float min_depth, Eigen::Isometry3f* frame_camera_wrt_world, Eigen::Isometry3f* frame_world_wrt_camera, Eigen::Isometry3f* frame_camera_wrt_world_gt, Eigen::Isometry3f* frame_world_wrt_camera_gt){
        name_ = name;
        lens_ = lens;
        aspect_ = aspect;
@@ -33,6 +35,8 @@ class Camera{
        min_depth_ = min_depth;
        frame_camera_wrt_world_ = frame_camera_wrt_world;
        frame_world_wrt_camera_ = frame_world_wrt_camera;
+       frame_camera_wrt_world_gt_ = frame_camera_wrt_world_gt;
+       frame_world_wrt_camera_gt_ = frame_world_wrt_camera_gt;
        invdepth_map_ = new Image< float >("invdepth_"+name_);
        image_rgb_ = new Image< cv::Vec3b >("rgb_"+name_);
 

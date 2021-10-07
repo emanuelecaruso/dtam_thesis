@@ -1538,8 +1538,8 @@ executables/CMakeFiles/test_mapping.dir/__/src_cuda/tracker.cu.o
  /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_cpu.cuh
  /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_gpu.cuh
  /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/environment.cuh
- /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/renderer.cuh
  /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/tracker.cu
+ /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/tracker.cuh
  /usr/local/include/eigen3/Eigen/Cholesky
  /usr/local/include/eigen3/Eigen/Core
  /usr/local/include/eigen3/Eigen/Geometry

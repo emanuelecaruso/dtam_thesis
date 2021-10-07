@@ -13,4 +13,6 @@ class Tracker{
     int index_r_;
     CameraVector_cpu camera_vector_cpu_;
     CameraVector_gpu camera_vector_gpu_;
+
+    void printPoseComparison(int index_m);
 };

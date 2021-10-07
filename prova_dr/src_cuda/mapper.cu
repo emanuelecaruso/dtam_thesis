@@ -409,7 +409,7 @@ __global__ void StudyCostVolumeMin_kernel(Camera_gpu* camera_r, Camera_gpu* came
 }
 
 
-__global__ void ComputeCostVolumeMin_kernel( Camera_gpu* camera_r, cv::cuda::PtrStepSz<int2> cost_volume, float* invdepth_r_array){
+__global__ void ComputeCostVolumeMin_kernel( cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepSz<float> a, cv::cuda::PtrStepSz<int2> cost_volume, float* invdepth_r_array){
 
   int row = blockIdx.x * blockDim.x + threadIdx.x;
   int col = blockIdx.y * blockDim.y + threadIdx.y;
@@ -445,10 +445,12 @@ __global__ void ComputeCostVolumeMin_kernel( Camera_gpu* camera_r, cv::cuda::Ptr
 
     float val =(float)invdepth_r_array[i]/invdepth_r_array[0];
 
-    camera_r->invdepth_map_(row,col)=val;
-    if (indx_array[threadIdx.x][threadIdx.y][0]==0)
-      camera_r->invdepth_map_(row,col)=1.0;
-
+    d(row,col)=val;
+    a(row,col)=val;
+    if (indx_array[threadIdx.x][threadIdx.y][0]==0){
+      d(row,col)=1.0;
+      a(row,col)=1.0;
+    }
 	}
 
 }
@@ -467,7 +469,7 @@ __global__ void Image2Vector_kernel(cv::cuda::PtrStepSz<float> image, float* vec
 
 }
 
-__global__ void UpdateState_kernel(cv::cuda::PtrStepSz<float> points_added, cv::cuda::PtrStepSz<int2> cost_volume, cv::cuda::PtrStepSz<float> a, cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepSz<float> gradient_q, float* invdepth_r_array, int switch_idx, float switch_depth, float depth1_r, float depth2_r){
+__global__ void UpdateState_kernel(cv::cuda::PtrStepSz<float> points_added, cv::cuda::PtrStepSz<int2> cost_volume, cv::cuda::PtrStepSz<float> a, cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepSz<float> gradient_q, int switch_idx, float switch_depth, float depth1_r, float depth2_r){
   int row = blockIdx.x * blockDim.x + threadIdx.x;
   int col = blockIdx.y * blockDim.y + threadIdx.y;
 
@@ -553,25 +555,25 @@ void Mapper::Initialize(){
   sigma_q_=sigma_q0_;
   sigma_d_=sigma_d0_;
 
-
-
-
   int cols = camera_vector_cpu_[index_r_]->invdepth_map_->image_.cols;
   int rows = camera_vector_cpu_[index_r_]->invdepth_map_->image_.rows;
 
+  a.create(rows,cols,CV_32FC1);
+  d.create(rows,cols,CV_32FC1);
+  q.create(rows*2,cols*2,CV_32FC1);
+  gradient_d.create(rows*2,cols*2,CV_32FC1);
+  gradient_q.create(rows,cols,CV_32FC1);
+
   // depth_groundtruth_.create(rows,cols,CV_32FC1);
   depth_groundtruth_ = camera_vector_cpu_[index_r_]->invdepth_map_gpu_.clone();
-  camera_vector_cpu_[index_r_]->invdepth_map_gpu_.setTo(1);
-  camera_vector_cpu_[index_r_]->invdepth_map_->setAllPixels(1);
+  camera_vector_cpu_[index_r_]->invdepth_map_gpu_.setTo(0);
+  camera_vector_cpu_[index_r_]->invdepth_map_->setAllPixels(0);
 
 
   cost_volume_.create(rows,cols*NUM_INTERPOLATIONS,CV_32SC2);
   cost_volume_.setTo(cv::Scalar(INT_MAX,0));
 
   weight_matrix_.create(rows,cols,CV_32FC1);
-
-  points_added_.create(rows,cols,CV_32FC1);
-  points_added_.setTo(0);
 
   Mapper::ComputeWeights();
 
@@ -597,8 +599,6 @@ void Mapper::UpdateCostVolume(int index_m, bool occl){
   double delta=t_e-t_s;
 
   std::cerr << "cost volume computation took: " << delta << " ms " << std::endl;
-
-
 
 
 }
@@ -646,20 +646,12 @@ void Mapper::ComputeCostVolumeMin(){
 
   dim3 threadsPerBlock( 4 , 4 , NUM_INTERPOLATIONS);
   dim3 numBlocks( rows/4, cols/4 , 1);
-  ComputeCostVolumeMin_kernel<<<numBlocks,threadsPerBlock>>>( camera_r_gpu, cost_volume_, invdepth_r_array_);
+  ComputeCostVolumeMin_kernel<<<numBlocks,threadsPerBlock>>>( d, a, cost_volume_, invdepth_r_array_);
   printCudaError("Kernel computing cost volume min");
 
   double t_e=getTime();
   double delta=t_e-t_s;
-
   std::cerr << "ComputeCostVolumeMin took: " << delta << " ms " << std::endl;
-
-  d = camera_vector_cpu_[index_r_]->invdepth_map_gpu_.clone();
-  a = camera_vector_cpu_[index_r_]->invdepth_map_gpu_.clone();
-  q.create(d.rows*2,d.cols*2,CV_32FC1);
-  gradient_d.create(d.rows*2,d.cols*2,CV_32FC1);
-  gradient_q.create(d.rows,d.cols,CV_32FC1);
-
 }
 
 
@@ -715,7 +707,7 @@ __global__ void gradDesc_D_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrSte
 
 }
 
-__global__ void search_A_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepSz<float> a, cv::cuda::PtrStepSz<int2> cost_volume , cv::cuda::PtrStepSz<float> points_added, float lambda, float theta, float* invdepth_r_array){
+__global__ void search_A_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepSz<float> a, cv::cuda::PtrStepSz<int2> cost_volume , float lambda, float theta, float* invdepth_r_array){
   int row = blockIdx.x * blockDim.x + threadIdx.x;
   int col = blockIdx.y * blockDim.y + threadIdx.y;
   int i = blockIdx.z * blockDim.z + threadIdx.z;
@@ -1068,7 +1060,7 @@ void Mapper::search_A(cv::cuda::GpuMat* d, cv::cuda::GpuMat* a ){
 
   dim3 threadsPerBlock( 4 , 4 , NUM_INTERPOLATIONS);
   dim3 numBlocks( rows/4, cols/4 , 1);
-  search_A_kernel<<<numBlocks,threadsPerBlock>>>( *d, *a, cost_volume_, points_added_, lambda_ , theta_, invdepth_r_array_);
+  search_A_kernel<<<numBlocks,threadsPerBlock>>>( *d, *a, cost_volume_, lambda_ , theta_, invdepth_r_array_);
   printCudaError("Kernel computing search on a");
 
 }
@@ -1170,7 +1162,7 @@ void Mapper::Regularize(){
 
 
 
-    camera_vector_cpu_[index_r_]->invdepth_map_gpu_= a;
+    // camera_vector_cpu_[index_r_]->invdepth_map_gpu_= a;
 
 
     double t_e=getTime();
@@ -1192,12 +1184,17 @@ void Mapper::UpdateState(){
 
   dim3 threadsPerBlock( 32 , 32 , 1);
   dim3 numBlocks( rows/32, cols/32 , 1);
-  UpdateState_kernel<<<numBlocks,threadsPerBlock>>>( points_added_, cost_volume_, a, d,  gradient_q,invdepth_r_array_, switch_idx_, switch_depth_, depth1_r, depth2_r);
+  // UpdateState_kernel<<<numBlocks,threadsPerBlock>>>( points_added_, cost_volume_, a, d,  gradient_q, switch_idx_, switch_depth_, depth1_r, depth2_r);
+  // UpdateState_kernel<<<numBlocks,threadsPerBlock>>>( camera_vector_gpu_[index_r_]->invdepth_map_, cost_volume_, a, d,  gradient_q, switch_idx_, switch_depth_, depth1_r, depth2_r);
+  UpdateState_kernel<<<numBlocks,threadsPerBlock>>>( camera_vector_cpu_[index_r_]->invdepth_map_gpu_, cost_volume_, a, d,  gradient_q, switch_idx_, switch_depth_, depth1_r, depth2_r);
   printCudaError("State Update State");
 
   double t_e=getTime();
   double delta=t_e-t_s;
   std::cerr << "State Update: " << delta << " ms " << std::endl;
+
+  // camera_vector_gpu_[index_r_]->invdepth_map_= points_added_;
+  // camera_vector_cpu_[index_r_]->invdepth_map_gpu_= points_added_;
 
 }
 

@@ -27,6 +27,10 @@ void Camera::printMembers(){
   std::cout << "frame_world_wrt_camera TRANSL:\n" << (*frame_world_wrt_camera_).translation() << std::endl;
   std::cout << "frame_camera_wrt_world LINEAR:\n" << (*frame_camera_wrt_world_).linear() << std::endl;
   std::cout << "frame_camera_wrt_world TRANSL:\n" << (*frame_camera_wrt_world_).translation() << std::endl;
+  std::cout << "frame_world_wrt_camera_gt LINEAR:\n" << (*frame_world_wrt_camera_gt_).linear() << std::endl;
+  std::cout << "frame_world_wrt_camera_gt TRANSL:\n" << (*frame_world_wrt_camera_gt_).translation() << std::endl;
+  std::cout << "frame_camera_wrt_world_gt LINEAR:\n" << (*frame_camera_wrt_world_gt_).linear() << std::endl;
+  std::cout << "frame_camera_wrt_world_gt TRANSL:\n" << (*frame_camera_wrt_world_gt_).translation() << std::endl;
   std::cout << "\n" << std::endl;
 
 }

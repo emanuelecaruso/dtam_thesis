@@ -27,6 +27,13 @@ cams_num=120
 scene.frame_start=0
 scene.frame_end=cams_num-1
 
+coll_name="cams_coll"
+for coll in bpy.data.collections:
+    if coll.name==coll_name:
+        bpy.data.collections.remove(coll)
+        
+coll=bpy.data.collections.new(coll_name)
+scene.collection.children.link(coll)
 
 bpy.data.scenes[0].timeline_markers.clear()
     
@@ -108,6 +115,12 @@ for obj_ in bpy.data.objects:
         
         marker = bpy.data.scenes[0].timeline_markers.new('F_'+str(i), frame=i)
         marker.camera = obj_
+        
+        # collection of cameras
+        obj_old_coll = obj_.users_collection
+        coll.objects.link(obj_)
+        for ob in obj_old_coll: #unlink from all  precedent obj collections
+            ob.objects.unlink(obj_)
     
         i=i+1
         

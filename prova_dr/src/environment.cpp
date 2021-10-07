@@ -114,14 +114,14 @@ void Environment::generateTexturedCube(float size, Eigen::Isometry3f pose, int d
 }
 
 void Environment::generateCamera(std::string name, float t1, float t2, float t3, float alpha1, float alpha2, float alpha3){
-  Eigen::Vector3f t_r(t1,t2,t3);
-  Eigen::Isometry3f* frame_world_wrt_camera_r = new Eigen::Isometry3f;
-  frame_world_wrt_camera_r->linear().setIdentity();  //TODO implement orientation
-  frame_world_wrt_camera_r->translation()=t_r;
-  Eigen::Isometry3f* frame_camera_wrt_world_r = new Eigen::Isometry3f;
-  *frame_camera_wrt_world_r = frame_world_wrt_camera_r->inverse();
-  Camera* camera = new Camera(name,lens_,aspect_,film_,resolution_,max_depth_,min_depth_,frame_camera_wrt_world_r,frame_world_wrt_camera_r);
-  camera_vector_.push_back(camera);
+  // Eigen::Vector3f t_r(t1,t2,t3);
+  // Eigen::Isometry3f* frame_world_wrt_camera_r = new Eigen::Isometry3f;
+  // frame_world_wrt_camera_r->linear().setIdentity();  //TODO implement orientation
+  // frame_world_wrt_camera_r->translation()=t_r;
+  // Eigen::Isometry3f* frame_camera_wrt_world_r = new Eigen::Isometry3f;
+  // *frame_camera_wrt_world_r = frame_world_wrt_camera_r->inverse();
+  // Camera* camera = new Camera(name,lens_,aspect_,film_,resolution_,max_depth_,min_depth_,frame_camera_wrt_world_r,frame_world_wrt_camera_r);
+  // camera_vector_.push_back(camera);
 
 }
 
@@ -276,14 +276,21 @@ bool Environment::loadEnvironment(std::string path_name, std::string dataset_nam
       f[6], f[7], f[8];
 
     Eigen::Vector3f t(f[9],f[10],f[11]);
+    Eigen::Isometry3f* frame_camera_wrt_world_gt = new Eigen::Isometry3f;
+    frame_camera_wrt_world_gt->linear()=R;
+    frame_camera_wrt_world_gt->translation()=t;
+    Eigen::Isometry3f* frame_world_wrt_camera_gt = new Eigen::Isometry3f;
+    *frame_world_wrt_camera_gt=frame_camera_wrt_world_gt->inverse();
+
     Eigen::Isometry3f* frame_camera_wrt_world = new Eigen::Isometry3f;
-    frame_camera_wrt_world->linear()=R;
-    frame_camera_wrt_world->translation()=t;
     Eigen::Isometry3f* frame_world_wrt_camera = new Eigen::Isometry3f;
-    *frame_world_wrt_camera=frame_camera_wrt_world->inverse();
+    frame_camera_wrt_world->linear().setIdentity();
+    frame_camera_wrt_world->translation()= Eigen::Vector3f(0,0,0);
+    frame_world_wrt_camera->linear().setIdentity();
+    frame_world_wrt_camera->translation()= Eigen::Vector3f(0,0,0);
 
     Camera* camera = new Camera(name,lens_,aspect_,film_,resolution_,max_depth_,
-      min_depth_,frame_camera_wrt_world,frame_world_wrt_camera);
+      min_depth_,frame_camera_wrt_world,frame_world_wrt_camera,frame_camera_wrt_world_gt,frame_world_wrt_camera_gt);
 
     camera->loadRGB(path_rgb);
 

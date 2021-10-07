@@ -11,9 +11,8 @@
 -- handle borders			XXXX
 -- depth->invdepth  			XXXX
 -- function handling			XXXX
+-- classes mapping/tracking   XXXX
 -- add points to state    XX..
-
--- classes mapping/tracking
 -- points on blender
 
 -- update sampling ??
