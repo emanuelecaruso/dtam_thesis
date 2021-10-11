@@ -14,5 +14,6 @@ class Tracker{
     CameraVector_cpu camera_vector_cpu_;
     CameraVector_gpu camera_vector_gpu_;
 
+    void computeCameraPose(int index_m);
     void printPoseComparison(int index_m);
 };

@@ -4,6 +4,7 @@
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/camera_cpu.cu.o: ../src/camera.h
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/camera_cpu.cu.o: ../src/defs.h
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/camera_cpu.cu.o: ../src/image.h
+executables/CMakeFiles/test_mapping.dir/__/src_cuda/camera_cpu.cu.o: ../src_cuda/cuda_utils.cuh
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/camera_cpu.cu.o: ../src_cuda/camera_cpu.cu
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/camera_cpu.cu.o: ../src_cuda/camera_cpu.cuh
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/camera_cpu.cu.o: ../src_cuda/camera_gpu.cuh
@@ -307,6 +308,7 @@ executables/CMakeFiles/test_mapping.dir/__/src_cuda/camera_cpu.cu.o: /usr/local/
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/camera_gpu.cu.o: ../src/camera.h
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/camera_gpu.cu.o: ../src/defs.h
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/camera_gpu.cu.o: ../src/image.h
+executables/CMakeFiles/test_mapping.dir/__/src_cuda/camera_gpu.cu.o: ../src_cuda/cuda_utils.cuh
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/camera_gpu.cu.o: ../src_cuda/camera_gpu.cu
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/camera_gpu.cu.o: ../src_cuda/camera_gpu.cuh
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/camera_gpu.cu.o: /usr/local/include/eigen3/Eigen/Cholesky
@@ -921,6 +923,7 @@ executables/CMakeFiles/test_mapping.dir/__/src_cuda/environment.cu.o: ../src/def
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/environment.cu.o: ../src/environment.h
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/environment.cu.o: ../src/image.h
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/environment.cu.o: ../src/utils.h
+executables/CMakeFiles/test_mapping.dir/__/src_cuda/environment.cu.o: ../src_cuda/cuda_utils.cuh
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/environment.cu.o: ../src_cuda/camera_cpu.cuh
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/environment.cu.o: ../src_cuda/camera_gpu.cuh
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/environment.cu.o: ../src_cuda/environment.cu
@@ -1534,6 +1537,7 @@ executables/CMakeFiles/test_mapping.dir/__/src_cuda/tracker.cu.o: ../src/camera.
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/tracker.cu.o: ../src/defs.h
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/tracker.cu.o: ../src/environment.h
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/tracker.cu.o: ../src/image.h
+executables/CMakeFiles/test_mapping.dir/__/src_cuda/tracker.cu.o: ../src_cuda/cuda_utils.cuh
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/tracker.cu.o: ../src_cuda/camera_cpu.cuh
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/tracker.cu.o: ../src_cuda/camera_gpu.cuh
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/tracker.cu.o: ../src_cuda/environment.cuh
@@ -1836,6 +1840,7 @@ executables/CMakeFiles/test_mapping.dir/__/src_cuda/tracker.cu.o: /usr/local/inc
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/tracker.cu.o: /usr/local/include/opencv4/opencv2/video/tracking.hpp
 executables/CMakeFiles/test_mapping.dir/__/src_cuda/tracker.cu.o: /usr/local/include/opencv4/opencv2/videoio.hpp
 
+executables/CMakeFiles/test_mapping.dir/__/src/camera.cpp.o: ../src_cuda/cuda_utils.cuh
 executables/CMakeFiles/test_mapping.dir/__/src/camera.cpp.o: ../src/camera.cpp
 executables/CMakeFiles/test_mapping.dir/__/src/camera.cpp.o: ../src/camera.h
 executables/CMakeFiles/test_mapping.dir/__/src/camera.cpp.o: ../src/defs.h
@@ -2138,6 +2143,7 @@ executables/CMakeFiles/test_mapping.dir/__/src/camera.cpp.o: /usr/local/include/
 executables/CMakeFiles/test_mapping.dir/__/src/camera.cpp.o: /usr/local/include/opencv4/opencv2/videoio.hpp
 
 executables/CMakeFiles/test_mapping.dir/__/src/environment.cpp.o: ../libs/json.hpp
+executables/CMakeFiles/test_mapping.dir/__/src/environment.cpp.o: ../src_cuda/cuda_utils.cuh
 executables/CMakeFiles/test_mapping.dir/__/src/environment.cpp.o: ../src/camera.h
 executables/CMakeFiles/test_mapping.dir/__/src/environment.cpp.o: ../src/defs.h
 executables/CMakeFiles/test_mapping.dir/__/src/environment.cpp.o: ../src/environment.cpp
@@ -2441,6 +2447,7 @@ executables/CMakeFiles/test_mapping.dir/__/src/environment.cpp.o: /usr/local/inc
 executables/CMakeFiles/test_mapping.dir/__/src/environment.cpp.o: /usr/local/include/opencv4/opencv2/video/tracking.hpp
 executables/CMakeFiles/test_mapping.dir/__/src/environment.cpp.o: /usr/local/include/opencv4/opencv2/videoio.hpp
 
+executables/CMakeFiles/test_mapping.dir/__/src/image.cpp.o: ../src_cuda/cuda_utils.cuh
 executables/CMakeFiles/test_mapping.dir/__/src/image.cpp.o: ../src/defs.h
 executables/CMakeFiles/test_mapping.dir/__/src/image.cpp.o: ../src/image.cpp
 executables/CMakeFiles/test_mapping.dir/__/src/image.cpp.o: ../src/image.h
@@ -2741,6 +2748,7 @@ executables/CMakeFiles/test_mapping.dir/__/src/image.cpp.o: /usr/local/include/o
 executables/CMakeFiles/test_mapping.dir/__/src/image.cpp.o: /usr/local/include/opencv4/opencv2/video/tracking.hpp
 executables/CMakeFiles/test_mapping.dir/__/src/image.cpp.o: /usr/local/include/opencv4/opencv2/videoio.hpp
 
+executables/CMakeFiles/test_mapping.dir/__/src/renderer.cpp.o: ../src_cuda/cuda_utils.cuh
 executables/CMakeFiles/test_mapping.dir/__/src/renderer.cpp.o: ../src/camera.h
 executables/CMakeFiles/test_mapping.dir/__/src/renderer.cpp.o: ../src/defs.h
 executables/CMakeFiles/test_mapping.dir/__/src/renderer.cpp.o: ../src/environment.h
@@ -3054,6 +3062,7 @@ executables/CMakeFiles/test_mapping.dir/test_mapping.cpp.o: ../src/image.h
 executables/CMakeFiles/test_mapping.dir/test_mapping.cpp.o: ../src/utils.h
 executables/CMakeFiles/test_mapping.dir/test_mapping.cpp.o: ../src_cuda/camera_cpu.cuh
 executables/CMakeFiles/test_mapping.dir/test_mapping.cpp.o: ../src_cuda/camera_gpu.cuh
+executables/CMakeFiles/test_mapping.dir/test_mapping.cpp.o: ../src_cuda/cuda_utils.cuh
 executables/CMakeFiles/test_mapping.dir/test_mapping.cpp.o: ../src_cuda/dtam_cuda.cuh
 executables/CMakeFiles/test_mapping.dir/test_mapping.cpp.o: ../src_cuda/environment.cuh
 executables/CMakeFiles/test_mapping.dir/test_mapping.cpp.o: ../src_cuda/mapper.cuh

@@ -8,6 +8,7 @@
 #include "opencv2/opencv.hpp"
 #include <sys/types.h>
 #include <dirent.h>
+#include "cuda_utils.cuh"
 
 
 namespace pr {
@@ -222,6 +223,13 @@ namespace pr {
     Eigen::Vector3f point;
     cv::Vec3b color;
   };
+  struct Cp_gpu // Colored point (in 3D)
+  {
+    Eigen::Vector3f point;
+    uchar3 color;
+    bool valid;
+  };
+
 
   typedef std::vector<Cp> cpVector;
 }

@@ -469,14 +469,15 @@ __global__ void Image2Vector_kernel(cv::cuda::PtrStepSz<float> image, float* vec
 
 }
 
-__global__ void UpdateState_kernel(cv::cuda::PtrStepSz<float> points_added, cv::cuda::PtrStepSz<int2> cost_volume, cv::cuda::PtrStepSz<float> a, cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepSz<float> gradient_q, int switch_idx, float switch_depth, float depth1_r, float depth2_r){
+__global__ void UpdateDepthmap_kernel(Camera_gpu* camera, cv::cuda::PtrStepSz<int2> cost_volume, cv::cuda::PtrStepSz<float> a, cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepSz<float> gradient_q, int switch_idx, float switch_depth, float depth1_r, float depth2_r){
   int row = blockIdx.x * blockDim.x + threadIdx.x;
   int col = blockIdx.y * blockDim.y + threadIdx.y;
-
   int rows = blockDim.x*gridDim.x;
   int cols = blockDim.y*gridDim.y;
+  int index = row+col*rows;
 
-  points_added(row,col)=0;
+  camera->invdepth_map_(row,col)=0;
+  // points_added(row,col)=0;
   if(abs(gradient_q(row,col))<0.5){
 
     float invdepth=a(row,col);
@@ -484,8 +485,6 @@ __global__ void UpdateState_kernel(cv::cuda::PtrStepSz<float> points_added, cv::
     int i;
     if(depth<switch_depth){
       i= (int)roundf( switch_idx*((depth -depth1_r)/(switch_depth-depth1_r)));
-      // if(depth<0.77)
-      //   printf("%i,%i %f \n",row,col,depth );
     }
     else{
       i=switch_idx+(int)roundf(((NUM_INTERPOLATIONS-switch_idx-1)*((1.0/depth)-(1.0/switch_depth)))/((1.0/depth2_r)-(1.0/switch_depth)));
@@ -494,14 +493,38 @@ __global__ void UpdateState_kernel(cv::cuda::PtrStepSz<float> points_added, cv::
     int cost = cost_volume(row,col_).x;
     int nproj = cost_volume(row,col_).y;
 
-    //
-    //
-    // if(cost_volume(row,col_).x<3 && cost_volume(row,col_).y>2){
-    //   points_added(row,col)=1;
-    // }
-    if(cost<5 && nproj>2)
-      points_added(row,col)=d(row,col);
+    if(cost<5 && nproj>2){
+      camera->invdepth_map_(row,col)=d(row,col);
+    }
   }
+
+}
+
+__global__ void PopulateState_kernel(Camera_gpu* camera){
+  int row = blockIdx.x * blockDim.x + threadIdx.x;
+  int col = blockIdx.y * blockDim.y + threadIdx.y;
+  int rows = blockDim.x*gridDim.x;
+  int cols = blockDim.y*gridDim.y;
+  int index = row+col*rows;
+
+  Eigen::Vector2f uv_r;
+  Eigen::Vector2i pixel_coords_r(col,row);
+  camera->pixelCoords2uv(pixel_coords_r, uv_r);
+  float depth=1.0/(camera->invdepth_map_(row,col)*(1.0/camera->min_depth_));
+  Eigen::Vector3f p;
+
+  camera->pointAtDepth(uv_r, depth, p);
+  bool valid;
+  if(camera->invdepth_map_(row,col)!=0)
+    valid=true;
+  else
+    valid=false;
+
+  struct Cp_gpu cp = {p, camera->image_rgb_(row,col), valid};
+
+  camera->cp_array_[index]=cp;
+
+
 
 }
 
@@ -569,7 +592,6 @@ void Mapper::Initialize(){
   camera_vector_cpu_[index_r_]->invdepth_map_gpu_.setTo(0);
   camera_vector_cpu_[index_r_]->invdepth_map_->setAllPixels(0);
 
-
   cost_volume_.create(rows,cols*NUM_INTERPOLATIONS,CV_32SC2);
   cost_volume_.setTo(cv::Scalar(INT_MAX,0));
 
@@ -577,6 +599,13 @@ void Mapper::Initialize(){
 
   Mapper::ComputeWeights();
 
+  // cudaError_t err ;
+  // camera_vector_gpu_[index_r_]->cpArray = new Cp[n_pixels];
+
+  // camera_vector_gpu_[index_r_]->cp_array_ = cp_arr;
+  // err = cudaGetLastError();
+  // if (err != cudaSuccess)
+  //     printf("cudaMalloc cp array Error: %s\n", cudaGetErrorString(err));
 
 }
 
@@ -603,7 +632,9 @@ void Mapper::UpdateCostVolume(int index_m, bool occl){
 
 }
 
-void Mapper::StudyCostVolumeMin(int index_m, int row, int col,bool showbaseline=false){
+double Mapper::StudyCostVolumeMin(int index_m, int row, int col,bool showbaseline=false){
+  double t_s=getTime();
+
 
   Camera_cpu* camera_r_cpu = camera_vector_cpu_[index_r_];
   Camera_gpu* camera_r_gpu = camera_vector_gpu_[index_r_];
@@ -632,7 +663,9 @@ void Mapper::StudyCostVolumeMin(int index_m, int row, int col,bool showbaseline=
     study_ref->show(1500/camera_vector_cpu_[index_r_]->resolution_);
   }
 
-
+  double t_e=getTime();
+  double delta=t_e-t_s;
+  return delta;
 }
 
 void Mapper::ComputeCostVolumeMin(){
@@ -1173,20 +1206,20 @@ void Mapper::Regularize(){
 
 }
 
-void Mapper::UpdateState(){
+void Mapper::UpdateDepthmap(){
 
   double t_s=getTime();
 
-  int cols = camera_vector_cpu_[index_r_]->invdepth_map_->image_.cols;
-  int rows = camera_vector_cpu_[index_r_]->invdepth_map_->image_.rows;
-  float depth1_r=camera_vector_cpu_[index_r_]->min_depth_;
-  float depth2_r=camera_vector_cpu_[index_r_]->max_depth_;
+  Camera_cpu* camera_cpu = camera_vector_cpu_[index_r_];
+  Camera_gpu* camera_gpu = camera_vector_gpu_[index_r_];
+  int cols = camera_cpu->invdepth_map_->image_.cols;
+  int rows = camera_cpu->invdepth_map_->image_.rows;
+  float depth1_r=camera_cpu->min_depth_;
+  float depth2_r=camera_cpu->max_depth_;
 
   dim3 threadsPerBlock( 32 , 32 , 1);
   dim3 numBlocks( rows/32, cols/32 , 1);
-  // UpdateState_kernel<<<numBlocks,threadsPerBlock>>>( points_added_, cost_volume_, a, d,  gradient_q, switch_idx_, switch_depth_, depth1_r, depth2_r);
-  // UpdateState_kernel<<<numBlocks,threadsPerBlock>>>( camera_vector_gpu_[index_r_]->invdepth_map_, cost_volume_, a, d,  gradient_q, switch_idx_, switch_depth_, depth1_r, depth2_r);
-  UpdateState_kernel<<<numBlocks,threadsPerBlock>>>( camera_vector_cpu_[index_r_]->invdepth_map_gpu_, cost_volume_, a, d,  gradient_q, switch_idx_, switch_depth_, depth1_r, depth2_r);
+  UpdateDepthmap_kernel<<<numBlocks,threadsPerBlock>>>( camera_gpu, cost_volume_, a, d,  gradient_q, switch_idx_, switch_depth_, depth1_r, depth2_r);
   printCudaError("State Update State");
 
   double t_e=getTime();
@@ -1198,6 +1231,31 @@ void Mapper::UpdateState(){
 
 }
 
+void Mapper::PopulateState(){
+
+  double t_s=getTime();
+
+  Camera_cpu* camera_cpu = camera_vector_cpu_[index_r_];
+  Camera_gpu* camera_gpu = camera_vector_gpu_[index_r_];
+  int cols = camera_cpu->invdepth_map_->image_.cols;
+  int rows = camera_cpu->invdepth_map_->image_.rows;
+  float depth1_r=camera_cpu->min_depth_;
+  float depth2_r=camera_cpu->max_depth_;
+
+  dim3 threadsPerBlock( 32 , 32 , 1);
+  dim3 numBlocks( rows/32, cols/32 , 1);
+  PopulateState_kernel<<<numBlocks,threadsPerBlock>>>( camera_gpu );
+  printCudaError("Populate Update Kernel");
+
+  double t_e=getTime();
+  double delta=t_e-t_s;
+  std::cerr << "Populate State: " << delta << " ms " << std::endl;
+
+}
+
+void Mapper::StateFromGt(int index_m){
+  camera_vector_cpu_[index_r_]->invdepth_map_gpu_= depth_groundtruth_.clone();
+}
 void Mapper::depthSampling(Environment_gpu* environment){
   int rows = environment->resolution_/environment->aspect_;
   int cols = environment->resolution_;

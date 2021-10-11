@@ -29,7 +29,7 @@ class Dtam{
     void test_mapping(Environment_gpu* environment);
     void test_tracking(Environment_gpu* environment);
 
-    void showImgs(int scale);
+    double showImgs(int scale);
 
     void addCamera(Camera_cpu* camera_cpu, Camera_gpu* camera_gpu);
     bool setReferenceCamera(int index_r);

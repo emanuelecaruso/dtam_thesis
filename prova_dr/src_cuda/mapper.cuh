@@ -60,9 +60,11 @@ __global__ void squareVectorElements_kernel(float *vector);
 
 __global__ void Image2Vector_kernel(cv::cuda::PtrStepSz<float> image, float* vector);
 
-__global__ void UpdateState_kernel(cv::cuda::PtrStepSz<float> points_added, cv::cuda::PtrStepSz<int2> cost_volume, cv::cuda::PtrStepSz<float> a,
+__global__ void UpdateDepthmap_kernel(Camera_gpu* camera, cv::cuda::PtrStepSz<int2> cost_volume, cv::cuda::PtrStepSz<float> a,
                                   cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepSz<float> gradient_q, int switch_idx,
                                   float switch_depth, float depth1_r, float depth2_r);
+
+__global__ void PopulateState_kernel(Camera_gpu* camera);
 
 
 class Mapper{
@@ -72,8 +74,10 @@ class Mapper{
 
     void addCamera(Camera_cpu* camera_cpu, Camera_gpu* camera_gpu);
     void Regularize();
-    void StudyCostVolumeMin(int index_m, int row, int col, bool showbaseline);
-    void UpdateState();
+    double StudyCostVolumeMin(int index_m, int row, int col, bool showbaseline);
+    void UpdateDepthmap();
+    void PopulateState();
+    void StateFromGt(int index_m);
     void ComputeCostVolumeMin();
     void UpdateCostVolume(int index_m, bool occl );
     void depthSampling(Environment_gpu* environment);

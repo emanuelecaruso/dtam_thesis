@@ -5,6 +5,7 @@ executables/CMakeFiles/test_tracking.dir/__/src_cuda/camera_cpu.cu.o
  ../src/camera.h
  ../src/defs.h
  ../src/image.h
+ ../src_cuda/cuda_utils.cuh
  /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_cpu.cu
  /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_cpu.cuh
  /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_gpu.cuh
@@ -308,6 +309,7 @@ executables/CMakeFiles/test_tracking.dir/__/src_cuda/camera_gpu.cu.o
  ../src/camera.h
  ../src/defs.h
  ../src/image.h
+ ../src_cuda/cuda_utils.cuh
  /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_gpu.cu
  /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_gpu.cuh
  /usr/local/include/eigen3/Eigen/Cholesky
@@ -922,6 +924,7 @@ executables/CMakeFiles/test_tracking.dir/__/src_cuda/environment.cu.o
  ../src/environment.h
  ../src/image.h
  ../src/utils.h
+ ../src_cuda/cuda_utils.cuh
  /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_cpu.cuh
  /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_gpu.cuh
  /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/environment.cu
@@ -1535,6 +1538,7 @@ executables/CMakeFiles/test_tracking.dir/__/src_cuda/tracker.cu.o
  ../src/defs.h
  ../src/environment.h
  ../src/image.h
+ ../src_cuda/cuda_utils.cuh
  /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_cpu.cuh
  /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_gpu.cuh
  /home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/environment.cuh
@@ -1837,6 +1841,7 @@ executables/CMakeFiles/test_tracking.dir/__/src_cuda/tracker.cu.o
  /usr/local/include/opencv4/opencv2/video/tracking.hpp
  /usr/local/include/opencv4/opencv2/videoio.hpp
 executables/CMakeFiles/test_tracking.dir/__/src/camera.cpp.o
+ ../src_cuda/cuda_utils.cuh
  /home/manu/Desktop/dtam_thesis/prova_dr/src/camera.cpp
  /home/manu/Desktop/dtam_thesis/prova_dr/src/camera.h
  /home/manu/Desktop/dtam_thesis/prova_dr/src/defs.h
@@ -2139,6 +2144,7 @@ executables/CMakeFiles/test_tracking.dir/__/src/camera.cpp.o
  /usr/local/include/opencv4/opencv2/videoio.hpp
 executables/CMakeFiles/test_tracking.dir/__/src/environment.cpp.o
  ../libs/json.hpp
+ ../src_cuda/cuda_utils.cuh
  /home/manu/Desktop/dtam_thesis/prova_dr/src/camera.h
  /home/manu/Desktop/dtam_thesis/prova_dr/src/defs.h
  /home/manu/Desktop/dtam_thesis/prova_dr/src/environment.cpp
@@ -2442,6 +2448,7 @@ executables/CMakeFiles/test_tracking.dir/__/src/environment.cpp.o
  /usr/local/include/opencv4/opencv2/video/tracking.hpp
  /usr/local/include/opencv4/opencv2/videoio.hpp
 executables/CMakeFiles/test_tracking.dir/__/src/image.cpp.o
+ ../src_cuda/cuda_utils.cuh
  /home/manu/Desktop/dtam_thesis/prova_dr/src/defs.h
  /home/manu/Desktop/dtam_thesis/prova_dr/src/image.cpp
  /home/manu/Desktop/dtam_thesis/prova_dr/src/image.h
@@ -2742,6 +2749,7 @@ executables/CMakeFiles/test_tracking.dir/__/src/image.cpp.o
  /usr/local/include/opencv4/opencv2/video/tracking.hpp
  /usr/local/include/opencv4/opencv2/videoio.hpp
 executables/CMakeFiles/test_tracking.dir/__/src/renderer.cpp.o
+ ../src_cuda/cuda_utils.cuh
  /home/manu/Desktop/dtam_thesis/prova_dr/src/camera.h
  /home/manu/Desktop/dtam_thesis/prova_dr/src/defs.h
  /home/manu/Desktop/dtam_thesis/prova_dr/src/environment.h
@@ -3055,6 +3063,7 @@ executables/CMakeFiles/test_tracking.dir/test_tracking.cpp.o
  ../src/utils.h
  ../src_cuda/camera_cpu.cuh
  ../src_cuda/camera_gpu.cuh
+ ../src_cuda/cuda_utils.cuh
  ../src_cuda/dtam_cuda.cuh
  ../src_cuda/environment.cuh
  ../src_cuda/mapper.cuh

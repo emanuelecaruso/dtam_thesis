@@ -23,6 +23,7 @@ class Camera{
     Eigen::Isometry3f* frame_camera_wrt_world_;
     Eigen::Isometry3f* frame_world_wrt_camera_gt_;
     Eigen::Isometry3f* frame_camera_wrt_world_gt_;
+    Cp_gpu* cp_array_;
 
     Camera(std::string name, float lens, float aspect, float width, int resolution,
        float max_depth, float min_depth, Eigen::Isometry3f* frame_camera_wrt_world, Eigen::Isometry3f* frame_world_wrt_camera, Eigen::Isometry3f* frame_camera_wrt_world_gt, Eigen::Isometry3f* frame_world_wrt_camera_gt){

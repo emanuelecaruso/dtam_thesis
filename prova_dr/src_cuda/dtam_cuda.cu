@@ -32,7 +32,10 @@ bool Dtam::setReferenceCamera(int index_r){
 
 }
 
-void Dtam::showImgs(int scale){
+double Dtam::showImgs(int scale){
+
+  double t_s=getTime();
+
   int resolution=camera_vector_cpu_[index_r_]->resolution_;
 
   cv::Mat_< float > q_gradient;
@@ -97,9 +100,11 @@ void Dtam::showImgs(int scale){
   // cv::imshow("q_1", resized_image_q_1);
   //
 
-
   cv::waitKey(0);
 
+  double t_e=getTime();
+  double delta=t_e-t_s;
+  return delta;
 }
 
 void Dtam::test_mapping(Environment_gpu* environment){
@@ -157,7 +162,8 @@ void Dtam::test_mapping(Environment_gpu* environment){
           init = false;
         }
         else if(index_m>(index_r_+2)){
-          mapper_->UpdateState();
+          mapper_->UpdateDepthmap();
+          mapper_->PopulateState();
         }
 
       }
@@ -168,7 +174,6 @@ void Dtam::test_mapping(Environment_gpu* environment){
 
     else if(!init){
 
-      double t_s1=getTime();
       // float cr=0.484; float rr=0.465;  //occlusion
       float cr=0.51; float rr=0.98;  //strange down
       // float cr=0.61; float rr=0.53;  //hightex1
@@ -180,18 +185,13 @@ void Dtam::test_mapping(Environment_gpu* environment){
       int index_m=frames_computed_-1;
       int col=cr*camera_vector_cpu_[0]->resolution_;
       int row=rr*camera_vector_cpu_[0]->resolution_/camera_vector_cpu_[0]->aspect_;
-      // mapper_->StudyCostVolumeMin(index_m, row, col, true);
-      double t_e1=getTime();
-      double delta1=t_e1-t_s1;
-      waitKeyDelay+=delta1;
+      // waitKeyDelay+=mapper_->StudyCostVolumeMin(index_m, row, col, true);
+
 
       mapper_->Regularize();
 
-      double t_s2=getTime();
-      showImgs(640);
-      double t_e2=getTime();
-      double delta2=t_e2-t_s2;
-      waitKeyDelay+=delta2;
+      waitKeyDelay+=showImgs(640);
+
 
     }
 
@@ -240,17 +240,23 @@ void Dtam::test_tracking(Environment_gpu* environment){
 
       if (set_reference){
         setReferenceCamera(frames_computed_-1);
+        mapper_->StateFromGt(frames_computed_-1);
         set_reference=false;
+
       }
       else{
         int index_m=frames_computed_-1;
-        tracker_->printPoseComparison(index_m);
-
+        // tracker_->printPoseComparison(index_m);
+        init=false;
       }
 
 
 
       frame_available=false;
+    }
+    else if(!init){
+      // waitKeyDelay+=showImgs(640);
+      init=true;
     }
 
 

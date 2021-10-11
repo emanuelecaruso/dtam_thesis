@@ -9,7 +9,7 @@ CUDA_DEFINES =
 
 CUDA_INCLUDES = -I/usr/local/include/eigen3 -I/usr/include/python3.6m -I/home/manu/Desktop/dtam_thesis/prova_dr/src -I/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda -I/home/manu/Desktop/dtam_thesis/prova_dr/libs -isystem=/usr/local/include/opencv4 
 
-CXX_FLAGS = -Wall -std=c++11 -O3 -DNDEBUG -pthread -O3 -DNDEBUG   -D USE_CUDA
+CXX_FLAGS = -std=c++11 -O3 -DNDEBUG -pthread -O3 -DNDEBUG   -D USE_CUDA
 
 CXX_DEFINES = 
 

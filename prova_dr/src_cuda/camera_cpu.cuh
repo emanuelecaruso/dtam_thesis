@@ -19,7 +19,8 @@ class Camera_cpu : public Camera{
        Eigen::Isometry3f* frame_camera_wrt_world_gt, Eigen::Isometry3f* frame_world_wrt_camera_gt)
 
     : Camera(name, lens, aspect, width, resolution, max_depth, min_depth,
-      frame_camera_wrt_world, frame_world_wrt_camera, frame_camera_wrt_world_gt, frame_world_wrt_camera_gt){}
+            frame_camera_wrt_world, frame_world_wrt_camera, frame_camera_wrt_world_gt,
+            frame_world_wrt_camera_gt){}
 
 
     void gpuFree();
