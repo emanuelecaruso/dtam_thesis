@@ -86,7 +86,6 @@ class Mapper{
     void Initialize();
 
     CameraVector_cpu camera_vector_cpu_;
-    CameraVector_gpu camera_vector_gpu_;
     cv::cuda::GpuMat d;
     cv::cuda::GpuMat a;
     cv::cuda::GpuMat q;

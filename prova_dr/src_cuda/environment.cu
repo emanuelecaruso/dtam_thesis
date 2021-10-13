@@ -27,7 +27,6 @@ bool Environment_gpu::loadEnvironment_gpu(std::string path_name, std::string dat
     std::cout << "loading dataset at: " << path_name << std::endl;
 
     camera_vector_cpu_.clear();
-    camera_vector_gpu_.clear();
     loadEnvironment(path_name, dataset_name);
 
     for( Camera* camera : camera_vector_){
@@ -45,10 +44,10 @@ bool Environment_gpu::loadEnvironment_gpu(std::string path_name, std::string dat
         camera->frame_world_wrt_camera_gt_
       );
       camera_cpu->cloneCameraImages(camera);
+      camera_cpu->getCamera_gpu();
+
       camera_vector_cpu_.push_back(camera_cpu);
 
-      Camera_gpu* camera_gpu = camera_cpu->getCamera_gpu();
-      camera_vector_gpu_.push_back(camera_gpu);
     }
 
     std::cout << "dataset loaded successfully" << std::endl;

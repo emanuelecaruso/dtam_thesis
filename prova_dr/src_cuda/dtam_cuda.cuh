@@ -12,7 +12,6 @@ class Dtam{
 
   public:
     CameraVector_cpu camera_vector_cpu_;
-    CameraVector_gpu camera_vector_gpu_;
     Mapper* mapper_;
     Tracker* tracker_;
     int index_r_;
@@ -31,7 +30,7 @@ class Dtam{
 
     double showImgs(int scale);
 
-    void addCamera(Camera_cpu* camera_cpu, Camera_gpu* camera_gpu);
+    void addCamera(Camera_cpu* camera_cpu);
     bool setReferenceCamera(int index_r);
 
 };

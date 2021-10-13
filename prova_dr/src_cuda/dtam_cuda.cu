@@ -6,13 +6,10 @@
 #include "cuda_utils.cuh"
 
 
-void Dtam::addCamera(Camera_cpu* camera_cpu, Camera_gpu* camera_gpu){
+void Dtam::addCamera(Camera_cpu* camera_cpu){
   camera_vector_cpu_.push_back(camera_cpu);
-  camera_vector_gpu_.push_back(camera_gpu);
   mapper_->camera_vector_cpu_.push_back(camera_cpu);
-  mapper_->camera_vector_gpu_.push_back(camera_gpu);
   tracker_->camera_vector_cpu_.push_back(camera_cpu);
-  tracker_->camera_vector_gpu_.push_back(camera_gpu);
 }
 
 bool Dtam::setReferenceCamera(int index_r){
@@ -133,11 +130,11 @@ void Dtam::test_mapping(Environment_gpu* environment){
         break;
       }
       Camera_cpu* camera_cpu=environment->camera_vector_cpu_[frames_computed_];
-      Camera_gpu* camera_gpu=environment->camera_vector_gpu_[frames_computed_];
+      Camera_gpu* camera_gpu=camera_cpu->camera_gpu_;
       // set groundtruth pose
-      camera_cpu->setGroundtruthPose(camera_gpu);
+      camera_cpu->setGroundtruthPose();
       // load camera
-      addCamera(camera_cpu,camera_gpu);
+      addCamera(camera_cpu);
       frames_computed_+=(frames_delta+1);
       if (frames_delta>0)
         std::cout << frames_delta+1 << " frames has been skipped!" << std::endl;
@@ -190,7 +187,7 @@ void Dtam::test_mapping(Environment_gpu* environment){
 
       mapper_->Regularize();
 
-      // waitKeyDelay+=showImgs(640);
+      waitKeyDelay+=showImgs(640);
 
 
     }
@@ -225,9 +222,9 @@ void Dtam::test_tracking(Environment_gpu* environment){
         break;
       }
       Camera_cpu* camera_cpu=environment->camera_vector_cpu_[frames_computed_];
-      Camera_gpu* camera_gpu=environment->camera_vector_gpu_[frames_computed_];
+      Camera_gpu* camera_gpu=camera_cpu->camera_gpu_;
       // load camera
-      addCamera(camera_cpu,camera_gpu);
+      addCamera(camera_cpu);
 
 
       frames_computed_+=(frames_delta+1);

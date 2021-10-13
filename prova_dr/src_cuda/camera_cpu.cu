@@ -14,7 +14,7 @@ void Camera_cpu::gpuFree(){
 }
 
 
-Camera_gpu* Camera_cpu::getCamera_gpu(){
+void Camera_cpu::getCamera_gpu(){
   cudaError_t err ;
 
   image_rgb_gpu_.upload(image_rgb_->image_);
@@ -33,20 +33,17 @@ Camera_gpu* Camera_cpu::getCamera_gpu(){
      image_rgb_gpu_, cp_arr);
 
 
-  Camera_gpu* camera_gpu_d;
-  cudaMalloc((void**)&camera_gpu_d, sizeof(Camera_gpu));
+  cudaMalloc((void**)&camera_gpu_, sizeof(Camera_gpu));
   err = cudaGetLastError();
   if (err != cudaSuccess)
       printf("cudaMalloc %s%s",name_," Error: %s\n", cudaGetErrorString(err));
 
-  cudaMemcpy(camera_gpu_d, camera_gpu_h, sizeof(Camera_gpu), cudaMemcpyHostToDevice);
+  cudaMemcpy(camera_gpu_, camera_gpu_h, sizeof(Camera_gpu), cudaMemcpyHostToDevice);
   err = cudaGetLastError();
   if (err != cudaSuccess)
       printf("cudaMemcpy %s%s",name_," Error: %s\n", cudaGetErrorString(err));
 
   delete camera_gpu_h;
-
-  return camera_gpu_d;
 }
 
 void Camera_cpu::cloneCameraImages(Camera* camera){
@@ -61,12 +58,12 @@ void Camera_cpu::showInvdepthmap(int scale){
   invdepthmap->show(scale/resolution_);
 }
 
-void Camera_cpu::setGroundtruthPose( Camera_gpu*& camera_gpu ){
+void Camera_cpu::setGroundtruthPose(){
+  cudaFree(camera_gpu_);
+
   *frame_world_wrt_camera_=*frame_world_wrt_camera_gt_;
   *frame_camera_wrt_world_=*frame_camera_wrt_world_gt_;
 
-  cudaFree(camera_gpu);
-  Camera_gpu* camera_gpu_ = Camera_cpu::getCamera_gpu();
-  camera_gpu=camera_gpu_;
+  Camera_cpu::getCamera_gpu();
 
 }

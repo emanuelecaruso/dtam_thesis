@@ -17,7 +17,6 @@ class Environment_gpu : public Environment{
     // cpVector cp_vector_;
 
     CameraVector_cpu camera_vector_cpu_; // vector containing pointers to camera objects
-    CameraVector_gpu camera_vector_gpu_; // vector containing pointers to camera objects on device (gpu)
 
 
     Environment_gpu(int resolution = 640, float aspect = 1, float film = 0.024,

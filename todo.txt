@@ -12,15 +12,17 @@
 -- depth->invdepth  			XXXX
 -- function handling			XXXX
 -- classes mapping/tracking   XXXX
+-- cameragpu in cameracpu   XXXX
 -- add points to state    XX..
 
--- rgb depth map
--- cameragpu in cameracpu
+
 
 -- points on blender
 
--- update sampling ??
 -- play with parameters
+
+-- rgb depth map    ????
+-- update sampling    ????
 
 -- plot costs for pixel in graph
 

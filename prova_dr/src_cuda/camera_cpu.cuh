@@ -13,6 +13,7 @@ class Camera_cpu : public Camera{
 
     cv::cuda::GpuMat invdepth_map_gpu_;
     cv::cuda::GpuMat image_rgb_gpu_;
+    Camera_gpu* camera_gpu_;
 
     Camera_cpu(std::string name, float lens, float aspect, float width, int resolution,
        float max_depth, float min_depth, Eigen::Isometry3f* frame_camera_wrt_world, Eigen::Isometry3f* frame_world_wrt_camera,
@@ -24,11 +25,11 @@ class Camera_cpu : public Camera{
 
 
     void gpuFree();
-    Camera_gpu* getCamera_gpu();
+    void getCamera_gpu();
     void computeDataForDtam(int index_r);
     void cloneCameraImages(Camera* camera);
     void showInvdepthmap(int scale);
-    void setGroundtruthPose( Camera_gpu*& camera_gpu );
+    void setGroundtruthPose();
     // inline Camera_cpu* clone(){
     //   return new Camera_cpu(*this);
     // }

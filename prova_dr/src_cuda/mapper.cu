@@ -180,7 +180,7 @@ void Mapper::prepareCameraForDtam(int index_m){
   // Kernel invocation
   dim3 threadsPerBlock( 8 , 8 , 1);
   dim3 numBlocks( rows/8, cols/8 , 1);
-  prepareCameraForDtam_kernel<<<numBlocks,threadsPerBlock>>>( camera_vector_gpu_[index_r_], camera_vector_gpu_[index_m], camera_data_for_dtam_h->query_proj_matrix);
+  prepareCameraForDtam_kernel<<<numBlocks,threadsPerBlock>>>( camera_r->camera_gpu_, camera_m->camera_gpu_, camera_data_for_dtam_h->query_proj_matrix);
   printCudaError("Kernel preparing camera for dtam "+camera_m->name_);
 
   cudaMalloc(&camera_data_for_dtam_, sizeof(cameraDataForDtam));
@@ -609,21 +609,15 @@ void Mapper::Initialize(){
 
   Mapper::ComputeWeights();
 
-  // cudaError_t err ;
-  // camera_vector_gpu_[index_r_]->cpArray = new Cp[n_pixels];
-
-  // camera_vector_gpu_[index_r_]->cp_array_ = cp_arr;
-  // err = cudaGetLastError();
-  // if (err != cudaSuccess)
-  //     printf("cudaMalloc cp array Error: %s\n", cudaGetErrorString(err));
-
 }
 
 void Mapper::UpdateCostVolume(int index_m, bool occl){
   double t_s=getTime();
 
   Camera_cpu* camera_r_cpu = camera_vector_cpu_[index_r_];
-  Camera_gpu* camera_r_gpu = camera_vector_gpu_[index_r_];
+  Camera_gpu* camera_r_gpu = camera_r_cpu->camera_gpu_;
+  Camera_gpu* camera_m_gpu = camera_vector_cpu_[index_m]->camera_gpu_;
+
   int cols = camera_r_cpu->invdepth_map_->image_.cols;
   int rows = camera_r_cpu->invdepth_map_->image_.rows;
 
@@ -631,7 +625,7 @@ void Mapper::UpdateCostVolume(int index_m, bool occl){
 
   dim3 threadsPerBlock( 4 , 4 , NUM_INTERPOLATIONS);
   dim3 numBlocks( rows/4, cols/4 , 1);
-  UpdateCostVolume_kernel<<<numBlocks,threadsPerBlock>>>(camera_r_gpu, camera_vector_gpu_[index_m], cost_volume_, camera_data_for_dtam_, invdepth_r_array_, threshold_, occl);
+  UpdateCostVolume_kernel<<<numBlocks,threadsPerBlock>>>(camera_r_gpu, camera_m_gpu, cost_volume_, camera_data_for_dtam_, invdepth_r_array_, threshold_, occl);
   printCudaError("Kernel updating cost volume");
 
   double t_e=getTime();
@@ -647,11 +641,12 @@ double Mapper::StudyCostVolumeMin(int index_m, int row, int col,bool showbaselin
 
 
   Camera_cpu* camera_r_cpu = camera_vector_cpu_[index_r_];
-  Camera_gpu* camera_r_gpu = camera_vector_gpu_[index_r_];
+  Camera_gpu* camera_r_gpu = camera_r_cpu->camera_gpu_;
+  Camera_gpu* camera_m_gpu = camera_vector_cpu_[index_m]->camera_gpu_;
 
   dim3 threadsPerBlock( 1 , 1 , NUM_INTERPOLATIONS);
   dim3 numBlocks( 1, 1 , 1);
-  StudyCostVolumeMin_kernel<<<numBlocks,threadsPerBlock>>>(camera_r_gpu, camera_vector_gpu_[index_m], cost_volume_, camera_data_for_dtam_, invdepth_r_array_,row,col, depth_groundtruth_, a);
+  StudyCostVolumeMin_kernel<<<numBlocks,threadsPerBlock>>>(camera_r_gpu, camera_m_gpu, cost_volume_, camera_data_for_dtam_, invdepth_r_array_,row,col, depth_groundtruth_, a);
   printCudaError("Kernel studying cost volume");
 
   if(showbaseline){
@@ -683,7 +678,7 @@ void Mapper::ComputeCostVolumeMin(){
   double t_s=getTime();
 
   Camera_cpu* camera_r_cpu = camera_vector_cpu_[index_r_];
-  Camera_gpu* camera_r_gpu = camera_vector_gpu_[index_r_];
+  Camera_gpu* camera_r_gpu = camera_r_cpu->camera_gpu_;
   int cols = camera_r_cpu->invdepth_map_->image_.cols;
   int rows = camera_r_cpu->invdepth_map_->image_.rows;
 
@@ -1134,7 +1129,7 @@ void Mapper::search_A(cv::cuda::GpuMat* d, cv::cuda::GpuMat* a ){
 void Mapper::ComputeWeights(){
 
   Camera_cpu* camera_r_cpu = camera_vector_cpu_[index_r_];
-  Camera_gpu* camera_r_gpu = camera_vector_gpu_[index_r_];
+  Camera_gpu* camera_r_gpu = camera_r_cpu->camera_gpu_;
   int cols = camera_r_cpu->invdepth_map_->image_.cols;
   int rows = camera_r_cpu->invdepth_map_->image_.rows;
   dim3 threadsPerBlock( 32 , 32 , 1);
@@ -1244,7 +1239,7 @@ void Mapper::UpdateDepthmap(){
   double t_s=getTime();
 
   Camera_cpu* camera_cpu = camera_vector_cpu_[index_r_];
-  Camera_gpu* camera_gpu = camera_vector_gpu_[index_r_];
+  Camera_gpu* camera_gpu = camera_cpu->camera_gpu_;
   int cols = camera_cpu->invdepth_map_->image_.cols;
   int rows = camera_cpu->invdepth_map_->image_.rows;
   float depth1_r=camera_cpu->min_depth_;
@@ -1259,8 +1254,6 @@ void Mapper::UpdateDepthmap(){
   double delta=t_e-t_s;
   std::cerr << "State Update: " << delta << " ms " << std::endl;
 
-  // camera_vector_gpu_[index_r_]->invdepth_map_= points_added_;
-  // camera_vector_cpu_[index_r_]->invdepth_map_gpu_= points_added_;
 
 }
 
@@ -1269,7 +1262,7 @@ void Mapper::PopulateState(){
   double t_s=getTime();
 
   Camera_cpu* camera_cpu = camera_vector_cpu_[index_r_];
-  Camera_gpu* camera_gpu = camera_vector_gpu_[index_r_];
+  Camera_gpu* camera_gpu = camera_cpu->camera_gpu_;
   int cols = camera_cpu->invdepth_map_->image_.cols;
   int rows = camera_cpu->invdepth_map_->image_.rows;
 
