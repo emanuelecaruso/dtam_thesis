@@ -13,6 +13,10 @@
 -- function handling			XXXX
 -- classes mapping/tracking   XXXX
 -- add points to state    XX..
+
+-- rgb depth map
+-- cameragpu in cameracpu
+
 -- points on blender
 
 -- update sampling ??

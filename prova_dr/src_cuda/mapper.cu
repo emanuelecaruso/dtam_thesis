@@ -1070,7 +1070,7 @@ void Mapper::gradDesc_Q(cv::cuda::GpuMat* q, cv::cuda::GpuMat* gradient_d ){
     dim3 threadsPerBlock( 32 , 32 , 1);
     dim3 numBlocks( rows/32, cols/32 , 1);
     gradDesc_Q_kernel<<<numBlocks,threadsPerBlock>>>( *q, *gradient_d, eps_, sigma_q_ );
-    printCudaError("Kernel computing next q to normalize");
+    printCudaError("Kernel computing next q ");
 
 }
 
@@ -1208,7 +1208,7 @@ void Mapper::Regularize(){
 
 
     Mapper::search_A( &d, &a );  // compute a (n+1)
-    
+
     Mapper::UpdateParametersReg(false);
 
 
@@ -1272,8 +1272,6 @@ void Mapper::PopulateState(){
   Camera_gpu* camera_gpu = camera_vector_gpu_[index_r_];
   int cols = camera_cpu->invdepth_map_->image_.cols;
   int rows = camera_cpu->invdepth_map_->image_.rows;
-  float depth1_r=camera_cpu->min_depth_;
-  float depth2_r=camera_cpu->max_depth_;
 
   dim3 threadsPerBlock( 32 , 32 , 1);
   dim3 numBlocks( rows/32, cols/32 , 1);

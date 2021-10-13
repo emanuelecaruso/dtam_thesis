@@ -190,7 +190,7 @@ void Dtam::test_mapping(Environment_gpu* environment){
 
       mapper_->Regularize();
 
-      waitKeyDelay+=showImgs(640);
+      // waitKeyDelay+=showImgs(640);
 
 
     }
