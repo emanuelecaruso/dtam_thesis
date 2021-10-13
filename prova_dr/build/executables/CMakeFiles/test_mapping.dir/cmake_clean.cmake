@@ -1,19 +1,19 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/test_mapping.dir/__/src/camera.cpp.o"
-  "CMakeFiles/test_mapping.dir/__/src/environment.cpp.o"
-  "CMakeFiles/test_mapping.dir/__/src/image.cpp.o"
-  "CMakeFiles/test_mapping.dir/__/src/renderer.cpp.o"
-  "CMakeFiles/test_mapping.dir/__/src/utils.cpp.o"
+  "CMakeFiles/test_mapping.dir/test_mapping.cpp.o"
   "CMakeFiles/test_mapping.dir/__/src_cuda/camera_cpu.cu.o"
-  "CMakeFiles/test_mapping.dir/__/src_cuda/camera_gpu.cu.o"
-  "CMakeFiles/test_mapping.dir/__/src_cuda/dtam_cuda.cu.o"
+  "CMakeFiles/test_mapping.dir/__/src/image.cpp.o"
+  "CMakeFiles/test_mapping.dir/__/src/camera.cpp.o"
+  "CMakeFiles/test_mapping.dir/__/src/renderer.cpp.o"
   "CMakeFiles/test_mapping.dir/__/src_cuda/environment.cu.o"
+  "CMakeFiles/test_mapping.dir/__/src/environment.cpp.o"
+  "CMakeFiles/test_mapping.dir/__/src_cuda/dtam_cuda.cu.o"
+  "CMakeFiles/test_mapping.dir/__/src/utils.cpp.o"
+  "CMakeFiles/test_mapping.dir/__/src_cuda/camera_gpu.cu.o"
   "CMakeFiles/test_mapping.dir/__/src_cuda/mapper.cu.o"
   "CMakeFiles/test_mapping.dir/__/src_cuda/tracker.cu.o"
   "CMakeFiles/test_mapping.dir/cmake_device_link.o"
-  "CMakeFiles/test_mapping.dir/test_mapping.cpp.o"
-  "test_mapping"
   "test_mapping.pdb"
+  "test_mapping"
 )
 
 # Per-language clean rules from dependency scanning.

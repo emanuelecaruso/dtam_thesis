@@ -124,7 +124,7 @@ void Dtam::test_mapping(Environment_gpu* environment){
   while (true){
 
     // considering 30 fps camera
-    float fps=30;
+    float fps=3;
     int current_frame=int((getTime()-t_start-waitKeyDelay)/((1.0/fps)*1000));
     int frames_delta=current_frame-frames_computed_;
     if(frames_delta>=0){

@@ -52,13 +52,23 @@ __global__ void ComputeWeights_kernel(Camera_gpu* camera_r, cv::cuda::PtrStepSz<
 
   auto rgb_image= camera_r->image_rgb_;
 
-  float grad_rgbr_x=-rgb_image(row-1,col-1).x-2*rgb_image(row-1,col).x-rgb_image(row-1,col+1).x+rgb_image(row+1,col-1).x+2*rgb_image(row+1,col).x+rgb_image(row+1,col+1).x;
-  float grad_rgbg_x=-rgb_image(row-1,col-1).y-2*rgb_image(row-1,col).y-rgb_image(row-1,col+1).y+rgb_image(row+1,col-1).y+2*rgb_image(row+1,col).y+rgb_image(row+1,col+1).y;
-  float grad_rgbb_x=-rgb_image(row-1,col-1).z-2*rgb_image(row-1,col).z-rgb_image(row-1,col+1).z+rgb_image(row+1,col-1).z+2*rgb_image(row+1,col).z+rgb_image(row+1,col+1).z;
+  bool down = row>=rows-1;
+  bool up = row<=0;
+  bool right = col>=cols-1;
+  bool left = col<=0;
 
-  float grad_rgbr_y=-rgb_image(row-1,col-1).x-2*rgb_image(row,col-1).x-rgb_image(row+1,col-1).x+rgb_image(row-1,col+1).x+2*rgb_image(row,col+1).x+rgb_image(row+1,col+1).x;
-  float grad_rgbg_y=-rgb_image(row-1,col-1).y-2*rgb_image(row,col-1).y-rgb_image(row+1,col-1).y+rgb_image(row-1,col+1).y+2*rgb_image(row,col+1).y+rgb_image(row+1,col+1).y;
-  float grad_rgbb_y=-rgb_image(row-1,col-1).z-2*rgb_image(row,col-1).z-rgb_image(row+1,col-1).z+rgb_image(row-1,col+1).z+2*rgb_image(row,col+1).z+rgb_image(row+1,col+1).z;
+  int row_u = row+up-1;
+  int row_d = row-down+1;
+  int col_r = col-right+1;
+  int col_l = col+left-1;
+
+  float grad_rgbr_x=-rgb_image(row_u,col_l).x-2*rgb_image(row_u,col).x-rgb_image(row_u,col_r).x+rgb_image(row_d,col_l).x+2*rgb_image(row_d,col).x+rgb_image(row_d,col_r).x;
+  float grad_rgbg_x=-rgb_image(row_u,col_l).y-2*rgb_image(row_u,col).y-rgb_image(row_u,col_r).y+rgb_image(row_d,col_l).y+2*rgb_image(row_d,col).y+rgb_image(row_d,col_r).y;
+  float grad_rgbb_x=-rgb_image(row_u,col_l).z-2*rgb_image(row_u,col).z-rgb_image(row_u,col_r).z+rgb_image(row_d,col_l).z+2*rgb_image(row_d,col).z+rgb_image(row_d,col_r).z;
+
+  float grad_rgbr_y=-rgb_image(row_u,col_l).x-2*rgb_image(row,col_l).x-rgb_image(row_d,col_l).x+rgb_image(row_u,col_r).x+2*rgb_image(row,col_r).x+rgb_image(row_d,col_r).x;
+  float grad_rgbg_y=-rgb_image(row_u,col_l).y-2*rgb_image(row,col_l).y-rgb_image(row_d,col_l).y+rgb_image(row_u,col_r).y+2*rgb_image(row,col_r).y+rgb_image(row_d,col_r).y;
+  float grad_rgbb_y=-rgb_image(row_u,col_l).z-2*rgb_image(row,col_l).z-rgb_image(row_d,col_l).z+rgb_image(row_u,col_r).z+2*rgb_image(row,col_r).z+rgb_image(row_d,col_r).z;
 
   // // L1 norm
   // float grad_rgbb_norm=abs(grad_rgbr_x)+abs(grad_rgbg_x)+abs(grad_rgbb_x)+abs(grad_rgbr_y)+abs(grad_rgbg_y)+abs(grad_rgbb_y);
@@ -726,6 +736,18 @@ __global__ void gradDesc_Q_toNormalize_kernel(cv::cuda::PtrStepSz<float> q, cv::
 
 }
 
+__global__ void gradDesc_Q_kernel(cv::cuda::PtrStepSz<float> q, cv::cuda::PtrStepSz<float> gradient_d, float eps, float sigma_q ){
+  int row = blockIdx.x * blockDim.x + threadIdx.x;
+  int col = blockIdx.y * blockDim.y + threadIdx.y;
+
+  int rows = blockDim.x*gridDim.x;
+  int cols = blockDim.y*gridDim.y;
+
+  int index = row+col*rows;
+  q(row,col)=(q(row,col)+sigma_q*gradient_d(row,col))/(1+sigma_q*eps);
+
+}
+
 __global__ void gradDesc_D_kernel(cv::cuda::PtrStepSz<float> d, cv::cuda::PtrStepSz<float> a, cv::cuda::PtrStepSz<float> gradient_q, float sigma_d, float theta){
   int row = blockIdx.x * blockDim.x + threadIdx.x;
   int col = blockIdx.y * blockDim.y + threadIdx.y;
@@ -1042,35 +1064,46 @@ void Mapper::getImageNorm(cv::cuda::GpuMat* image, float* norm ){
 void Mapper::gradDesc_Q(cv::cuda::GpuMat* q, cv::cuda::GpuMat* gradient_d ){
 
 
-  int rows = q->rows;
-  int cols = q->cols;
-  int N = rows*cols;
-  float* vector_to_normalize;
-  cudaMalloc(&vector_to_normalize, sizeof(float)*N);
+    int rows = q->rows;
+    int cols = q->cols;
 
-
-  dim3 threadsPerBlock( 32 , 32 , 1);
-  dim3 numBlocks( rows/32, cols/32 , 1);
-  gradDesc_Q_toNormalize_kernel<<<numBlocks,threadsPerBlock>>>( *q, *gradient_d, eps_, sigma_q_, vector_to_normalize );
-  printCudaError("Kernel computing next q to normalize");
-
-  float* norm = new float;
-  Mapper::getVectorNorm(vector_to_normalize, norm, N);
-  // std::cout << "norm is: " << *norm << std::endl;
-  normalize_Q_kernel<<<numBlocks,threadsPerBlock>>> (*norm, *q, vector_to_normalize);
-  printCudaError("Kernel computing sum reduction");
-
-  // float* max = new float;
-  // Mapper::getVectorMax(vector_to_normalize, max, N);
-  // // std::cout << "max is: " << *max << std::endl;
-  // normalize_Q_kernel<<<numBlocks,threadsPerBlock>>> (*max, *q, vector_to_normalize);
-  // printCudaError("Kernel computing sum reduction");
-
-
-
-
+    dim3 threadsPerBlock( 32 , 32 , 1);
+    dim3 numBlocks( rows/32, cols/32 , 1);
+    gradDesc_Q_kernel<<<numBlocks,threadsPerBlock>>>( *q, *gradient_d, eps_, sigma_q_ );
+    printCudaError("Kernel computing next q to normalize");
 
 }
+
+// void Mapper::gradDesc_Q(cv::cuda::GpuMat* q, cv::cuda::GpuMat* gradient_d ){
+//
+//
+//   int rows = q->rows;
+//   int cols = q->cols;
+//   int N = rows*cols;
+//   float* vector_to_normalize;
+//   cudaMalloc(&vector_to_normalize, sizeof(float)*N);
+//
+//
+//   dim3 threadsPerBlock( 32 , 32 , 1);
+//   dim3 numBlocks( rows/32, cols/32 , 1);
+//   gradDesc_Q_toNormalize_kernel<<<numBlocks,threadsPerBlock>>>( *q, *gradient_d, eps_, sigma_q_, vector_to_normalize );
+//   printCudaError("Kernel computing next q to normalize");
+//
+//   float* norm = new float;
+//   Mapper::getVectorNorm(vector_to_normalize, norm, N);
+//   // std::cout << "norm is: " << *norm << std::endl;
+//   normalize_Q_kernel<<<numBlocks,threadsPerBlock>>> (*norm, *q, vector_to_normalize);
+//   printCudaError("Kernel computing sum reduction");
+//
+//   // float* max = new float;
+//   // Mapper::getVectorMax(vector_to_normalize, max, N);
+//   // // std::cout << "max is: " << *max << std::endl;
+//   // normalize_Q_kernel<<<numBlocks,threadsPerBlock>>> (*max, *q, vector_to_normalize);
+//   // printCudaError("Kernel computing sum reduction");
+//
+//   cudaFree(vector_to_normalize);
+//
+// }
 
 void Mapper::gradDesc_D(cv::cuda::GpuMat* d, cv::cuda::GpuMat* a, cv::cuda::GpuMat* gradient_q ){
 
@@ -1175,7 +1208,7 @@ void Mapper::Regularize(){
 
 
     Mapper::search_A( &d, &a );  // compute a (n+1)
-
+    
     Mapper::UpdateParametersReg(false);
 
 

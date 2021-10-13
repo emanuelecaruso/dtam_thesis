@@ -5,12 +5,12 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CUDA
-  "/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_cpu.cu" "/home/manu/Desktop/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_tracking.dir/__/src_cuda/camera_cpu.cu.o"
-  "/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/camera_gpu.cu" "/home/manu/Desktop/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_tracking.dir/__/src_cuda/camera_gpu.cu.o"
-  "/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/dtam_cuda.cu" "/home/manu/Desktop/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_tracking.dir/__/src_cuda/dtam_cuda.cu.o"
-  "/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/environment.cu" "/home/manu/Desktop/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_tracking.dir/__/src_cuda/environment.cu.o"
-  "/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/mapper.cu" "/home/manu/Desktop/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_tracking.dir/__/src_cuda/mapper.cu.o"
-  "/home/manu/Desktop/dtam_thesis/prova_dr/src_cuda/tracker.cu" "/home/manu/Desktop/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_tracking.dir/__/src_cuda/tracker.cu.o"
+  "/home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/camera_cpu.cu" "/home/emanuele/Scrivania/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_tracking.dir/__/src_cuda/camera_cpu.cu.o"
+  "/home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/camera_gpu.cu" "/home/emanuele/Scrivania/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_tracking.dir/__/src_cuda/camera_gpu.cu.o"
+  "/home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/dtam_cuda.cu" "/home/emanuele/Scrivania/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_tracking.dir/__/src_cuda/dtam_cuda.cu.o"
+  "/home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/environment.cu" "/home/emanuele/Scrivania/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_tracking.dir/__/src_cuda/environment.cu.o"
+  "/home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/mapper.cu" "/home/emanuele/Scrivania/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_tracking.dir/__/src_cuda/mapper.cu.o"
+  "/home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/tracker.cu" "/home/emanuele/Scrivania/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_tracking.dir/__/src_cuda/tracker.cu.o"
   )
 set(CMAKE_CUDA_COMPILER_ID "NVIDIA")
 
@@ -24,12 +24,12 @@ set(CMAKE_CUDA_TARGET_INCLUDE_PATH
   "/usr/local/include/opencv4"
   )
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/manu/Desktop/dtam_thesis/prova_dr/src/camera.cpp" "/home/manu/Desktop/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_tracking.dir/__/src/camera.cpp.o"
-  "/home/manu/Desktop/dtam_thesis/prova_dr/src/environment.cpp" "/home/manu/Desktop/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_tracking.dir/__/src/environment.cpp.o"
-  "/home/manu/Desktop/dtam_thesis/prova_dr/src/image.cpp" "/home/manu/Desktop/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_tracking.dir/__/src/image.cpp.o"
-  "/home/manu/Desktop/dtam_thesis/prova_dr/src/renderer.cpp" "/home/manu/Desktop/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_tracking.dir/__/src/renderer.cpp.o"
-  "/home/manu/Desktop/dtam_thesis/prova_dr/src/utils.cpp" "/home/manu/Desktop/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_tracking.dir/__/src/utils.cpp.o"
-  "/home/manu/Desktop/dtam_thesis/prova_dr/executables/test_tracking.cpp" "/home/manu/Desktop/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_tracking.dir/test_tracking.cpp.o"
+  "/home/emanuele/Scrivania/dtam_thesis/prova_dr/src/camera.cpp" "/home/emanuele/Scrivania/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_tracking.dir/__/src/camera.cpp.o"
+  "/home/emanuele/Scrivania/dtam_thesis/prova_dr/src/environment.cpp" "/home/emanuele/Scrivania/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_tracking.dir/__/src/environment.cpp.o"
+  "/home/emanuele/Scrivania/dtam_thesis/prova_dr/src/image.cpp" "/home/emanuele/Scrivania/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_tracking.dir/__/src/image.cpp.o"
+  "/home/emanuele/Scrivania/dtam_thesis/prova_dr/src/renderer.cpp" "/home/emanuele/Scrivania/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_tracking.dir/__/src/renderer.cpp.o"
+  "/home/emanuele/Scrivania/dtam_thesis/prova_dr/src/utils.cpp" "/home/emanuele/Scrivania/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_tracking.dir/__/src/utils.cpp.o"
+  "/home/emanuele/Scrivania/dtam_thesis/prova_dr/executables/test_tracking.cpp" "/home/emanuele/Scrivania/dtam_thesis/prova_dr/build/executables/CMakeFiles/test_tracking.dir/test_tracking.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
