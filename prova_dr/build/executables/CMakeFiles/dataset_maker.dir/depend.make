@@ -336,6 +336,8 @@ executables/CMakeFiles/dataset_maker.dir/__/src/camera.cpp.o: /usr/local/include
 executables/CMakeFiles/dataset_maker.dir/__/src/dtam.cpp.o: ../src/dtam.cpp
 
 executables/CMakeFiles/dataset_maker.dir/__/src/environment.cpp.o: ../libs/json.hpp
+executables/CMakeFiles/dataset_maker.dir/__/src/environment.cpp.o: ../src_cuda/camera_cpu.cuh
+executables/CMakeFiles/dataset_maker.dir/__/src/environment.cpp.o: ../src_cuda/camera_gpu.cuh
 executables/CMakeFiles/dataset_maker.dir/__/src/environment.cpp.o: ../src_cuda/cuda_utils.cuh
 executables/CMakeFiles/dataset_maker.dir/__/src/environment.cpp.o: ../src/camera.h
 executables/CMakeFiles/dataset_maker.dir/__/src/environment.cpp.o: ../src/defs.h
@@ -1001,6 +1003,8 @@ executables/CMakeFiles/dataset_maker.dir/__/src/image.cpp.o: /usr/local/include/
 executables/CMakeFiles/dataset_maker.dir/__/src/image.cpp.o: /usr/local/include/opencv4/opencv2/videostab/stabilizer.hpp
 executables/CMakeFiles/dataset_maker.dir/__/src/image.cpp.o: /usr/local/include/opencv4/opencv2/videostab/wobble_suppression.hpp
 
+executables/CMakeFiles/dataset_maker.dir/__/src/renderer.cpp.o: ../src_cuda/camera_cpu.cuh
+executables/CMakeFiles/dataset_maker.dir/__/src/renderer.cpp.o: ../src_cuda/camera_gpu.cuh
 executables/CMakeFiles/dataset_maker.dir/__/src/renderer.cpp.o: ../src_cuda/cuda_utils.cuh
 executables/CMakeFiles/dataset_maker.dir/__/src/renderer.cpp.o: ../src/camera.h
 executables/CMakeFiles/dataset_maker.dir/__/src/renderer.cpp.o: ../src/defs.h
@@ -1345,6 +1349,8 @@ executables/CMakeFiles/dataset_maker.dir/dataset_maker.cpp.o: ../src/environment
 executables/CMakeFiles/dataset_maker.dir/dataset_maker.cpp.o: ../src/image.h
 executables/CMakeFiles/dataset_maker.dir/dataset_maker.cpp.o: ../src/renderer.h
 executables/CMakeFiles/dataset_maker.dir/dataset_maker.cpp.o: ../src/utils.h
+executables/CMakeFiles/dataset_maker.dir/dataset_maker.cpp.o: ../src_cuda/camera_cpu.cuh
+executables/CMakeFiles/dataset_maker.dir/dataset_maker.cpp.o: ../src_cuda/camera_gpu.cuh
 executables/CMakeFiles/dataset_maker.dir/dataset_maker.cpp.o: ../src_cuda/cuda_utils.cuh
 executables/CMakeFiles/dataset_maker.dir/dataset_maker.cpp.o: ../executables/dataset_maker.cpp
 executables/CMakeFiles/dataset_maker.dir/dataset_maker.cpp.o: /usr/local/include/eigen3/Eigen/Cholesky

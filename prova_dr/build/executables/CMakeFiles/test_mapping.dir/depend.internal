@@ -2354,6 +2354,8 @@ executables/CMakeFiles/test_mapping.dir/__/src/camera.cpp.o
  /usr/local/include/opencv4/opencv2/videostab/wobble_suppression.hpp
 executables/CMakeFiles/test_mapping.dir/__/src/environment.cpp.o
  ../libs/json.hpp
+ ../src_cuda/camera_cpu.cuh
+ ../src_cuda/camera_gpu.cuh
  ../src_cuda/cuda_utils.cuh
  /home/emanuele/Scrivania/dtam_thesis/prova_dr/src/camera.h
  /home/emanuele/Scrivania/dtam_thesis/prova_dr/src/defs.h
@@ -3019,6 +3021,8 @@ executables/CMakeFiles/test_mapping.dir/__/src/image.cpp.o
  /usr/local/include/opencv4/opencv2/videostab/stabilizer.hpp
  /usr/local/include/opencv4/opencv2/videostab/wobble_suppression.hpp
 executables/CMakeFiles/test_mapping.dir/__/src/renderer.cpp.o
+ ../src_cuda/camera_cpu.cuh
+ ../src_cuda/camera_gpu.cuh
  ../src_cuda/cuda_utils.cuh
  /home/emanuele/Scrivania/dtam_thesis/prova_dr/src/camera.h
  /home/emanuele/Scrivania/dtam_thesis/prova_dr/src/defs.h

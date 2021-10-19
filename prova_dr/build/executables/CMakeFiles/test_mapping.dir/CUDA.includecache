@@ -37,6 +37,8 @@ cuda_utils.cuh
 ../src/environment.h
 camera.h
 ../src/camera.h
+camera_cpu.cuh
+../src/camera_cpu.cuh
 
 ../src/image.h
 defs.h
@@ -52,20 +54,6 @@ thread
 vector
 -
 
-../src_cuda/cuda_utils.cuh
-cuda_runtime.h
--
-
-/home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/camera_cpu.cu
-camera_cpu.cuh
-/home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/camera_cpu.cuh
-thread
--
-vector
--
-mutex
--
-
 /home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/camera_cpu.cuh
 defs.h
 /home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/defs.h
@@ -75,16 +63,6 @@ camera.h
 /home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/camera.h
 camera_gpu.cuh
 /home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/camera_gpu.cuh
-
-/home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/camera_gpu.cu
-camera_gpu.cuh
-/home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/camera_gpu.cuh
-thread
--
-vector
--
-mutex
--
 
 /home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/camera_gpu.cuh
 defs.h
@@ -130,12 +108,6 @@ mapper.cuh
 tracker.cuh
 /home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/tracker.cuh
 
-/home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/environment.cu
-environment.cuh
-/home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/environment.cuh
-utils.h
-/home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/utils.h
-
 /home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/environment.cuh
 defs.h
 /home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/defs.h
@@ -145,20 +117,6 @@ camera_cpu.cuh
 /home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/camera_cpu.cuh
 camera_gpu.cuh
 /home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/camera_gpu.cuh
-
-/home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/mapper.cu
-mapper.cuh
-/home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/mapper.cuh
-math.h
--
-utils.h
-/home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/utils.h
-stdlib.h
--
-defs.h
-/home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/defs.h
-cuda_utils.cuh
-/home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/cuda_utils.cuh
 
 /home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/mapper.cuh
 camera_cpu.cuh
@@ -171,10 +129,6 @@ cuda_runtime.h
 -
 environment.cuh
 /home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/environment.cuh
-
-/home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/tracker.cu
-tracker.cuh
-/home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/tracker.cuh
 
 /home/emanuele/Scrivania/dtam_thesis/prova_dr/src_cuda/tracker.cuh
 defs.h

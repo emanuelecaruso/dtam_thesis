@@ -12,3 +12,4 @@ cd prova_dr
 ./build/executables/test_mapping ${dataset_name}
 
 # cuda-memcheck ./build/executables/test_mapping ${dataset_name}
+# blender ../blender_scenes/${dataset_name}.blend --python ../blender_scenes/python_scripts/run.py

@@ -91,6 +91,8 @@ mp.inputs[1].default_value=-1
 links.new(mm.outputs[0], mp.inputs[0])
 
 render.image_settings.compression=0
+#render.image_settings.exr_codec='ZIP'
+render.image_settings.exr_codec='NONE'
 
 i=0
 # iterate through objects
@@ -109,7 +111,7 @@ for obj_ in bpy.data.objects:
         scene.frame_current=i
 
         l1=links.new(d.outputs['Image'], v.inputs[0])
-        if( (con and not os.path.isfile(path_rgb)) or not con ):
+        if( (con and not os.path.isfile(path_rgb+".png")) or not con ):
             render.image_settings.file_format='PNG'
             render.image_settings.color_mode='RGB'
             render.image_settings.color_depth='16'
@@ -120,10 +122,10 @@ for obj_ in bpy.data.objects:
 
         links.remove(l1)
         l2=links.new(mp.outputs[0], v.inputs[0])
-        if( (con and not os.path.isfile(path_depth)) or not con ):
-            render.image_settings.file_format='PNG'
+        if( (con and not os.path.isfile(path_depth+".exr")) or not con ):
+            render.image_settings.file_format='OPEN_EXR'
             render.image_settings.color_mode='BW'
-            render.image_settings.color_depth='16'
+            render.image_settings.color_depth='32'
             
             scene.view_settings.view_transform = 'Raw'
             render.engine=engine_eevee

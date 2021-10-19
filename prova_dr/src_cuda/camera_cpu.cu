@@ -21,8 +21,8 @@ void Camera_cpu::getCamera_gpu(){
   invdepth_map_gpu_.upload(invdepth_map_->image_);
 
   int n_pixels=resolution_*(resolution_/aspect_);
-  Cp_gpu* cp_arr;
-  cudaMalloc(&cp_arr, sizeof(Cp_gpu)*n_pixels);
+
+  cudaMalloc(&cp_array_gpu_, sizeof(Cp_gpu)*n_pixels);
   err = cudaGetLastError();
   if (err != cudaSuccess)
       printf("cudaMalloc cps Error: %s\n", cudaGetErrorString(err));
@@ -30,7 +30,7 @@ void Camera_cpu::getCamera_gpu(){
   Camera_gpu* camera_gpu_h = new Camera_gpu(name_, lens_, aspect_, width_, resolution_,
      max_depth_,min_depth_, K_, Kinv_, *frame_camera_wrt_world_, *frame_world_wrt_camera_,
      *frame_camera_wrt_world_gt_, *frame_world_wrt_camera_gt_, invdepth_map_gpu_,
-     image_rgb_gpu_, cp_arr);
+     image_rgb_gpu_, cp_array_gpu_);
 
 
   cudaMalloc((void**)&camera_gpu_, sizeof(Camera_gpu));

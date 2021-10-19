@@ -1,5 +1,6 @@
 #pragma once
 #include "camera.h"
+#include "camera_cpu.cuh"
 
 class Environment{
   public:
@@ -12,6 +13,7 @@ class Environment{
     float max_depth_;
     // environment state
     cpVector cp_vector_;
+    std::string dataset_name_;
 
     CameraVector camera_vector_; // vector containing pointers to camera objects
 
@@ -31,4 +33,6 @@ class Environment{
 
     bool saveEnvironment(std::string path_name, std::string dataset_name);
     bool loadEnvironment(std::string path_name, std::string dataset_name);
+    double saveState(std::string path_name, Camera_cpu* camera_cpu);
+
 };

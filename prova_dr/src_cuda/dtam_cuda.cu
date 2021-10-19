@@ -6,11 +6,13 @@
 #include "cuda_utils.cuh"
 
 
+
 void Dtam::addCamera(Camera_cpu* camera_cpu){
   camera_vector_cpu_.push_back(camera_cpu);
   mapper_->camera_vector_cpu_.push_back(camera_cpu);
   tracker_->camera_vector_cpu_.push_back(camera_cpu);
 }
+
 
 bool Dtam::setReferenceCamera(int index_r){
 
@@ -104,6 +106,13 @@ double Dtam::showImgs(int scale){
   return delta;
 }
 
+void Dtam::test(){
+  // cv::Mat_< float > prova= cv::imread("./isthisgoof.exr",  cv::IMREAD_ANYCOLOR | cv::IMREAD_ANYDEPTH);
+  cv::Mat_< float > prova= cv::imread("./isthisgoof_zip.exr",  cv::IMREAD_ANYDEPTH );
+  cv::imshow("ao", prova);
+
+}
+
 void Dtam::test_mapping(Environment_gpu* environment){
 
   double t_start;  // time start for computing computation time
@@ -161,6 +170,7 @@ void Dtam::test_mapping(Environment_gpu* environment){
         else if(index_m>(index_r_+2)){
           mapper_->UpdateDepthmap();
           mapper_->PopulateState();
+
         }
 
       }
@@ -194,6 +204,8 @@ void Dtam::test_mapping(Environment_gpu* environment){
 
 
   }
+  waitKeyDelay+=environment->saveState("./dataset/"+environment->dataset_name_+"/state.json", environment->camera_vector_cpu_[index_r_]);
+
 
 }
 
@@ -213,7 +225,7 @@ void Dtam::test_tracking(Environment_gpu* environment){
   while (true){
 
     // considering 30 fps camera
-    float fps=30;
+    float fps=3;
     int current_frame=int((getTime()-t_start-waitKeyDelay)/((1.0/fps)*1000));
     int frames_delta=current_frame-frames_computed_;
     if(frames_delta>=0){
@@ -237,7 +249,15 @@ void Dtam::test_tracking(Environment_gpu* environment){
 
       if (set_reference){
         setReferenceCamera(frames_computed_-1);
-        mapper_->StateFromGt(frames_computed_-1);
+
+        Camera_cpu* camera_cpu=environment->camera_vector_cpu_[index_r_];
+        if (index_r_==0)
+          camera_cpu->setGroundtruthPose();
+        // camera_cpu->printMembers();  //for debug
+
+        mapper_->StateFromGt();
+        mapper_->PopulateState();
+        // waitKeyDelay+=environment->saveState("./dataset/"+environment->dataset_name_+"/state.json", environment->camera_vector_cpu_[index_r_]);
         set_reference=false;
 
       }

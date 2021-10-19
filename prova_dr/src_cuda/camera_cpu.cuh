@@ -14,6 +14,7 @@ class Camera_cpu : public Camera{
     cv::cuda::GpuMat invdepth_map_gpu_;
     cv::cuda::GpuMat image_rgb_gpu_;
     Camera_gpu* camera_gpu_;
+    Cp_gpu* cp_array_gpu_;
 
     Camera_cpu(std::string name, float lens, float aspect, float width, int resolution,
        float max_depth, float min_depth, Eigen::Isometry3f* frame_camera_wrt_world, Eigen::Isometry3f* frame_world_wrt_camera,

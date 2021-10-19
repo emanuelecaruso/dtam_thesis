@@ -523,18 +523,24 @@ __global__ void PopulateState_kernel(Camera_gpu* camera){
   float depth=1.0/(camera->invdepth_map_(row,col)*(1.0/camera->min_depth_));
   Eigen::Vector3f p;
 
-  camera->pointAtDepth(uv_r, depth, p);
-  bool valid;
-  if(camera->invdepth_map_(row,col)!=0)
-    valid=true;
-  else
-    valid=false;
 
-  struct Cp_gpu cp = {p, camera->image_rgb_(row,col), valid};
+  bool valid;
+  if(camera->invdepth_map_(row,col)!=0){
+    valid=true;
+    camera->pointAtDepth(uv_r, depth, p);
+  }
+  else{
+    valid=false;
+    p={0,0,0};
+  }
+  uchar3 clr = camera->image_rgb_(row,col);
+
+  Cp_gpu cp = {p, {clr.x,clr.y,clr.z}, valid};
 
   camera->cp_array_[index]=cp;
 
-
+  // if (index<=100)
+  // printf("%f %i %i\n", camera->cp_array_[index].point.x(), valid, index );
 
 }
 
@@ -1265,11 +1271,18 @@ void Mapper::PopulateState(){
   Camera_gpu* camera_gpu = camera_cpu->camera_gpu_;
   int cols = camera_cpu->invdepth_map_->image_.cols;
   int rows = camera_cpu->invdepth_map_->image_.rows;
+  int n_pixels = cols*rows;
 
   dim3 threadsPerBlock( 32 , 32 , 1);
   dim3 numBlocks( rows/32, cols/32 , 1);
   PopulateState_kernel<<<numBlocks,threadsPerBlock>>>( camera_gpu );
   printCudaError("Populate Update Kernel");
+
+  camera_cpu->cp_array_ = new Cp_gpu[n_pixels];
+  cudaMemcpy(camera_cpu->cp_array_, camera_cpu->cp_array_gpu_ , sizeof(Cp_gpu)*n_pixels, cudaMemcpyDeviceToHost);
+  printCudaError("Copying cp_array device to host");
+
+  cudaDeviceSynchronize();
 
   double t_e=getTime();
   double delta=t_e-t_s;
@@ -1277,8 +1290,10 @@ void Mapper::PopulateState(){
 
 }
 
-void Mapper::StateFromGt(int index_m){
-  camera_vector_cpu_[index_r_]->invdepth_map_gpu_= depth_groundtruth_.clone();
+void Mapper::StateFromGt(){
+  Camera_cpu* camera = camera_vector_cpu_[index_r_];
+  depth_groundtruth_.download(camera->invdepth_map_->image_);
+  camera->getCamera_gpu();
 }
 void Mapper::depthSampling(Environment_gpu* environment){
   int rows = environment->resolution_/environment->aspect_;

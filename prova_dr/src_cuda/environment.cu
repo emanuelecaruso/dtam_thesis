@@ -49,6 +49,7 @@ bool Environment_gpu::loadEnvironment_gpu(std::string path_name, std::string dat
       camera_vector_cpu_.push_back(camera_cpu);
 
     }
+    camera_vector_.clear();
 
     std::cout << "dataset loaded successfully" << std::endl;
 

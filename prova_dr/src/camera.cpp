@@ -21,6 +21,7 @@ void Camera::printMembers(){
   std::cout << "width: " << width_ << std::endl;
   std::cout << "resolution: " << resolution_ << std::endl;
   std::cout << "max_depth: " << max_depth_ << std::endl;
+  std::cout << "min_depth: " << min_depth_ << std::endl;
   std::cout << "K: " << K_ << std::endl;
   std::cout << "Kinv: " << Kinv_ << std::endl;
   std::cout << "frame_world_wrt_camera LINEAR:\n" << (*frame_world_wrt_camera_).linear() << std::endl;
@@ -98,12 +99,35 @@ void Camera::loadRGB(std::string path){
 }
 
 void Camera::loadDepthMap(std::string path){
-  cv::Mat_<cv::Vec3b> rgbImg;
-  cv::Mat channel[3];
-  rgbImg = cv::imread(path);
-  split(rgbImg, channel);
-  invdepth_map_->image_=channel[0];
-  invdepth_map_->image_.convertTo(invdepth_map_->image_, CV_32FC1, 1.0/255.0);
+
+
+
+  invdepth_map_->image_=cv::imread(path, cv::IMREAD_ANYDEPTH);
+  // float clr = invdepth_map_->image_.at<float>(1,1);
+
+  // invdepth_map_->image_/=1.09142431022;
+  invdepth_map_->image_/=1.0908;
+  // float clr = invdepth_map_->image_.at<float>(1,1);
+  // std::cout << clr << " PORCODDIOOO" << std::endl;
+
+  // cv::Mat_<cv::Vec3f> rgbImg;
+  // cv::Mat channel[3];
+  // rgbImg = cv::imread(path);
+  // split(rgbImg, channel);
+  //
+  //
+  // invdepth_map_->image_=channel[0];
+  // cv::Vec3f clr = rgbImg.at<cv::Vec3f>(1,1);
+  // std::cout << clr << " PORCODDIOOO" << std::endl;
+  // invdepth_map_->image_.convertTo(invdepth_map_->image_, CV_32FC1, 1.0/255.0);
+
+  // cv::Mat_< cv::Vec3f > image=cv::imread(path, cv::IMREAD_ANYCOLOR);
+  // // cv::Mat_< cv::Vec3d > image=cv::imread(path);
+  // cv::Vec3f clr = image.at<cv::Vec3f>(0,0);
+  // // Eigen::Vector2i pxl={0,0};
+  // // invdepth_map_->evalPixel(pxl,clr);
+  // // std::cout << clr << " PORCODDIOOO" << std::endl;
+  // std::cout << clr << " PORCODDIOOO" << std::endl;
 }
 
 void Camera::showWorldFrame(Eigen::Vector3f origin, float delta, int length){

@@ -79,7 +79,7 @@ class Mapper{
     double StudyCostVolumeMin(int index_m, int row, int col, bool showbaseline);
     void UpdateDepthmap();
     void PopulateState();
-    void StateFromGt(int index_m);
+    void StateFromGt();
     void ComputeCostVolumeMin();
     void UpdateCostVolume(int index_m, bool occl );
     void depthSampling(Environment_gpu* environment);

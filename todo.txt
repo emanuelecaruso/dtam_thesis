@@ -19,14 +19,13 @@
 
 -- points on blender
 
--- play with parameters
-
 -- rgb depth map    ????
 -- update sampling    ????
 
 -- plot costs for pixel in graph
 
 -- add rotation for naive dataset maker	maybe not
+-- play with parameters
 
 
 -- initialization

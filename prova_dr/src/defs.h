@@ -226,7 +226,7 @@ namespace pr {
   struct Cp_gpu // Colored point (in 3D)
   {
     Eigen::Vector3f point;
-    uchar3 color;
+    uchar color[3];
     bool valid;
   };
 

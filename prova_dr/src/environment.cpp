@@ -188,6 +188,60 @@ bool Environment::saveEnvironment(std::string path_name, std::string dataset_nam
    return 1;
 }
 
+double Environment::saveState(std::string path_name, Camera_cpu* camera_cpu){
+
+  double t_s=getTime();
+
+  const char* path_name_ = path_name.c_str(); // dataset name
+  struct stat info;
+  if( stat( path_name_, &info ) != 0 )
+  { }
+  else if( info.st_mode & S_IFDIR )
+  {
+    // isdir
+    return 0;
+  }
+  else
+  {
+    // printf( "%s is not a directory\n", path_name );
+    std::string st = "rm " + path_name;
+    const char *str = st.c_str();
+    // std::string
+    system(str);
+  }
+
+  std::string st = "touch "+path_name;
+  const char *str = st.c_str();
+  system(str);
+
+  json j;
+
+  j["cameras"][camera_cpu->name_];
+
+  int rows=camera_cpu->resolution_/camera_cpu->aspect_;
+  int cols=camera_cpu->resolution_;
+  int n_pixels=rows*cols;
+  for (int i=0; i<n_pixels; i++){
+    Cp_gpu cp= camera_cpu->cp_array_[i];
+    if (cp.valid){
+      std::stringstream ss;
+      ss << std::setw(6) << std::setfill('0') << i;
+      std::string idx = ss.str();
+      j["cameras"][camera_cpu->name_]["p"+idx] = {
+        {"color", {cp.color[0],cp.color[1],cp.color[2]}},
+        {"position", {cp.point[0],cp.point[1],cp.point[2]}}
+      };
+    }
+  }
+  // write prettified JSON to another file
+  std::ofstream o(path_name);
+  o << std::setw(4) << j << std::endl;
+  o.close();
+
+  double t_e=getTime();
+  double delta=t_e-t_s;
+  return delta;
+}
 
 bool Environment::loadEnvironment(std::string path_name, std::string dataset_name){
 
@@ -268,6 +322,7 @@ bool Environment::loadEnvironment(std::string path_name, std::string dataset_nam
     max_depth_=max_depth;
     min_depth_=min_depth;
     aspect_=aspect;
+    dataset_name_=dataset_name;
 
     Eigen::Matrix3f R;
     R <<
@@ -295,7 +350,7 @@ bool Environment::loadEnvironment(std::string path_name, std::string dataset_nam
     camera->loadRGB(path_rgb);
 
     struct stat info__;
-    std::string path_depth_=(path_name+"/depth_"+name+".png");
+    std::string path_depth_=(path_name+"/depth_"+name+".exr");
     const char* path_depth = path_depth_.c_str(); // dataset name
     if( stat( path_depth, &info__ ) != 0 ){
       camera_vector_.push_back(camera);
